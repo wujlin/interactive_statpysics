@@ -22,23 +22,23 @@
 - [ ] Euler–Maruyama 数值模拟与稳态检验
 
 ### 知识库（kb/）— 必做
-- [ ] Concept：
-  - [ ] `kb/concepts/Langevin 方程 Langevin equation.md`
-  - [ ] `kb/concepts/Fokker-Planck 方程 Fokker-Planck equation.md`
-- [ ] Derivation：
-  - [ ] `kb/derivations/Langevin 与 Fokker-Planck 的对应关系 形式.md`
-- [ ] Method：
-  - [ ] `kb/methods/Euler–Maruyama 数值模拟.md`
-- [ ] Urban-mapping：
-  - [ ] `kb/urban-mapping/漂移扩散 作为连续城市量随机演化.md`
+- [x] Concept：
+  - [x] `kb/concepts/Langevin 方程 Langevin equation.md`
+  - [x] `kb/concepts/Fokker-Planck 方程 Fokker-Planck equation.md`
+- [x] Derivation：
+  - [x] `kb/derivations/Langevin 与 Fokker-Planck 的对应关系 形式.md`
+- [x] Method：
+  - [x] `kb/methods/Euler–Maruyama 数值模拟.md`
+- [x] Urban-mapping：
+  - [x] `kb/urban-mapping/漂移扩散 作为连续城市量随机演化.md`
 
 ### 习题与实验（exercises/）— 必做
-- [ ] Written：
-  - [ ] `exercises/written/M9_fp_langevin.md`
-- [ ] Notebook：
-  - [ ] `exercises/notebooks/E09_ou_process.ipynb`
-- [ ] Test（自动检查）：
-  - [ ] `exercises/tests/test_ou_process.py`
+- [x] Written：
+  - [x] `exercises/written/M9_fp_langevin.md`
+- [x] Notebook：
+  - [x] `exercises/notebooks/E09_ou_process.ipynb`
+- [x] Test（自动检查）：
+  - [x] `exercises/tests/test_ou_process.py`
 
 ## 完成标准（过关条件）
 - [ ] OU 模拟的样本均值/方差与理论稳态一致（在误差阈值内）

@@ -1,6 +1,8 @@
 import fs from "node:fs";
 import path from "node:path";
 
+import matter from "gray-matter";
+
 import { EXERCISES_ROOT } from "@/lib/paths";
 
 export type WrittenExerciseDoc = {
@@ -15,8 +17,15 @@ export type ExerciseNotebookDoc = {
   title: string;
 };
 
+export type ExerciseSolutionDoc = {
+  slug: string;
+  relPath: string;
+  title: string;
+};
+
 const WRITTEN_ROOT = path.join(EXERCISES_ROOT, "written");
 const NOTEBOOKS_ROOT = path.join(EXERCISES_ROOT, "notebooks");
+const SOLUTIONS_ROOT = path.join(EXERCISES_ROOT, "solutions");
 
 const SKIP_BASENAMES = new Set([".DS_Store"]);
 
@@ -25,14 +34,16 @@ function assertSafeSlug(slug: string) {
   if (slug.includes("/") || slug.includes("\\")) throw new Error("invalid slug");
 }
 
-function firstHeadingTitle(markdown: string): string | undefined {
-  for (const line of markdown.split("\n")) {
+function deriveMarkdownTitle(markdown: string, fallback: string): string {
+  const parsed = matter(markdown);
+  if (typeof parsed.data?.title === "string" && parsed.data.title.trim()) return parsed.data.title.trim();
+  for (const line of parsed.content.split("\n")) {
     const trimmed = line.trim();
     if (!trimmed) continue;
     if (trimmed.startsWith("# ")) return trimmed.replace(/^#\s+/, "").trim();
-    return undefined;
+    break;
   }
-  return undefined;
+  return fallback;
 }
 
 export function listWrittenExercises(): WrittenExerciseDoc[] {
@@ -49,7 +60,7 @@ export function listWrittenExercises(): WrittenExerciseDoc[] {
     const slug = ent.name.replace(/\.md$/i, "");
     const absPath = path.join(WRITTEN_ROOT, ent.name);
     const raw = fs.readFileSync(absPath, "utf-8");
-    const title = firstHeadingTitle(raw) ?? slug;
+    const title = deriveMarkdownTitle(raw, slug);
     docs.push({ slug, relPath: `exercises/written/${ent.name}`, title });
   }
 
@@ -63,7 +74,7 @@ export function getWrittenExerciseBySlug(slug: string): { doc: WrittenExerciseDo
   const absPath = path.join(WRITTEN_ROOT, filename);
   if (!absPath.startsWith(WRITTEN_ROOT)) throw new Error("path traversal");
   const raw = fs.readFileSync(absPath, "utf-8");
-  const title = firstHeadingTitle(raw) ?? slug;
+  const title = deriveMarkdownTitle(raw, slug);
   return { doc: { slug, relPath: `exercises/written/${filename}`, title }, content: raw };
 }
 
@@ -94,3 +105,34 @@ export function getExerciseNotebookBySlug(slug: string): { doc: ExerciseNotebook
   return { doc: { slug, relPath: `exercises/notebooks/${filename}`, title: slug }, raw };
 }
 
+export function listExerciseSolutions(): ExerciseSolutionDoc[] {
+  if (!fs.existsSync(SOLUTIONS_ROOT)) return [];
+  const entries = fs.readdirSync(SOLUTIONS_ROOT, { withFileTypes: true });
+  const docs: ExerciseSolutionDoc[] = [];
+
+  for (const ent of entries) {
+    if (!ent.isFile()) continue;
+    if (SKIP_BASENAMES.has(ent.name)) continue;
+    if (!ent.name.toLowerCase().endsWith(".md")) continue;
+    if (ent.name.startsWith("_")) continue;
+
+    const slug = ent.name.replace(/\.md$/i, "");
+    const absPath = path.join(SOLUTIONS_ROOT, ent.name);
+    const raw = fs.readFileSync(absPath, "utf-8");
+    const title = deriveMarkdownTitle(raw, slug);
+    docs.push({ slug, relPath: `exercises/solutions/${ent.name}`, title });
+  }
+
+  docs.sort((a, b) => a.slug.localeCompare(b.slug, "en"));
+  return docs;
+}
+
+export function getExerciseSolutionBySlug(slug: string): { doc: ExerciseSolutionDoc; content: string } {
+  assertSafeSlug(slug);
+  const filename = slug + ".md";
+  const absPath = path.join(SOLUTIONS_ROOT, filename);
+  if (!absPath.startsWith(SOLUTIONS_ROOT)) throw new Error("path traversal");
+  const raw = fs.readFileSync(absPath, "utf-8");
+  const title = deriveMarkdownTitle(raw, slug);
+  return { doc: { slug, relPath: `exercises/solutions/${filename}`, title }, content: raw };
+}

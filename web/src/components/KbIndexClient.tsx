@@ -13,6 +13,8 @@ type KbDocItem = {
 
 function groupLabel(type?: string): string {
   switch (type) {
+    case "source":
+      return "Sources";
     case "module":
       return "Modules";
     case "concept":
@@ -51,49 +53,45 @@ export function KbIndexClient({ docs }: { docs: KbDocItem[] }) {
     }
     const orderedKeys = [
       "Modules",
+      "Sources",
       "Concepts",
       "Derivations",
       "Methods",
       "Urban Mappings",
       ...Array.from(groups.keys()).filter(
-        (k) => !["Modules", "Concepts", "Derivations", "Methods", "Urban Mappings"].includes(k),
+        (k) => !["Modules", "Sources", "Concepts", "Derivations", "Methods", "Urban Mappings"].includes(k),
       ),
     ].filter((k, idx, arr) => arr.indexOf(k) === idx && groups.has(k));
     return { groups, orderedKeys };
   }, [filtered]);
 
   return (
-    <main style={{ padding: 24, maxWidth: 960, margin: "0 auto" }}>
-      <h1>知识库（kb/）</h1>
-      <p style={{ opacity: 0.8 }}>
-        内容来源：<code>statphys_urban_learning/kb</code>
-      </p>
+    <main className="container stack">
+      <section className="card">
+        <h1 className="page-title">知识库（KB）</h1>
+        <p className="kicker">
+          内容来源：<code>statphys_urban_learning/kb</code>
+        </p>
 
-      <div style={{ marginTop: 16, display: "flex", gap: 12, alignItems: "center" }}>
-        <input
-          value={q}
-          onChange={(e) => setQ(e.target.value)}
-          placeholder="搜索：熵 / MaxEnt / ensemble / ..."
-          style={{
-            flex: 1,
-            padding: "10px 12px",
-            borderRadius: 8,
-            border: "1px solid rgba(127,127,127,0.35)",
-            background: "transparent",
-            color: "inherit",
-          }}
-        />
-        <span style={{ opacity: 0.7 }}>{filtered.length} 条</span>
-      </div>
+        <div className="toolbar" style={{ marginTop: 12 }}>
+          <input
+            className="input"
+            value={q}
+            onChange={(e) => setQ(e.target.value)}
+            placeholder="搜索：熵 / MaxEnt / ensemble / ..."
+          />
+          <span className="muted">{filtered.length} 条</span>
+        </div>
+      </section>
 
       {grouped.orderedKeys.map((key) => (
-        <section key={key} style={{ marginTop: 24 }}>
+        <section key={key} className="card">
           <h2>{key}</h2>
-          <ul>
+          <ul style={{ marginTop: 12, paddingLeft: 18 }}>
             {(grouped.groups.get(key) ?? []).map((doc) => (
-              <li key={doc.relPath}>
+              <li key={doc.relPath} style={{ margin: "8px 0" }}>
                 <Link href={{ pathname: "/kb/" + doc.slug.join("/") }}>{doc.title}</Link>
-                {doc.status ? <span style={{ marginLeft: 8, opacity: 0.7 }}>({doc.status})</span> : null}
+                {doc.status ? <span className="muted"> · {doc.status}</span> : null}
               </li>
             ))}
           </ul>
@@ -102,4 +100,3 @@ export function KbIndexClient({ docs }: { docs: KbDocItem[] }) {
     </main>
   );
 }
-

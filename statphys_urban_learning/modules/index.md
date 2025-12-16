@@ -12,3 +12,22 @@
 - [M7 相变与标度](M7_phase_transition_scaling.md)
 - [M8 随机过程与主方程](M8_markov_master_equation.md)
 - [M9 Fokker–Planck 与 Langevin](M9_fokker_planck_langevin.md)
+
+## 学习路径图谱
+
+```mermaid
+graph TD
+    M0[M0 热力学骨架] --> M1[M1 熵/最大熵]
+    M1 --> M2[M2 微正则系综]
+    M1 --> M3[M3 正则系综/配分函数]
+    M3 --> M4[M4 巨正则/OD推断]
+    M3 --> M5[M5 涨落/响应]
+    M5 --> M6[M6 相互作用/平均场]
+    M6 --> M7[M7 相变/临界]
+    M3 --> M8[M8 Markov动力学]
+    M8 --> M9[M9 FP/Langevin]
+    
+    style M0 fill:#f9f,stroke:#333
+    style M3 fill:#bbf,stroke:#333
+    style M8 fill:#bfb,stroke:#333
+```

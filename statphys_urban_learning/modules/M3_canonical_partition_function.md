@@ -20,26 +20,26 @@
 - [ ] ln Z 的导数规则：⟨E⟩、Var(E)
 
 ### 知识库（kb/）— 必做
-- [ ] Concept：
-  - [ ] `kb/concepts/正则系综 Canonical ensemble.md`
-  - [ ] `kb/concepts/配分函数 Partition function.md`
-- [ ] Derivation：
-  - [ ] `kb/derivations/从正则分布到自由能 F=-kT ln Z.md`
-  - [ ] `kb/derivations/平均能量与 ln Z 的导数关系.md`
-- [ ] Method：
-  - [ ] `kb/methods/Metropolis-Hastings（最小 MCMC）.md`
-  - [ ] `kb/methods/MCMC 误差估计 自相关时间与 Blocking.md`
-- [ ] Urban-mapping：
-  - [ ] `kb/urban-mapping/Logit Softmax 与 Boltzmann 以及 log-sum-exp 自由能.md`
+- [x] Concept：
+  - [x] `kb/concepts/正则系综 Canonical ensemble.md`
+  - [x] `kb/concepts/配分函数 Partition function.md`
+- [x] Derivation：
+  - [x] `kb/derivations/从正则分布到自由能 F=-kT ln Z.md`
+  - [x] `kb/derivations/平均能量与 ln Z 的导数关系.md`
+- [x] Method：
+  - [x] `kb/methods/Metropolis-Hastings（最小 MCMC）.md`
+  - [x] `kb/methods/MCMC 误差估计 自相关时间与 Blocking.md`
+- [x] Urban-mapping：
+  - [x] `kb/urban-mapping/Logit Softmax 与 Boltzmann 以及 log-sum-exp 自由能.md`
 
 ### 习题与实验（exercises/）— 必做
-- [ ] Written：
-  - [ ] `exercises/written/M3_lnZ_derivatives.md`
-- [ ] Notebook：
-  - [ ] `exercises/notebooks/E02_metropolis_harmonic.ipynb`
-- [ ] Test（自动检查）：
-  - [ ] `exercises/tests/test_e02_metropolis_harmonic.py`
-  - [ ] `exercises/tests/test_mcmc_diagnostics.py`
+- [x] Written：
+  - [x] `exercises/written/M3_lnZ_derivatives.md`
+- [x] Notebook：
+  - [x] `exercises/notebooks/E02_metropolis_harmonic.ipynb`
+- [x] Test（自动检查）：
+  - [x] `exercises/tests/test_e02_metropolis_harmonic.py`
+  - [x] `exercises/tests/test_mcmc_diagnostics.py`
 
 ## 完成标准（过关条件）
 - [ ] 能从 ln Z 的导数写出均值/涨落的表达式，并解释其含义

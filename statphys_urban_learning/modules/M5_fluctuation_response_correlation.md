@@ -20,21 +20,21 @@
 - [ ] MCMC 误差：自相关时间、有效样本量（作为“可置信”最低门槛）
 
 ### 知识库（kb/）— 必做
-- [ ] Concept：
-  - [ ] `kb/concepts/涨落-响应 Fluctuation-response.md`
-  - [ ] `kb/concepts/相关函数 Correlation function.md`
-- [ ] Derivation：
-  - [ ] `kb/derivations/协方差与二阶导（通用）.md`
-- [ ] Method：
-  - [ ] `kb/methods/MCMC 误差估计 自相关时间与 Blocking.md`
-- [ ] Urban-mapping：
-  - [ ] `kb/urban-mapping/参数扰动与城市系统响应敏感性.md`
+- [x] Concept：
+  - [x] `kb/concepts/涨落-响应 Fluctuation-response.md`
+  - [x] `kb/concepts/相关函数 Correlation function.md`
+- [x] Derivation：
+  - [x] `kb/derivations/协方差与二阶导（通用）.md`
+- [x] Method：
+  - [x] `kb/methods/MCMC 误差估计 自相关时间与 Blocking.md`
+- [x] Urban-mapping：
+  - [x] `kb/urban-mapping/参数扰动与城市系统响应敏感性.md`
 
 ### 习题与实验（exercises/）— 必做
-- [ ] Written：
-  - [ ] `exercises/written/M5_fluctuation_response.md`
-- [ ] Notebook：
-  - [ ] `exercises/notebooks/E05_sensitivity_od.ipynb`
+- [x] Written：
+  - [x] `exercises/written/M5_fluctuation_response.md`
+- [x] Notebook：
+  - [x] `exercises/notebooks/E05_sensitivity_od.ipynb`
 
 ## 完成标准（过关条件）
 - [ ] 能用“扰动实验”回答：哪个参数/哪条成本扰动，对 OD 结构影响最大

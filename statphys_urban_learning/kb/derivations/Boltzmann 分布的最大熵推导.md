@@ -19,6 +19,10 @@ status: seed
 2. 对每个 x 令 \(\partial \mathcal{L}/\partial p(x)=0\) 得 \(\ln p(x)=\lambda-1-\beta E(x)\)
 3. 归一化得到 \(p(x)=e^{-\beta E(x)}/Z\)，其中 \(Z=\sum_x e^{-\beta E(x)}\)
 
+> ⚠️ **常见卡点**：
+> - 很多人在第 2 步求导时，忘记 \(\frac{\partial}{\partial p}(\sum \lambda p) = \lambda\)。
+> - 在得到 \(p(x) \propto e^{-\beta E}\) 后，必须利用 \(\sum p=1\) 来把前面的比例系数确定为 \(1/Z\)。这一步不能跳过。
+
 ## 结果
 - \(p(x)=\frac{1}{Z}e^{-\beta E(x)}\)
 - \(\beta=1/(k_BT)\)（物理诠释）

@@ -45,29 +45,20 @@ export function ModuleProgressList({ modules }: { modules: ModuleItem[] }) {
   const ratio = total > 0 ? doneCount / total : 0;
 
   return (
-    <section style={{ marginTop: 24 }}>
+    <section>
       <h2>模块进度</h2>
-      <p style={{ opacity: 0.8 }}>
+      <p className="muted" style={{ marginTop: 8 }}>
         已完成 {doneCount}/{total}（本地保存：localStorage）
       </p>
-      <div
-        aria-hidden
-        style={{
-          height: 8,
-          borderRadius: 999,
-          background: "rgba(127,127,127,0.2)",
-          overflow: "hidden",
-          margin: "12px 0",
-        }}
-      >
-        <div style={{ height: "100%", width: `${Math.round(ratio * 100)}%`, background: "rgba(80,120,255,0.8)" }} />
+      <div aria-hidden className="progress-bar">
+        <div className="progress-bar-fill" style={{ width: `${Math.round(ratio * 100)}%` }} />
       </div>
 
-      <ul style={{ marginTop: 8 }}>
+      <ul className="task-list">
         {modules.map((m) => {
           const checked = Boolean(progress[m.id]);
           return (
-            <li key={m.id} style={{ display: "flex", gap: 12, alignItems: "center", margin: "8px 0" }}>
+            <li key={m.id} className="task-item">
               <input
                 type="checkbox"
                 checked={checked}
@@ -77,7 +68,7 @@ export function ModuleProgressList({ modules }: { modules: ModuleItem[] }) {
                   saveProgress(next);
                 }}
               />
-              <span style={{ minWidth: 48, opacity: 0.8 }}>{m.id}</span>
+              <span className="task-meta">{m.id}</span>
               <Link href={m.href}>{m.title}</Link>
             </li>
           );

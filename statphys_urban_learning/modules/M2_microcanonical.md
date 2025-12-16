@@ -14,17 +14,17 @@
 - [ ] 热力学极限：为什么“最概然≈平均”、相对涨落变小
 
 ### 知识库（kb/）— 必做
-- [ ] Concept：
-  - [ ] `kb/concepts/微正则系综 Microcanonical ensemble.md`
-  - [ ] `kb/concepts/热力学极限 Thermodynamic limit.md`
-- [ ] Derivation：
-  - [ ] `kb/derivations/T,P,μ 作为熵的偏导定义.md`
-- [ ] Urban-mapping：
-  - [ ] `kb/urban-mapping/微正则（闭系统）→ 城市资源约束基线.md`
+- [x] Concept：
+  - [x] `kb/concepts/微正则系综 Microcanonical ensemble.md`
+  - [x] `kb/concepts/热力学极限 Thermodynamic limit.md`
+- [x] Derivation：
+  - [x] `kb/derivations/T,P,μ 作为熵的偏导定义.md`
+- [x] Urban-mapping：
+  - [x] `kb/urban-mapping/微正则（闭系统）→ 城市资源约束基线.md`
 
 ### 习题（exercises/）— 必做
-- [ ] Written：
-  - [ ] `exercises/written/M2_microcanonical_basics.md`
+- [x] Written：
+  - [x] `exercises/written/M2_microcanonical_basics.md`
 
 ## 完成标准（过关条件）
 - [ ] 能给出 Ω 与 S 的定义，并用一个简单计数模型算出最概然宏观态

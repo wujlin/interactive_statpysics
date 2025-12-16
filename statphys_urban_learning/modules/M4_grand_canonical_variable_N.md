@@ -23,23 +23,23 @@
 - [ ] 最大熵在“边际约束（行/列和）”下的矩阵形式（OD）
 
 ### 知识库（kb/）— 必做
-- [ ] Concept：
-  - [ ] `kb/concepts/巨正则系综 Grand canonical ensemble.md`
-  - [ ] `kb/concepts/化学势 Chemical potential.md`
-- [ ] Derivation：
-  - [ ] `kb/derivations/平均粒子数与涨落从 ln Xi 的导数得到.md`
-- [ ] Method：
-  - [ ] `kb/methods/IPF 迭代比例拟合（Iterative Proportional Fitting）.md`
-- [ ] Urban-mapping：
-  - [ ] `kb/urban-mapping/化学势 μ 作为城市总强度规模控制量.md`
+- [x] Concept：
+  - [x] `kb/concepts/巨正则系综 Grand canonical ensemble.md`
+  - [x] `kb/concepts/化学势 Chemical potential.md`
+- [x] Derivation：
+  - [x] `kb/derivations/平均粒子数与涨落从 ln Xi 的导数得到.md`
+- [x] Method：
+  - [x] `kb/methods/IPF 迭代比例拟合（Iterative Proportional Fitting）.md`
+- [x] Urban-mapping：
+  - [x] `kb/urban-mapping/化学势 μ 作为城市总强度规模控制量.md`
 
 ### 习题与项目（exercises/ & projects/）— 必做
-- [ ] Written：
-  - [ ] `exercises/written/M4_grand_canonical_notes.md`
-- [ ] Project：
-  - [ ] `projects/p01_maxent_od/`（Notebook + pytest）
-    - [ ] `projects/p01_maxent_od/notebooks/P01_maxent_od.ipynb`
-    - [ ] `projects/p01_maxent_od/tests/test_ipf.py`
+- [x] Written：
+  - [x] `exercises/written/M4_grand_canonical_notes.md`
+- [x] Project：
+  - [x] `projects/p01_maxent_od/`（Notebook + pytest）
+    - [x] `projects/p01_maxent_od/notebooks/P01_maxent_od.ipynb`
+    - [x] `projects/p01_maxent_od/tests/test_ipf.py`
 
 ## 完成标准（过关条件）
 - [ ] 能写清：μ 控制的是“平均规模/数量”，并能从 ln Ξ 导出 ⟨N⟩、Var(N)

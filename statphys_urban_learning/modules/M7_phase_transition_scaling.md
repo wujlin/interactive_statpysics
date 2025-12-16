@@ -20,21 +20,21 @@
 - [ ] 有限尺寸效应：为什么“发散”变“峰值”
 
 ### 知识库（kb/）— 必做
-- [ ] Concept：
-  - [ ] `kb/concepts/相变 Phase transition.md`
-  - [ ] `kb/concepts/相关长度 Correlation length.md`
-- [ ] Derivation：
-  - [ ] `kb/derivations/有限尺寸效应 Finite-size effects.md`
-- [ ] Method：
-  - [ ] `kb/methods/定位临界点 峰值或 Binder cumulant.md`
-- [ ] Urban-mapping：
-  - [ ] `kb/urban-mapping/城市阈值与韧性 的相变式信号.md`
+- [x] Concept：
+  - [x] `kb/concepts/相变 Phase transition.md`
+  - [x] `kb/concepts/相关长度 Correlation length.md`
+- [x] Derivation：
+  - [x] `kb/derivations/有限尺寸效应 Finite-size effects.md`
+- [x] Method：
+  - [x] `kb/methods/定位临界点 峰值或 Binder cumulant.md`
+- [x] Urban-mapping：
+  - [x] `kb/urban-mapping/城市阈值与韧性 的相变式信号.md`
 
 ### 习题与实验（exercises/）— 必做
-- [ ] Written：
-  - [ ] `exercises/written/M7_phase_transition.md`
-- [ ] Notebook：
-  - [ ] `exercises/notebooks/E07_ising_critical_signals.ipynb`
+- [x] Written：
+  - [x] `exercises/written/M7_phase_transition.md`
+- [x] Notebook：
+  - [x] `exercises/notebooks/E07_ising_critical_signals.ipynb`
 
 ## 完成标准（过关条件）
 - [ ] 能用至少一个指标（峰值或 Binder）指出“临界附近”的温度区间

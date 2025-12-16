@@ -16,21 +16,21 @@
 - [ ] Legendre 变换的操作与直觉（“换控制变量”）
 
 ### 知识库（kb/）— 必做
-- [ ] Concept：
-  - [ ] `kb/concepts/状态函数与过程量 State vs process quantities.md`
-  - [ ] `kb/concepts/第一定律与第二定律 First and second law.md`
-  - [ ] `kb/concepts/热力学势 Thermodynamic potentials.md`
-  - [ ] `kb/concepts/化学势 Chemical potential.md`
-- [ ] Derivation：
-  - [ ] `kb/derivations/Legendre 变换 从 U 到 F 到 G.md`
-- [ ] Method：
-  - [ ] `kb/methods/热力学公式自检 Checklist.md`
-- [ ] Urban-mapping：
-  - [ ] `kb/urban-mapping/约束与控制变量 在城市复杂动力建模中的作用.md`
+- [x] Concept：
+  - [x] `kb/concepts/状态函数与过程量 State vs process quantities.md`
+  - [x] `kb/concepts/第一定律与第二定律 First and second law.md`
+  - [x] `kb/concepts/热力学势 Thermodynamic potentials.md`
+  - [x] `kb/concepts/化学势 Chemical potential.md`
+- [x] Derivation：
+  - [x] `kb/derivations/Legendre 变换 从 U 到 F 到 G.md`
+- [x] Method：
+  - [x] `kb/methods/热力学公式自检 Checklist.md`
+- [x] Urban-mapping：
+  - [x] `kb/urban-mapping/约束与控制变量 在城市复杂动力建模中的作用.md`
 
 ### 习题（exercises/）— 必做
-- [ ] Written：
-  - [ ] `exercises/written/M0_thermo_basics.md`
+- [x] Written：
+  - [x] `exercises/written/M0_thermo_basics.md`
 
 ## 完成标准（过关条件）
 - [ ] 能不看书写出：`dU = T dS − P dV + μ dN`，并说明每一项的物理含义

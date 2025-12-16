@@ -21,23 +21,23 @@
 - [ ] 平均场近似（自洽方程的来源）
 
 ### 知识库（kb/）— 必做
-- [ ] Concept：
-  - [ ] `kb/concepts/相互作用系统 Interacting systems.md`
-  - [ ] `kb/concepts/序参量 Order parameter.md`
-- [ ] Derivation：
-  - [ ] `kb/derivations/Ising 平均场自洽方程.md`
-- [ ] Method：
-  - [ ] `kb/methods/Ising 的 Metropolis 模拟.md`
-- [ ] Urban-mapping：
-  - [ ] `kb/urban-mapping/城市外部性 拥堵同伴效应 与相互作用项.md`
+- [x] Concept：
+  - [x] `kb/concepts/相互作用系统 Interacting systems.md`
+  - [x] `kb/concepts/序参量 Order parameter.md`
+- [x] Derivation：
+  - [x] `kb/derivations/Ising 平均场自洽方程.md`
+- [x] Method：
+  - [x] `kb/methods/Ising 的 Metropolis 模拟.md`
+- [x] Urban-mapping：
+  - [x] `kb/urban-mapping/城市外部性 拥堵同伴效应 与相互作用项.md`
 
 ### 习题与实验（exercises/）— 必做
-- [ ] Written：
-  - [ ] `exercises/written/M6_mean_field.md`
-- [ ] Notebook：
-  - [ ] `exercises/notebooks/E06_ising_mcmc.ipynb`
-- [ ] Test（自动检查）：
-  - [ ] `exercises/tests/test_ising_simulation.py`
+- [x] Written：
+  - [x] `exercises/written/M6_mean_field.md`
+- [x] Notebook：
+  - [x] `exercises/notebooks/E06_ising_mcmc.ipynb`
+- [x] Test（自动检查）：
+  - [x] `exercises/tests/test_ising_simulation.py`
 
 ## 完成标准（过关条件）
 - [ ] 低温（高 β）下磁化 |m| 明显偏离 0；高温下 |m| 接近 0（有限尺寸下允许波动）

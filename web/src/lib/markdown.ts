@@ -68,6 +68,26 @@ function rewriteObsidianWikiLinks(markdown: string): string {
   );
 }
 
+function rewriteMarkdownLinks(markdown: string): string {
+  return transformOutsideFences(markdown, (line) => {
+    let out = line;
+
+    // exercises: ../solutions/<slug>.md -> /exercises/solutions/<slug>
+    out = out.replace(/\]\(\s*\.\.\/solutions\/([^)\s]+?)\.md\s*\)/g, (_m, slug: string) => {
+      const href = "/exercises/solutions/" + encodeURIComponent(String(slug));
+      return `](${href})`;
+    });
+
+    // modules/index.md: (M0_xxx.md) or (./M0_xxx.md) -> /modules/M0_xxx
+    out = out.replace(/\]\(\s*(?:\.\/)?(M\d+_[^)\s]+?)\.md\s*\)/gi, (_m, slug: string) => {
+      const href = "/modules/" + encodeURIComponent(String(slug));
+      return `](${href})`;
+    });
+
+    return out;
+  });
+}
+
 function rewriteInlineRepoPaths(markdown: string): string {
   // 把仓库内常见的 `kb/...`, `modules/...`, `exercises/...`, `projects/...` 路径变成可点击站内链接（仍保持代码样式）
   return transformOutsideFences(markdown, (line) => {
@@ -97,6 +117,12 @@ function rewriteInlineRepoPaths(markdown: string): string {
       return `[\`${p1}\`](${href})`;
     });
 
+    out = out.replace(/`(exercises\/solutions\/[^`]+?\.md)`/g, (_m, p1: string) => {
+      const slug = String(p1).replace(/^exercises\/solutions\//, "").replace(/\.md$/i, "");
+      const href = "/exercises/solutions/" + encodeURIComponent(slug);
+      return `[\`${p1}\`](${href})`;
+    });
+
     out = out.replace(/`(projects\/([^`/]+?)\/)`/g, (_m, p1: string, project: string) => {
       const href = "/projects/" + encodeURIComponent(project);
       return `[\`${p1}\`](${href})`;
@@ -122,10 +148,10 @@ function rewriteInlineRepoPaths(markdown: string): string {
 
 export function preprocessKbMarkdown(markdown: string): string {
   // 顺序：先把路径/双链变成标准链接，再处理数学分隔符。
-  return normalizeLatexDelimiters(rewriteObsidianWikiLinks(rewriteInlineRepoPaths(markdown)));
+  return normalizeLatexDelimiters(rewriteObsidianWikiLinks(rewriteInlineRepoPaths(rewriteMarkdownLinks(markdown))));
 }
 
 export function preprocessModuleMarkdown(markdown: string): string {
   // module/checklist/exercises/projects 主要是 checklist + 路径引用：先做路径链接化，再处理 wiki links 与数学分隔符。
-  return normalizeLatexDelimiters(rewriteObsidianWikiLinks(rewriteInlineRepoPaths(markdown)));
+  return normalizeLatexDelimiters(rewriteObsidianWikiLinks(rewriteInlineRepoPaths(rewriteMarkdownLinks(markdown))));
 }
