@@ -113,6 +113,11 @@ function rewriteInlineRepoPaths(markdown: string): string {
   return transformOutsideFences(markdown, (line) => {
     let out = line;
 
+    out = out.replace(/`(SP-[A-Za-z0-9-]+)`/g, (_m, id: string) => {
+      const href = "/references/seminal_papers#" + encodeURIComponent(String(id));
+      return `[\`${id}\`](${href})`;
+    });
+
     out = out.replace(/`(kb\/[^`]+?\.md)`/g, (_m, p1: string) => {
       const rel = String(p1).replace(/^kb\//, "").replace(/\.md$/i, "");
       const href = "/kb/" + encodePathSegments(rel);
@@ -122,6 +127,12 @@ function rewriteInlineRepoPaths(markdown: string): string {
     out = out.replace(/`(modules\/[^`]+?\.md)`/g, (_m, p1: string) => {
       const slug = String(p1).replace(/^modules\//, "").replace(/\.md$/i, "");
       const href = "/modules/" + encodeURIComponent(slug);
+      return `[\`${p1}\`](${href})`;
+    });
+
+    out = out.replace(/`(references\/[^`]+?\.md)`/g, (_m, p1: string) => {
+      const slug = String(p1).replace(/^references\//, "").replace(/\.md$/i, "");
+      const href = "/references/" + encodeURIComponent(slug);
       return `[\`${p1}\`](${href})`;
     });
 

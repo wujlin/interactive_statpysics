@@ -1,0 +1,604 @@
+"use client";
+
+import katex from "katex";
+import type { ReactNode } from "react";
+import { useEffect, useMemo, useRef, useState } from "react";
+
+type Rect = { x: number; y: number; w: number; h: number };
+type ThemeColors = {
+  text: string;
+  muted: string;
+  border: string;
+  surface: string;
+  primary: string;
+  accent: string;
+};
+
+type Particle = {
+  side: 0 | 1; // 0=left, 1=right
+  x: number;
+  y: number;
+  fromX: number;
+  fromY: number;
+  toX: number;
+  toY: number;
+  moveStartMs: number;
+  moveDurationMs: number;
+  moving: boolean;
+};
+
+type HistoryPoint = { t: number; s: number };
+
+const MIN_N = 20;
+const MAX_N = 200;
+const DEFAULT_N = 50;
+
+const LN2 = Math.log(2);
+const LOG10_2 = Math.log10(2);
+const LOG10_SECONDS_PER_YEAR = Math.log10(60 * 60 * 24 * 365.25);
+
+const LOG_FACTORIAL = (() => {
+  const arr = new Array(MAX_N + 1).fill(0);
+  for (let i = 2; i <= MAX_N; i++) arr[i] = arr[i - 1] + Math.log(i);
+  return arr;
+})();
+
+function logBinomial(n: number, k: number): number {
+  if (k < 0 || k > n) return Number.NEGATIVE_INFINITY;
+  return LOG_FACTORIAL[n] - LOG_FACTORIAL[k] - LOG_FACTORIAL[n - k];
+}
+
+function normalizedEntropy(n: number, left: number): number {
+  if (n <= 0) return 0;
+  const logOmega = logBinomial(n, left);
+  return logOmega / (n * LN2);
+}
+
+function clamp(value: number, min: number, max: number): number {
+  return Math.max(min, Math.min(max, value));
+}
+
+function easeInOutCubic(t: number): number {
+  return t < 0.5 ? 4 * t * t * t : 1 - Math.pow(-2 * t + 2, 3) / 2;
+}
+
+function sampleExpSeconds(rate: number): number {
+  const u = Math.max(Number.EPSILON, Math.random());
+  return -Math.log(u) / rate;
+}
+
+function getThemeColors(): ThemeColors {
+  const style = getComputedStyle(document.documentElement);
+  return {
+    text: style.getPropertyValue("--text").trim() || "#0f172a",
+    muted: style.getPropertyValue("--text-muted").trim() || "rgba(15, 23, 42, 0.72)",
+    border: style.getPropertyValue("--border").trim() || "rgba(15, 23, 42, 0.12)",
+    surface: style.getPropertyValue("--surface-solid").trim() || "#ffffff",
+    primary: style.getPropertyValue("--primary").trim() || "#4f46e5",
+    accent: style.getPropertyValue("--accent").trim() || "#10b981",
+  };
+}
+
+function MathInline({ tex, className }: { tex: string; className?: string }) {
+  const html = useMemo(() => {
+    try {
+      return katex.renderToString(tex, { throwOnError: false, displayMode: false });
+    } catch {
+      return tex;
+    }
+  }, [tex]);
+  return <span className={className} dangerouslySetInnerHTML={{ __html: html }} />;
+}
+
+function roundRectPath(ctx: CanvasRenderingContext2D, x: number, y: number, w: number, h: number, r: number) {
+  const radius = Math.max(0, Math.min(r, w / 2, h / 2));
+  const anyCtx = ctx as unknown as { roundRect?: (x: number, y: number, w: number, h: number, radii?: number) => void };
+  if (typeof anyCtx.roundRect === "function") {
+    anyCtx.roundRect(x, y, w, h, radius);
+    return;
+  }
+  ctx.moveTo(x + radius, y);
+  ctx.arcTo(x + w, y, x + w, y + h, radius);
+  ctx.arcTo(x + w, y + h, x, y + h, radius);
+  ctx.arcTo(x, y + h, x, y, radius);
+  ctx.arcTo(x, y, x + w, y, radius);
+  ctx.closePath();
+}
+
+function applyCanvasSize(canvas: HTMLCanvasElement, cssW: number, cssH: number) {
+  const dpr = window.devicePixelRatio || 1;
+  canvas.width = Math.max(1, Math.floor(cssW * dpr));
+  canvas.height = Math.max(1, Math.floor(cssH * dpr));
+  canvas.style.width = `${cssW}px`;
+  canvas.style.height = `${cssH}px`;
+
+  const ctx = canvas.getContext("2d");
+  if (ctx) ctx.setTransform(dpr, 0, 0, dpr, 0, 0);
+  return ctx;
+}
+
+function computeSlots(n: number): { cols: number; rows: number; u: number[]; v: number[] } {
+  const cols = Math.max(4, Math.ceil(Math.sqrt(n)));
+  const rows = Math.max(1, Math.ceil(n / cols));
+  const u: number[] = new Array(n);
+  const v: number[] = new Array(n);
+  for (let i = 0; i < n; i++) {
+    const col = i % cols;
+    const row = Math.floor(i / cols);
+    u[i] = (col + 0.5) / cols;
+    v[i] = (row + 0.5) / rows;
+  }
+  return { cols, rows, u, v };
+}
+
+function targetPos(i: number, side: 0 | 1, layout: { left: Rect; right: Rect; padding: number; slots: any }) {
+  const box = side === 0 ? layout.left : layout.right;
+  const u = layout.slots.u[i] ?? 0.5;
+  const v = layout.slots.v[i] ?? 0.5;
+  const x = box.x + layout.padding + u * (box.w - 2 * layout.padding);
+  const y = box.y + layout.padding + v * (box.h - 2 * layout.padding);
+  return { x, y };
+}
+
+function buildLayout(n: number, w: number, h: number) {
+  const margin = 14;
+  const gap = 12;
+  const padding = 12;
+  const boxW = (w - margin * 2 - gap) / 2;
+  const boxH = h - margin * 2;
+  const left: Rect = { x: margin, y: margin, w: boxW, h: boxH };
+  const right: Rect = { x: margin + boxW + gap, y: margin, w: boxW, h: boxH };
+  const slots = computeSlots(n);
+  const radius = clamp(Math.min(boxW / (slots.cols * 2.2), boxH / (slots.rows * 2.2)), 2.2, 6.5);
+  return { left, right, padding, gap, margin, slots, radius };
+}
+
+/**
+ * M1: 熵计数器（Ehrenfest 两盒模型）
+ * - Poisson 事件：随机选一个粒子跨盒
+ * - Canvas 渲染：平滑跨越 + 实时熵曲线
+ */
+function EntropyCounter() {
+  const [n, setN] = useState(DEFAULT_N);
+  const [isRunning, setIsRunning] = useState(false);
+  const [leftCount, setLeftCount] = useState(DEFAULT_N);
+  const [sNorm, setSNorm] = useState(0);
+  const [toast, setToast] = useState<ReactNode | null>(null);
+
+  const containerRef = useRef<HTMLDivElement | null>(null);
+  const simCanvasRef = useRef<HTMLCanvasElement | null>(null);
+  const plotCanvasRef = useRef<HTMLCanvasElement | null>(null);
+
+  const themeRef = useRef<ThemeColors | null>(null);
+  const layoutRef = useRef<ReturnType<typeof buildLayout> | null>(null);
+  const particlesRef = useRef<Particle[]>([]);
+  const historyRef = useRef<HistoryPoint[]>([]);
+
+  const runningRef = useRef(false);
+  const leftCountRef = useRef(DEFAULT_N);
+  const sNormRef = useRef(0);
+  const simTimeRef = useRef(0);
+  const lastFrameMsRef = useRef<number | null>(null);
+  const jumpAccumulatorRef = useRef(0);
+  const nextJumpDelayRef = useRef(0.15);
+  const toastTimerRef = useRef<number | null>(null);
+
+  const jumpRate = 10; // events per second
+  const moveDurationMs = 420;
+
+  function showToast(node: ReactNode) {
+    setToast(node);
+    if (toastTimerRef.current) window.clearTimeout(toastTimerRef.current);
+    toastTimerRef.current = window.setTimeout(() => setToast(null), 5200);
+  }
+
+  function syncUiFromRefs() {
+    setLeftCount(leftCountRef.current);
+    setSNorm(sNormRef.current);
+  }
+
+  function resetAll(nextN = n) {
+    runningRef.current = false;
+    setIsRunning(false);
+    setN(nextN);
+
+    simTimeRef.current = 0;
+    jumpAccumulatorRef.current = 0;
+    nextJumpDelayRef.current = sampleExpSeconds(jumpRate);
+
+    leftCountRef.current = nextN;
+    sNormRef.current = 0;
+    historyRef.current = [{ t: 0, s: 0 }];
+
+    const layout = layoutRef.current;
+    if (!layout) return;
+    const nowMs = performance.now();
+    particlesRef.current = Array.from({ length: nextN }, (_v, i) => {
+      const p = targetPos(i, 0, layout);
+      return {
+        side: 0,
+        x: p.x,
+        y: p.y,
+        fromX: p.x,
+        fromY: p.y,
+        toX: p.x,
+        toY: p.y,
+        moveStartMs: nowMs,
+        moveDurationMs,
+        moving: false,
+      };
+    });
+
+    syncUiFromRefs();
+  }
+
+  function performJump(nowMs: number) {
+    const layout = layoutRef.current;
+    if (!layout) return;
+    const particles = particlesRef.current;
+    if (!particles.length) return;
+
+    const idx = Math.floor(Math.random() * particles.length);
+    const p = particles[idx];
+    const nextSide: 0 | 1 = p.side === 0 ? 1 : 0;
+
+    if (p.side === 0) leftCountRef.current -= 1;
+    else leftCountRef.current += 1;
+
+    p.side = nextSide;
+    const target = targetPos(idx, nextSide, layout);
+    p.fromX = p.x;
+    p.fromY = p.y;
+    p.toX = target.x;
+    p.toY = target.y;
+    p.moveStartMs = nowMs;
+    p.moveDurationMs = moveDurationMs;
+    p.moving = true;
+
+    const nextS = normalizedEntropy(particles.length, leftCountRef.current);
+    sNormRef.current = nextS;
+    historyRef.current.push({ t: simTimeRef.current, s: nextS });
+    if (historyRef.current.length > 500) historyRef.current = historyRef.current.slice(-500);
+
+    syncUiFromRefs();
+  }
+
+  function drawSimulation(ctx: CanvasRenderingContext2D, w: number, h: number) {
+    const theme = themeRef.current ?? getThemeColors();
+    themeRef.current = theme;
+    const layout = layoutRef.current;
+    if (!layout) return;
+
+    ctx.clearRect(0, 0, w, h);
+
+    // Panels
+    ctx.fillStyle = theme.surface;
+    ctx.strokeStyle = theme.border;
+    ctx.lineWidth = 1;
+    const drawBox = (r: Rect) => {
+      ctx.beginPath();
+      roundRectPath(ctx, r.x, r.y, r.w, r.h, 14);
+      ctx.fill();
+      ctx.stroke();
+    };
+    drawBox(layout.left);
+    drawBox(layout.right);
+
+    // Divider (visual cue only)
+    ctx.strokeStyle = theme.border;
+    ctx.setLineDash([5, 5]);
+    ctx.beginPath();
+    ctx.moveTo(layout.left.x + layout.left.w + layout.gap / 2, layout.left.y + 10);
+    ctx.lineTo(layout.left.x + layout.left.w + layout.gap / 2, layout.left.y + layout.left.h - 10);
+    ctx.stroke();
+    ctx.setLineDash([]);
+
+    // Labels
+    ctx.fillStyle = theme.muted;
+    ctx.font = "12px ui-sans-serif, system-ui";
+    ctx.fillText("Left", layout.left.x + 10, layout.left.y + 18);
+    ctx.fillText("Right", layout.right.x + 10, layout.right.y + 18);
+
+    // Particles
+    const particles = particlesRef.current;
+    const r = layout.radius;
+    for (const p of particles) {
+      const fill = p.side === 0 ? "#ef4444" : "#3b82f6";
+      ctx.fillStyle = fill;
+      ctx.beginPath();
+      ctx.arc(p.x, p.y, r, 0, Math.PI * 2);
+      ctx.fill();
+    }
+  }
+
+  function drawPlot(ctx: CanvasRenderingContext2D, w: number, h: number) {
+    const theme = themeRef.current ?? getThemeColors();
+    themeRef.current = theme;
+
+    ctx.clearRect(0, 0, w, h);
+
+    // Background
+    ctx.fillStyle = theme.surface;
+    ctx.strokeStyle = theme.border;
+    ctx.lineWidth = 1;
+    ctx.beginPath();
+    roundRectPath(ctx, 0.5, 0.5, w - 1, h - 1, 14);
+    ctx.fill();
+    ctx.stroke();
+
+    const pad = 14;
+    const plotW = w - pad * 2;
+    const plotH = h - pad * 2;
+    const x0 = pad;
+    const y0 = pad;
+
+    // Axes (minimal)
+    ctx.strokeStyle = theme.border;
+    ctx.beginPath();
+    ctx.moveTo(x0, y0 + plotH);
+    ctx.lineTo(x0 + plotW, y0 + plotH);
+    ctx.stroke();
+
+    const hist = historyRef.current;
+    if (hist.length < 2) return;
+
+    const tMax = hist[hist.length - 1]!.t;
+    const tMin = Math.max(0, tMax - 25); // last 25 seconds window
+    const view = hist.filter((p) => p.t >= tMin);
+    if (view.length < 2) return;
+
+    const scaleX = (t: number) => x0 + ((t - tMin) / Math.max(1e-6, tMax - tMin)) * plotW;
+    const scaleY = (s: number) => y0 + (1 - clamp(s, 0, 1)) * plotH;
+
+    ctx.strokeStyle = theme.primary;
+    ctx.lineWidth = 2;
+    ctx.beginPath();
+    ctx.moveTo(scaleX(view[0]!.t), scaleY(view[0]!.s));
+    for (let i = 1; i < view.length; i++) ctx.lineTo(scaleX(view[i]!.t), scaleY(view[i]!.s));
+    ctx.stroke();
+
+    // Current dot
+    const last = view[view.length - 1]!;
+    ctx.fillStyle = theme.accent;
+    ctx.beginPath();
+    ctx.arc(scaleX(last.t), scaleY(last.s), 3.2, 0, Math.PI * 2);
+    ctx.fill();
+
+    // Labels
+    ctx.fillStyle = theme.muted;
+    ctx.font = "12px ui-sans-serif, system-ui";
+    ctx.fillText("Entropy (normalized)", x0, y0 + 12);
+  }
+
+  // Keep refs in sync
+  useEffect(() => {
+    runningRef.current = isRunning;
+  }, [isRunning]);
+
+  // Resize & layout
+  useEffect(() => {
+    const container = containerRef.current;
+    const simCanvas = simCanvasRef.current;
+    const plotCanvas = plotCanvasRef.current;
+    if (!container || !simCanvas || !plotCanvas) return;
+
+    function resize() {
+      const containerEl = containerRef.current;
+      if (!containerEl) return;
+      const sim = simCanvasRef.current;
+      const plot = plotCanvasRef.current;
+      if (!sim || !plot) return;
+      const w = containerEl.clientWidth;
+      const simH = clamp(Math.round(w * 0.46), 220, 420);
+      const plotH = clamp(Math.round(w * 0.22), 130, 220);
+
+      const simCtx = applyCanvasSize(sim, w, simH);
+      const plotCtx = applyCanvasSize(plot, w, plotH);
+      if (!simCtx || !plotCtx) return;
+
+      layoutRef.current = buildLayout(n, w, simH);
+
+      // Snap non-moving particles to new targets
+      const layout = layoutRef.current;
+      const particles = particlesRef.current;
+      if (layout && particles.length === n) {
+        for (let i = 0; i < particles.length; i++) {
+          const p = particles[i]!;
+          if (p.moving) continue;
+          const t = targetPos(i, p.side, layout);
+          p.x = t.x;
+          p.y = t.y;
+          p.fromX = t.x;
+          p.fromY = t.y;
+          p.toX = t.x;
+          p.toY = t.y;
+        }
+      }
+
+      drawSimulation(simCtx, w, simH);
+      drawPlot(plotCtx, w, plotH);
+    }
+
+    const ro = new ResizeObserver(resize);
+    ro.observe(container);
+    resize();
+
+    return () => ro.disconnect();
+  }, [n]);
+
+  // Initialize / reset when N changes
+  useEffect(() => {
+    if (!layoutRef.current) return;
+    resetAll(n);
+    // eslint-disable-next-line react-hooks/exhaustive-deps
+  }, [n]);
+
+  // Animation loop
+  useEffect(() => {
+    let raf = 0;
+    const simCanvas = simCanvasRef.current;
+    const plotCanvas = plotCanvasRef.current;
+    if (!simCanvas || !plotCanvas) return;
+    const simCtx = simCanvas.getContext("2d");
+    const plotCtx = plotCanvas.getContext("2d");
+    if (!simCtx || !plotCtx) return;
+
+    const loop = (nowMs: number) => {
+      const last = lastFrameMsRef.current ?? nowMs;
+      const dt = (nowMs - last) / 1000;
+      lastFrameMsRef.current = nowMs;
+
+      if (runningRef.current) {
+        simTimeRef.current += dt;
+        jumpAccumulatorRef.current += dt;
+
+        while (jumpAccumulatorRef.current >= nextJumpDelayRef.current) {
+          jumpAccumulatorRef.current -= nextJumpDelayRef.current;
+          nextJumpDelayRef.current = sampleExpSeconds(jumpRate);
+          performJump(nowMs);
+        }
+      }
+
+      // Update particle animation
+      const particles = particlesRef.current;
+      for (const p of particles) {
+        if (!p.moving) continue;
+        const t = clamp((nowMs - p.moveStartMs) / p.moveDurationMs, 0, 1);
+        const e = easeInOutCubic(t);
+        const arc = Math.sin(Math.PI * e) * -10;
+        p.x = p.fromX + (p.toX - p.fromX) * e;
+        p.y = p.fromY + (p.toY - p.fromY) * e + arc;
+        if (t >= 1) {
+          p.x = p.toX;
+          p.y = p.toY;
+          p.moving = false;
+        }
+      }
+
+      const simW = parseFloat(simCanvas.style.width || "0") || simCanvas.getBoundingClientRect().width;
+      const simH = parseFloat(simCanvas.style.height || "0") || simCanvas.getBoundingClientRect().height;
+      const plotW = parseFloat(plotCanvas.style.width || "0") || plotCanvas.getBoundingClientRect().width;
+      const plotH = parseFloat(plotCanvas.style.height || "0") || plotCanvas.getBoundingClientRect().height;
+
+      if (simW > 0 && simH > 0) drawSimulation(simCtx, simW, simH);
+      if (plotW > 0 && plotH > 0) drawPlot(plotCtx, plotW, plotH);
+
+      raf = window.requestAnimationFrame(loop);
+    };
+
+    raf = window.requestAnimationFrame(loop);
+    return () => window.cancelAnimationFrame(raf);
+  }, []);
+
+  const rightCount = n - leftCount;
+
+  return (
+    <section className="ic-card">
+      <header className="ic-header">
+        <div className="ic-title">
+          <div className="ic-title-main">Ehrenfest 两盒模型：随机性如何产生宏观均衡</div>
+          <div className="ic-title-sub">
+            单次跳变是随机的，但多重度 <MathInline tex={"\\Omega"} className="ic-math" /> 的压倒性会把系统“吸”向{" "}
+            <MathInline tex={"N_L\\approx N_R"} className="ic-math" />。
+          </div>
+        </div>
+        <div className="ic-controls">
+          <label className="ic-slider">
+            <span className="ic-slider-label">
+              N = <span className="ic-mono">{n}</span>
+            </span>
+            <input
+              type="range"
+              min={MIN_N}
+              max={MAX_N}
+              step={1}
+              value={n}
+              onChange={(e) => {
+                const nextN = clamp(Number(e.target.value) || DEFAULT_N, MIN_N, MAX_N);
+                setN(nextN);
+              }}
+            />
+          </label>
+          <button className="ic-btn" onClick={() => resetAll(n)}>
+            Reset（低熵）
+          </button>
+          <button className="ic-btn ic-btn-primary" onClick={() => setIsRunning((v) => !v)}>
+            {isRunning ? "Pause" : "Start"}
+          </button>
+          <button
+            className="ic-btn ic-btn-ghost"
+            onClick={() => {
+              const log10Prob = -n * LOG10_2;
+              const log10WaitSeconds = n * LOG10_2 - Math.log10(jumpRate);
+              const log10WaitYears = log10WaitSeconds - LOG10_SECONDS_PER_YEAR;
+              showToast(
+                <span>
+                  在混合状态下回到“全在左侧”的瞬时概率约为 <MathInline tex={`10^{${Math.round(log10Prob)}}`} />；
+                  以当前速率约 <span className="ic-mono">{jumpRate}</span> 次/秒，期望等待约{" "}
+                  <MathInline tex={`10^{${Math.round(log10WaitSeconds)}}`} /> 秒（约{" "}
+                  <MathInline tex={`10^{${Math.round(log10WaitYears)}}`} /> 年）。
+                </span>,
+              );
+            }}
+          >
+            Reverse?
+          </button>
+        </div>
+      </header>
+
+      <div ref={containerRef} className="ic-canvas-grid">
+        <canvas ref={simCanvasRef} className="ic-canvas" aria-label="Ehrenfest simulation canvas" />
+        <canvas ref={plotCanvasRef} className="ic-canvas" aria-label="Entropy plot canvas" />
+      </div>
+
+      <div className="ic-metrics">
+        <div className="ic-metric">
+          <div className="ic-metric-label">Left</div>
+          <div className="ic-metric-value">
+            <span className="ic-mono">{leftCount}</span> / <span className="ic-mono">{n}</span>
+          </div>
+        </div>
+        <div className="ic-metric">
+          <div className="ic-metric-label">Right</div>
+          <div className="ic-metric-value">
+            <span className="ic-mono">{rightCount}</span> / <span className="ic-mono">{n}</span>
+          </div>
+        </div>
+        <div className="ic-metric">
+          <div className="ic-metric-label">
+            Entropy <MathInline tex={"S/(N\\ln 2)"} className="ic-math" />
+          </div>
+          <div className="ic-metric-value">
+            <span className="ic-mono">{sNorm.toFixed(3)}</span>
+          </div>
+        </div>
+      </div>
+
+      {toast ? <div className="ic-toast">{toast}</div> : null}
+
+      <p className="ic-footnote">
+        这个模型的“驱动力”不是某种趋向平衡的力，而是计数：满足{" "}
+        <MathInline tex={"N_L\\approx N_R"} className="ic-math" /> 的微观态数量远多于全左/全右（多重度{" "}
+        <MathInline tex={"\\Omega"} className="ic-math" /> 的差别随 N 指数扩大）。
+      </p>
+    </section>
+  );
+}
+
+// --- Main Registry ---
+
+const COMPONENT_MAP: Record<string, React.FC> = {
+  "entropy-counter": EntropyCounter,
+};
+
+export function InteractiveConcept({ type }: { type: string }) {
+  const Component = COMPONENT_MAP[type];
+  if (!Component) {
+    return (
+      <div className="card">
+        <p className="muted">Unknown interactive concept: {type}</p>
+      </div>
+    );
+  }
+  return <Component />;
+}

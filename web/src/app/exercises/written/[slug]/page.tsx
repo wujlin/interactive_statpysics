@@ -31,9 +31,14 @@ export default async function ExerciseWrittenPage({ params }: { params: Promise<
         <h1 className="page-title" style={{ marginTop: 12 }}>
           {doc.title}
         </h1>
-        <p className="kicker">
-          <code>{doc.relPath}</code>
-        </p>
+        <details style={{ marginTop: 8 }}>
+          <summary className="muted" style={{ cursor: "pointer" }}>
+            显示源文件路径
+          </summary>
+          <p className="kicker" style={{ marginTop: 8 }}>
+            <code>{doc.relPath}</code>
+          </p>
+        </details>
       </section>
 
       <section className="card">

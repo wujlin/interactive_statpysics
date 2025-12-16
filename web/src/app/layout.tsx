@@ -27,6 +27,7 @@ export default function RootLayout({
               <Link href="/kb">KB</Link>
               <Link href="/exercises">Exercises</Link>
               <Link href="/projects">Projects</Link>
+              <Link href="/references">References</Link>
             </nav>
           </div>
         </header>

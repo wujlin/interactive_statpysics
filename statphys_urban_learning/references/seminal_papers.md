@@ -71,6 +71,18 @@
 
 ## M5（涨落—响应 / 相关 / 线性响应）
 
+### SP-M5-Einstein1905-Brownian
+- A. Einstein, “Über die von der molekularkinetischen Theorie der Wärme geforderte Bewegung von in ruhenden Flüssigkeiten suspendierten Teilchen,” *Annalen der Physik* **17**, 549–560 (1905).
+- Why this paper?
+  - 给出布朗运动的最小可检验预测：均方位移随时间线性增长，并把扩散系数 \(D\) 与温度/阻力（迁移率）联系起来；
+  - 它是涨落—耗散思想的历史起点：微观“乱动”的强度与宏观“好推”的程度必须匹配，否则就会违背平衡。
+
+### SP-M5-Onsager1931
+- L. Onsager, “Reciprocal Relations in Irreversible Processes. I,” *Physical Review* **37**, 405–426 (1931).
+- Why this paper?
+  - 建立近平衡不可逆过程的线性理论框架（互易关系/回归思想），把“响应系数”从经验量变成受约束的结构；
+  - 是你理解“相关函数 → 响应”的关键祖先：后续的回归假说与 FDT/Kubo 公式都在这条谱系上。
+
 ### SP-M5-CallenWelton1951
 - H. B. Callen and T. A. Welton, “Irreversibility and Generalized Noise,” *Physical Review* **83**, 34–40 (1951).
 - Why this paper?

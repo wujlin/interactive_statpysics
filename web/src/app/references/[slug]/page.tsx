@@ -3,33 +3,32 @@ import { notFound } from "next/navigation";
 
 import { MdxArticle } from "@/components/MdxArticle";
 import { preprocessModuleMarkdown } from "@/lib/markdown";
-import { getExerciseSolutionBySlug, listExerciseSolutions } from "@/lib/exercises";
+import { getReferenceDocBySlug, listReferenceDocs } from "@/lib/references";
 
 export function generateStaticParams() {
-  return listExerciseSolutions().map((d) => ({ slug: d.slug }));
+  return listReferenceDocs().map((d) => ({ slug: d.slug }));
 }
 
-export default async function ExerciseSolutionPage({ params }: { params: Promise<{ slug: string }> }) {
+export default async function ReferenceDocPage({ params }: { params: Promise<{ slug: string }> }) {
   const { slug } = await params;
-  let doc: ReturnType<typeof getExerciseSolutionBySlug>["doc"];
+  let doc: ReturnType<typeof getReferenceDocBySlug>["doc"];
   let content: string;
   try {
-    ({ doc, content } = getExerciseSolutionBySlug(slug));
+    ({ doc, content } = getReferenceDocBySlug(slug));
   } catch {
     notFound();
   }
 
   const source = preprocessModuleMarkdown(content);
-
   return (
     <main className="container stack">
       <section className="card">
         <div className="toolbar" style={{ justifyContent: "space-between" }}>
-          <Link href="/exercises">← 返回 Exercises</Link>
+          <Link href="/references">← 返回 References</Link>
           <Link href="/modules">Modules</Link>
         </div>
         <h1 className="page-title" style={{ marginTop: 12 }}>
-          参考解答：{doc.title}
+          {doc.title}
         </h1>
         <details style={{ marginTop: 8 }}>
           <summary className="muted" style={{ cursor: "pointer" }}>

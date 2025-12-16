@@ -13,9 +13,8 @@ export default async function KbDocPage({ params }: { params: Promise<{ slug: st
   const { slug } = await params;
   let doc: ReturnType<typeof getKbDocBySlug>["doc"];
   let content: string;
-  let data: Record<string, unknown>;
   try {
-    ({ doc, content, data } = getKbDocBySlug(slug));
+    ({ doc, content } = getKbDocBySlug(slug));
   } catch {
     notFound();
   }
@@ -32,14 +31,20 @@ export default async function KbDocPage({ params }: { params: Promise<{ slug: st
           {doc.title}
         </h1>
         <p className="kicker">
-          <code>{doc.relPath}</code>
-          {typeof data.type === "string" ? (
+          {doc.type ? (
             <>
-              {" "}
-              · type: <code>{String(data.type)}</code>
+              type: <code>{doc.type}</code>
             </>
           ) : null}
         </p>
+        <details style={{ marginTop: 8 }}>
+          <summary className="muted" style={{ cursor: "pointer" }}>
+            显示源文件路径
+          </summary>
+          <p className="kicker" style={{ marginTop: 8 }}>
+            <code>kb/{doc.relPath}</code>
+          </p>
+        </details>
       </section>
 
       <section className="card">

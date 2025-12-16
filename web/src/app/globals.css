@@ -254,6 +254,7 @@ pre {
 
 .markdown :is(h1, h2, h3, h4) {
   margin: 1.2em 0 0.6em;
+  scroll-margin-top: 96px;
 }
 
 .markdown :is(p, ul, ol, pre, blockquote) {
@@ -267,6 +268,49 @@ pre {
 .markdown a {
   text-decoration: underline;
   text-underline-offset: 0.2em;
+}
+
+.kb-tooltip {
+  position: relative;
+  display: inline-flex;
+  align-items: baseline;
+}
+
+.kb-tooltip-bubble {
+  position: absolute;
+  left: 50%;
+  bottom: 100%;
+  transform: translateX(-50%);
+  margin-bottom: 10px;
+  width: max-content;
+  max-width: min(360px, 90vw);
+  padding: 10px 12px;
+  border-radius: 12px;
+  border: 1px solid var(--border);
+  background: var(--surface-solid);
+  box-shadow: var(--shadow-sm);
+  color: var(--text);
+  font-size: 13px;
+  line-height: 1.4;
+  opacity: 0;
+  pointer-events: none;
+  z-index: 20;
+}
+
+.kb-tooltip:hover .kb-tooltip-bubble,
+.kb-tooltip:focus-within .kb-tooltip-bubble {
+  opacity: 1;
+}
+
+.kb-tooltip-title {
+  display: block;
+  font-weight: 700;
+  margin-bottom: 6px;
+}
+
+.kb-tooltip-hint {
+  display: block;
+  color: var(--text-muted);
 }
 
 .markdown code {
@@ -293,6 +337,181 @@ pre {
   border: 1px solid var(--border);
   background: var(--surface-solid);
   overflow: auto;
+}
+
+/* InteractiveConcept (Canvas-based) */
+.ic-card {
+  background: var(--surface);
+  border: 1px solid var(--border);
+  border-radius: var(--radius);
+  box-shadow: var(--shadow-sm);
+  padding: 16px;
+}
+
+.ic-header {
+  display: flex;
+  gap: 14px;
+  justify-content: space-between;
+  align-items: flex-start;
+  flex-wrap: wrap;
+}
+
+.ic-title-main {
+  font-size: 18px;
+  font-weight: 800;
+  letter-spacing: -0.01em;
+}
+
+.ic-title-sub {
+  margin-top: 6px;
+  color: var(--text-muted);
+  font-size: 13px;
+  line-height: 1.45;
+  max-width: 70ch;
+}
+
+.ic-controls {
+  display: flex;
+  gap: 8px;
+  align-items: center;
+  flex-wrap: wrap;
+}
+
+.ic-slider {
+  display: flex;
+  gap: 10px;
+  align-items: center;
+  padding: 8px 10px;
+  border-radius: 12px;
+  border: 1px solid var(--border);
+  background: var(--surface-solid);
+  box-shadow: var(--shadow-sm);
+}
+
+.ic-slider-label {
+  font-size: 12px;
+  color: var(--text-muted);
+  white-space: nowrap;
+}
+
+.ic-slider input[type="range"] {
+  width: 160px;
+}
+
+.ic-btn {
+  padding: 8px 10px;
+  border-radius: 12px;
+  border: 1px solid var(--border);
+  background: var(--surface-solid);
+  color: var(--text);
+  box-shadow: var(--shadow-sm);
+  font-size: 13px;
+  cursor: pointer;
+  transition:
+    transform 120ms ease,
+    background 120ms ease,
+    border-color 120ms ease,
+    color 120ms ease;
+}
+
+.ic-btn:hover {
+  background: color-mix(in oklab, var(--surface-solid), var(--primary) 6%);
+  border-color: color-mix(in oklab, var(--border), var(--primary) 30%);
+}
+
+.ic-btn:active {
+  transform: translateY(1px);
+}
+
+.ic-btn-primary {
+  background: var(--primary);
+  border-color: color-mix(in oklab, var(--primary), #000 18%);
+  color: white;
+}
+
+.ic-btn-primary:hover {
+  background: var(--primary-strong);
+  border-color: color-mix(in oklab, var(--primary-strong), #000 18%);
+}
+
+.ic-btn-ghost {
+  background: transparent;
+  border-style: dashed;
+  color: var(--text-muted);
+  box-shadow: none;
+}
+
+.ic-btn-ghost:hover {
+  background: color-mix(in oklab, var(--surface-solid), var(--accent) 6%);
+  border-color: color-mix(in oklab, var(--border), var(--accent) 30%);
+  color: var(--text);
+}
+
+.ic-canvas-grid {
+  display: grid;
+  gap: 12px;
+  margin-top: 12px;
+}
+
+.ic-canvas {
+  width: 100%;
+  height: auto;
+  display: block;
+  border-radius: 14px;
+  border: 1px solid var(--border);
+  background: var(--surface-solid);
+}
+
+.ic-metrics {
+  display: grid;
+  grid-template-columns: repeat(auto-fit, minmax(160px, 1fr));
+  gap: 10px;
+  margin-top: 12px;
+}
+
+.ic-metric {
+  padding: 10px 12px;
+  border-radius: 12px;
+  border: 1px solid var(--border);
+  background: var(--surface-solid);
+}
+
+.ic-metric-label {
+  font-size: 12px;
+  color: var(--text-muted);
+}
+
+.ic-metric-value {
+  margin-top: 6px;
+  font-size: 18px;
+  font-weight: 800;
+  letter-spacing: -0.01em;
+}
+
+.ic-mono {
+  font-family: var(--font-mono);
+}
+
+.ic-math :is(.katex, .katex-display) {
+  font-size: 1em;
+}
+
+.ic-toast {
+  margin-top: 12px;
+  padding: 10px 12px;
+  border-radius: 12px;
+  border: 1px solid color-mix(in oklab, var(--border), var(--primary) 30%);
+  background: color-mix(in oklab, var(--surface-solid), var(--primary) 8%);
+  color: var(--text);
+  font-size: 13px;
+  line-height: 1.45;
+}
+
+.ic-footnote {
+  margin-top: 12px;
+  color: var(--text-muted);
+  font-size: 12px;
+  line-height: 1.5;
 }
 
 .mermaid-diagram svg {

@@ -8,7 +8,7 @@ status: ready
 ---
 
 ## 一句话
-- Fokker–Planck 方程描述随机过程的**概率密度** \(p(x,t)\) 如何随时间演化，是 Langevin 的“分布层面”表述。
+Fokker–Planck 方程（Kolmogorov 正向方程）给出连续 Markov 过程的概率密度 p(x,t) 的演化；对 Itô 形式的 SDE dX=a(X,t)dt+b(X,t)dW_t，有 ∂_t p=−∂_x(a p)+1/2 ∂_x^2(b^2 p)。
 
 ## 对应关系（形式）
 - 对 Langevin：\(dX = a(X)\,dt + b(X)\,dW\)，其密度满足：

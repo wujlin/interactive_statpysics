@@ -1,7 +1,7 @@
 # Reading Guide: Einstein (1905) Brownian Motion
 
 > **Type**: Reading Guide
-> **Source**: [[SP-M5-Einstein1905-Brownian]]
+> **Source**: `SP-M5-Einstein1905-Brownian`
 > **Topics**: Fluctuation-Dissipation, Diffusion, Atom Existence
 
 ## TL;DR (30秒概览)

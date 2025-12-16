@@ -1,7 +1,7 @@
 ---
 type: exercise
 id: M0_written
-title: M0 热力学骨架：dU/dF/dG 与自然变量
+title: M0：势函数的微分与自然变量（dU、dF、dG）
 difficulty: 1
 tags: [thermo, potentials, legendre]
 ---

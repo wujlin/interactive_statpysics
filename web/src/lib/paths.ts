@@ -7,6 +7,6 @@ export const KB_ROOT = path.join(STATPHYS_ROOT, "kb");
 export const MODULES_ROOT = path.join(STATPHYS_ROOT, "modules");
 export const EXERCISES_ROOT = path.join(STATPHYS_ROOT, "exercises");
 export const PROJECTS_ROOT = path.join(STATPHYS_ROOT, "projects");
+export const REFERENCES_ROOT = path.join(STATPHYS_ROOT, "references");
 
 export const CHECKLIST_PATH = path.join(STATPHYS_ROOT, "checklist.md");
-

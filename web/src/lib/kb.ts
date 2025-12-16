@@ -11,8 +11,16 @@ export type KbDoc = {
   relPath: string;
   title: string;
   type?: string;
+  hint?: string;
   tags?: string[];
   status?: string;
+};
+
+export type KbPreview = {
+  href: string;
+  title: string;
+  type?: string;
+  hint?: string;
 };
 
 const SKIP_BASENAMES = new Set([".DS_Store"]);
@@ -21,12 +29,17 @@ const INCLUDE_UNDERSCORE_BASENAMES = new Set(["_notation_conventions.md"]);
 type KbIndex = {
   docs: KbDoc[];
   titleToSlug: Map<string, string[]>;
+  hrefToPreview: Map<string, KbPreview>;
 };
 
 let kbIndexCache: KbIndex | null = null;
 
 function normalizeRelPath(relPath: string): string {
   return relPath.replaceAll("\\", "/");
+}
+
+function encodeSlug(slug: string[]): string {
+  return slug.map((s) => encodeURIComponent(s)).join("/");
 }
 
 function deriveKbType(relPath: string): string | undefined {
@@ -59,6 +72,76 @@ function walkMarkdownFiles(dirAbs: string, baseAbs: string): string[] {
   return out;
 }
 
+function cleanHintText(text: string): string {
+  let out = text.trim();
+  if (!out) return "";
+
+  out = out
+    .replace(/\[\[([^[\]]+)\]\]/g, (_m, inner: string) => {
+      const raw = String(inner).trim();
+      const parts = raw.split("|").map((s) => s.trim());
+      return parts.length === 2 ? parts[1] : parts[0];
+    })
+    .replace(/\[([^\]]+)\]\([^)]+\)/g, (_m, label: string) => String(label))
+    .replaceAll("`", "")
+    .replaceAll("**", "")
+    .replaceAll("*", "")
+    .replaceAll("\\(", "")
+    .replaceAll("\\)", "")
+    .replaceAll("\\[", "")
+    .replaceAll("\\]", "")
+    .replace(/\s+/g, " ")
+    .trim();
+
+  const maxLen = 240;
+  if (out.length > maxLen) out = out.slice(0, maxLen - 1).trimEnd() + "…";
+  return out;
+}
+
+function extractKbHint(content: string): string | undefined {
+  const lines = content.split("\n");
+
+  function firstLineAfterHeading(headingRegex: RegExp): string | undefined {
+    for (let i = 0; i < lines.length; i++) {
+      const t = lines[i].trim();
+      if (!t.startsWith("#")) continue; // Optimization: Must be a header
+      if (!headingRegex.test(t)) continue;
+
+      let j = i + 1;
+      while (j < lines.length && !lines[j].trim()) j++;
+      if (j >= lines.length) return undefined;
+
+      const raw = lines[j].trim().replace(/^[-*]\s+/, "").replace(/^\d+[.)]\s+/, "");
+      const cleaned = cleanHintText(raw);
+      if (cleaned) return cleaned;
+    }
+    return undefined;
+  }
+
+  const hint =
+    firstLineAfterHeading(/^##\s*一句话/) ??
+    firstLineAfterHeading(/^##\s*TL[:;]?DR/i) ??
+    firstLineAfterHeading(/^##\s*(核心)?目标/) ??
+    firstLineAfterHeading(/^##\s*(Abstract|Summary|简介|概述)/i) ??
+    (() => {
+      for (const line of lines) {
+        const t = line.trim();
+        if (!t) continue;
+        if (t.startsWith("#")) continue;
+        if (t.startsWith("```") || t.startsWith("~~~")) continue;
+        if (t.startsWith(">")) continue;
+        // Don't take a short metadata line?
+        if (t.startsWith("render_diffs")) continue;
+
+        const cleaned = cleanHintText(t.replace(/^[-*]\s+/, ""));
+        if (cleaned) return cleaned;
+      }
+      return undefined;
+    })();
+
+  return hint;
+}
+
 function buildKbIndex(): KbIndex {
   if (!fs.existsSync(KB_ROOT)) {
     throw new Error(`KB root not found: ${KB_ROOT}`);
@@ -73,6 +156,7 @@ function buildKbIndex(): KbIndex {
     const slug = relPath.replace(/\.md$/i, "").split(path.sep);
     const derivedType = deriveKbType(relPath);
     const type = typeof parsed.data?.type === "string" ? parsed.data.type : derivedType;
+    const hint = extractKbHint(parsed.content);
 
     return {
       id: typeof parsed.data?.id === "string" ? parsed.data.id : undefined,
@@ -80,6 +164,7 @@ function buildKbIndex(): KbIndex {
       relPath: normalizeRelPath(relPath),
       title: String(parsed.data?.title ?? basename),
       type,
+      hint,
       tags: Array.isArray(parsed.data?.tags) ? (parsed.data.tags as string[]) : undefined,
       status: typeof parsed.data?.status === "string" ? parsed.data.status : undefined,
     } satisfies KbDoc;
@@ -105,7 +190,13 @@ function buildKbIndex(): KbIndex {
     }
   }
 
-  return { docs, titleToSlug };
+  const hrefToPreview = new Map<string, KbPreview>();
+  for (const d of docs) {
+    const href = "/kb/" + encodeSlug(d.slug);
+    hrefToPreview.set(href, { href, title: d.title, type: d.type, hint: d.hint });
+  }
+
+  return { docs, titleToSlug, hrefToPreview };
 }
 
 function getKbIndex(): KbIndex {
@@ -119,6 +210,17 @@ function getKbIndex(): KbIndex {
 
 export function listKbDocs(): KbDoc[] {
   return getKbIndex().docs;
+}
+
+function normalizeHref(href: string): string {
+  let out = href.split("#")[0]?.split("?")[0] ?? href;
+  while (out.length > 1 && out.endsWith("/")) out = out.slice(0, -1);
+  return out;
+}
+
+export function findKbPreviewByHref(href: string): KbPreview | undefined {
+  const key = normalizeHref(href);
+  return getKbIndex().hrefToPreview.get(key);
 }
 
 function assertSafeSlug(slug: string[]) {

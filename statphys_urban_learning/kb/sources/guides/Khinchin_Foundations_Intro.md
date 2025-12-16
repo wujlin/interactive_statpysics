@@ -1,7 +1,7 @@
 # Reading Guide: Khinchin (Mathematical Foundations)
 
 > **Type**: Reading Guide
-> **Source**: [[SP-M2-Khinchin1949]] (Reference Entry)
+> **Source**: `SP-M2-Khinchin1949` (Reference Entry)
 > **Topics**: Ergodicity, Method of Arbitrary Functions, Thermodynamic Limit
 
 ## TL;DR (30秒概览)
