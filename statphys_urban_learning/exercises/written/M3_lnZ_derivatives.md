@@ -34,3 +34,7 @@ tags: [canonical, partition-function, fluctuation]
 ## 参考解答
 
 👉 [查看参考解答](../solutions/M3_solution.md)（建议自己推导完成后再核对）
+
+## Source anchors
+- Swendsen Eq 19.53：\(\partial_\beta \ln Z = -\langle E\rangle\)
+- Swendsen Eq 19.59：\(\partial_\beta \langle E\rangle = -\langle E^2\rangle + \langle E\rangle^2\)

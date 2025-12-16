@@ -39,3 +39,7 @@ status: ready
 ## 检查
 - 维度：\(\beta\) 的单位是 1/能量 ⇒ \(\partial_\beta\ln Z\) 的单位是能量
 - 高温极限 \(\beta\to 0\)：分布趋于均匀
+
+## Source anchors
+- Swendsen Eq 19.53：\(\partial_\beta \ln Z = -\langle E\rangle\)
+- Swendsen Eq 19.59：\(\partial_\beta \langle E\rangle = -\langle E^2\rangle + \langle E\rangle^2\)

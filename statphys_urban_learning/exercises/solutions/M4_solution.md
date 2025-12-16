@@ -15,43 +15,43 @@ p(x,N)\propto \exp\big(-\beta(E(x,N)-\mu N)\big)
 
 归一化因子（巨配分函数）对所有 \(N\) 与对应的微观态求和：
 \[
-\Xi(\beta,\mu)=\sum_{N}\sum_{x\in\mathcal{X}_N}\exp\big(-\beta(E(x,N)-\mu N)\big).
+\mathcal{Z}(\beta,\mu)=\sum_{N}\sum_{x\in\mathcal{X}_N}\exp\big(-\beta(E(x,N)-\mu N)\big).
 \]
 因此
 \[
-p(x,N)=\frac{1}{\Xi(\beta,\mu)}\exp\big(-\beta(E(x,N)-\mu N)\big).
+p(x,N)=\frac{1}{\mathcal{Z}(\beta,\mu)}\exp\big(-\beta(E(x,N)-\mu N)\big).
 \]
 
-## (2) \(\langle N\rangle\) 与 \(\mathrm{Var}(N)\) 从 \(\ln\Xi\) 得到
+## (2) \(\langle N\rangle\) 与 \(\mathrm{Var}(N)\) 从 \(\ln\mathcal{Z}\) 得到
 
-令 \(y=\beta\mu\)。把 \(\Xi\) 写成
+令 \(y=\beta\mu\)。把 \(\mathcal{Z}\) 写成
 \[
-\Xi(\beta,y)=\sum_{N}\sum_{x} \exp\big(-\beta E(x,N)+yN\big).
+\mathcal{Z}(\beta,y)=\sum_{N}\sum_{x} \exp\big(-\beta E(x,N)+yN\big).
 \]
 
 一阶导：
 \[
-\frac{\partial \Xi}{\partial y}
+\frac{\partial \mathcal{Z}}{\partial y}
 =\sum_{N}\sum_x N\,\exp\big(-\beta E(x,N)+yN\big).
 \]
 
 因此
 \[
-\frac{\partial \ln\Xi}{\partial y}
-=\frac{1}{\Xi}\frac{\partial\Xi}{\partial y}
-=\sum_{N}\sum_x N\,\frac{\exp(-\beta E(x,N)+yN)}{\Xi}
+\frac{\partial \ln\mathcal{Z}}{\partial y}
+=\frac{1}{\mathcal{Z}}\frac{\partial\mathcal{Z}}{\partial y}
+=\sum_{N}\sum_x N\,\frac{\exp(-\beta E(x,N)+yN)}{\mathcal{Z}}
 =\langle N\rangle.
 \]
 
 二阶导：
 \[
-\frac{\partial^2 \ln\Xi}{\partial y^2}
+\frac{\partial^2 \ln\mathcal{Z}}{\partial y^2}
 =\frac{\partial}{\partial y}\langle N\rangle
 =\langle N^2\rangle-\langle N\rangle^2
 =\mathrm{Var}(N)\ge 0.
 \]
 
-> 这和 M3 完全同构：\(\ln\Xi\) 是“生成函数”，一阶导给均值，二阶导给涨落。
+> 这和 M3 完全同构：\(\ln\mathcal{Z}\) 是“生成函数”，一阶导给均值，二阶导给涨落。
 
 ## (3) OD：边际约束 + 最小 KL \(\Rightarrow\) \(T_{ij}=a_i b_j Q_{ij}\)
 

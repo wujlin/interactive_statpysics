@@ -28,3 +28,9 @@ Z(\beta) = \sum_x e^{-\beta E(x)}.
 
 ## 城市连接（最小）
 - logit/softmax 的归一化项就是 \(Z\)；其 log-sum-exp 就是 \(\ln Z\)，在比较政策/参数时非常好用。
+
+## Source anchors
+- Swendsen Eq 19.18：\(Z(T,V,N)=\int dE\,\Omega(E,V,N)e^{-\beta E}\)
+- Swendsen Eq 19.49：\(F=-k_B T\ln Z\)
+- Swendsen Eq 19.53：\(\partial_\beta \ln Z = -\langle E\rangle\)
+- Swendsen Eq 19.59：\(\partial_\beta \langle E\rangle = -\langle E^2\rangle + \langle E\rangle^2\)

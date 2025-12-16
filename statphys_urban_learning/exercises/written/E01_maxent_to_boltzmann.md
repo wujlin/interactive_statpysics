@@ -51,3 +51,7 @@ H(p)=-\sum_x p(x)\ln p(x).
 ## 完整解答
 
 👉 [查看参考解答](../solutions/E01_solution.md) （建议自己推导完成后再核对）
+
+## Source anchors
+- Swendsen Eq 19.23：正则系综的 Boltzmann 权重（相空间形式）
+- Swendsen Eq 19.18：\(Z=\int dE\,\Omega(E,V,N)e^{-\beta E}\)（能量表象）

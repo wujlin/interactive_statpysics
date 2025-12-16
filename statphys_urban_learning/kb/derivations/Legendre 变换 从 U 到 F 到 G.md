@@ -51,3 +51,8 @@ dG = dF + P\,dV + V\,dP
 ## 检查
 - 维度：每一项都是能量
 - 自然变量：写成 \(d(\text{势}) = \sum (\text{共轭量})\,d(\text{自然变量})\)
+
+## Source anchors
+- Swendsen Eq 12.10：\(F \equiv U-TS\)
+- Swendsen Eq 12.11：\(dU = T\,dS - P\,dV + \mu\,dN\)
+- Swendsen Eq 12.12：\(dF = -S\,dT - P\,dV + \mu\,dN\)

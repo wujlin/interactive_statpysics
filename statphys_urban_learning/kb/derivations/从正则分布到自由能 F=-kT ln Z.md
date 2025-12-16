@@ -39,3 +39,6 @@ F = \langle E\rangle - T\big(k_B\beta\langle E\rangle + k_B\ln Z\big)
 ## 检查
 - \(Z\) 无量纲 ⇒ \(\ln Z\) 无量纲 ⇒ \(k_BT\ln Z\) 有能量单位
 - 与热力学：\(dF=-S\,dT-P\,dV+\mu\,dN\) 一致（进一步导数即可验证）
+
+## Source anchors
+- Swendsen Eq 19.49：\(F(T,V,N)=-k_B T\ln Z\)

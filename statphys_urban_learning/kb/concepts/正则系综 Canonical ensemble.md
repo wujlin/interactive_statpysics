@@ -27,3 +27,8 @@ p_i = \frac{e^{-\beta E_i}}{Z(\beta)},\quad Z(\beta)=\sum_i e^{-\beta E_i}.
 F(T,V,N) = -k_B T \ln Z.
 \]
 - 一旦知道 \(Z\)，系统的热力学量可由导数得到。
+
+## Source anchors
+- Swendsen Eq 19.23：相空间正则分布 \(P(p,q) \propto e^{-\beta H(p,q)}\)
+- Swendsen Eq 19.24：相空间配分函数 \(\tilde Z\)
+- Swendsen Eq 19.49：\(F(T,V,N)=-k_B T\ln Z\)

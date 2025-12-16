@@ -30,3 +30,7 @@ status: seed
 ## 检查
 - 维度：\(\beta E\) 无量纲
 - 极限：\(T\to\infty\Rightarrow p\) 趋于均匀；\(T\to 0\Rightarrow p\) 集中到基态
+
+## Source anchors
+- Swendsen Eq 19.23：正则系综的 Boltzmann 权重（相空间形式）
+- Swendsen Eq 19.18：\(Z=\int dE\,\Omega(E,V,N)e^{-\beta E}\)（能量表象）

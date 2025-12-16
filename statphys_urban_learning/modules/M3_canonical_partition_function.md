@@ -8,6 +8,9 @@
 ## 主线（只做这一条）
 - `p(x) ∝ exp(-βE(x))` → `Z = Σ exp(-βE)` → `F = -kT ln Z` → 导数给出均值/涨落。
 
+## Swendsen 对应（公式锚点）
+- Chapter 19：Eq 19.49（\(F=-k_BT\ln Z\)）、Eq 19.53（\(\partial_\beta\ln Z=-\langle E\rangle\)）、Eq 19.59（能量涨落）
+
 ## 先修
 - M1（最大熵/指数族）
 - M2（熵与偏导定义，作为参照）

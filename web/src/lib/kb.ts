@@ -16,6 +16,7 @@ export type KbDoc = {
 };
 
 const SKIP_BASENAMES = new Set([".DS_Store"]);
+const INCLUDE_UNDERSCORE_BASENAMES = new Set(["_notation_conventions.md"]);
 
 type KbIndex = {
   docs: KbDoc[];
@@ -51,7 +52,7 @@ function walkMarkdownFiles(dirAbs: string, baseAbs: string): string[] {
     if (!ent.isFile()) continue;
     if (SKIP_BASENAMES.has(ent.name)) continue;
     if (!ent.name.toLowerCase().endsWith(".md")) continue;
-    if (ent.name.startsWith("_")) continue; // templates
+    if (ent.name.startsWith("_") && !INCLUDE_UNDERSCORE_BASENAMES.has(ent.name)) continue; // templates
     out.push(path.relative(baseAbs, abs));
   }
   return out;

@@ -38,3 +38,8 @@ dG = -S\,dT + V\,dP + \mu\,dN.
 
 ## 最小例子（连接到城市）
 - 当你把一个系统写成“代价/势”的形式时，真正可用的是其对数归一化项（如 \(\ln Z\) 或 log-sum-exp），它在数学上就是势函数/生成函数。
+
+## Source anchors
+- Swendsen Eq 12.10：\(F \equiv U-TS\)
+- Swendsen Eq 12.11：\(dU = T\,dS - P\,dV + \mu\,dN\)
+- Swendsen Eq 12.12：\(dF = -S\,dT - P\,dV + \mu\,dN\)

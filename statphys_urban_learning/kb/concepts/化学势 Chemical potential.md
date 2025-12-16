@@ -33,3 +33,7 @@ p(x,N) \propto e^{-\beta(E(x,N)-\mu N)}.
 
 ## 城市映射（最小）
 - 若把“出行次数/迁移事件数/总体强度”当作可变的 N，那么 \(\mu\)（或等价乘子）就是控制总体强度的参数。
+
+## Source anchors
+- Swendsen Eq 12.11：\(dU = T\,dS - P\,dV + \mu\,dN\)
+- Swendsen Eq 20.7：\(-\mu_R\beta_R \equiv \partial_{N_T}\ln\Omega_R\)（巨正则推导里的 \(\mu\) 定义锚点）
