@@ -9,11 +9,12 @@ export function generateStaticParams() {
   return listModuleDocs().map((m) => ({ slug: m.slug }));
 }
 
-export default function ModulePage({ params }: { params: { slug: string } }) {
+export default async function ModulePage({ params }: { params: Promise<{ slug: string }> }) {
+  const { slug } = await params;
   let doc: ReturnType<typeof getModuleBySlug>["doc"];
   let content: string;
   try {
-    ({ doc, content } = getModuleBySlug(params.slug));
+    ({ doc, content } = getModuleBySlug(slug));
   } catch {
     notFound();
   }

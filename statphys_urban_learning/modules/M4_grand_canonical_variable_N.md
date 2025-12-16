@@ -1,53 +1,90 @@
-# M4 巨正则系综与可变规模（N 可变）
+# M4 巨正则系综与可变规模（OD/人口）
 
-## 目标
-- 学会处理“规模/粒子数可变”的系统：
-  - 巨正则分布
-  - 𝒵 与 ln 𝒵 的导数给出 ⟨N⟩ 与 Var(N)
-- 并把最大熵 OD（MaxEnt + IPF）跑成一个可复用项目（城市主线落地）。
+> **核心目标**：打破“封闭系统”的思维定势。在现实世界（和城市）里，物质和人员是流动的。**巨正则系综（Grand Canonical Ensemble）** 处理粒子数 \(N\) 变化的系统，引入了最令初学者头大的概念——**化学势 \(\mu\)**。掌握了它，你就掌握了开放系统的钥匙。
 
-## 主线（只做这一条）
-- `p(x,N) ∝ exp[-β(E(x,N) − μN)]`
-- `𝒵 = Σ_N e^{βμN} Z_N`（Swendsen 记号：`\mathcal{Z}`；很多书写作 `Ξ`）
-- `⟨N⟩, Var(N)` 来自 `ln 𝒵` 的导数
+## 推荐学习顺序
+1. 先专注于理解 Part 1 中 \(\mu\) 的物理直觉（不是只有化学反应才用它！）。
+2. 类比 M3 的 \(Z\)，学习 Part 2 中的巨配分函数 \(\Xi\)。
+3. 对照 Swendsen Chapter 14，推导理想气体的 \(\mu\)。
 
-## Swendsen 对应（公式锚点）
-- Chapter 20：Eq 20.9（巨正则权重）、Eq 20.12（\(\mathcal{Z}=\sum_N Z e^{\beta\mu N}\)）、Eq 20.17（\(\ln\mathcal{Z}=-\beta U[T,\mu]\)）
+---
 
-## 先修
-- M3（Z / ln Z）
-- M1（最大熵）
+## Introduction（开放与交换）
 
-## Checklist
+在 M3 中，我们允许能量交换（定 T）。现在，我们进一步放开限制，允许**粒子交换**（定 \(\mu\)）。
+这在物理上对应“相变”（液气共存）、“吸附”（表面物理）、“化学反应”；在城市里，这对应这最根本的问题：**人口迁移**。
+一个城市的人口不是锁死的常数，而是取决于这个城市相对于外部世界的“吸引力”。如果你的工资高、房租低（能量/成本低），人就会涌入。在这个图像里，维持平衡的那个“外部储库”的势能，就是化学势。
 
-### 阅读（按主题，不绑版本章节号）
-- [ ] 巨正则分布与化学势 μ
-- [ ] 𝒵 与 ln 𝒵 的导数规则（⟨N⟩、Var(N)）
-- [ ] 最大熵在“边际约束（行/列和）”下的矩阵形式（OD）
+## References（Seminal papers，SSOT）
+- **Gibbs 1876**: "On the Equilibrium of Heterogeneous Substances". 第一次明确定义了化学势（Potentials definition）。(SP-M0-Gibbs1876)
 
-### 知识库（kb/）— 必做
-- [x] Concept：
-  - [x] `kb/concepts/巨正则系综 Grand canonical ensemble.md`
-  - [x] `kb/concepts/化学势 Chemical potential.md`
-- [x] Derivation：
-  - [x] `kb/derivations/平均粒子数与涨落从 ln Xi 的导数得到.md`
-- [x] Method：
-  - [x] `kb/methods/IPF 迭代比例拟合（Iterative Proportional Fitting）.md`
-- [x] Urban-mapping：
-  - [x] `kb/urban-mapping/化学势 μ 作为城市总强度规模控制量.md`
+---
 
-### 习题与项目（exercises/ & projects/）— 必做
-- [x] Written：
-  - [x] `exercises/written/M4_grand_canonical_notes.md`
-- [x] Project：
-  - [x] `projects/p01_maxent_od/`（Notebook + pytest）
-    - [x] `projects/p01_maxent_od/notebooks/P01_maxent_od.ipynb`
-    - [x] `projects/p01_maxent_od/tests/test_ipf.py`
+## Part 1：化学势 \(\mu\)——到底是推力还是拉力？
 
-## 完成标准（过关条件）
-- [ ] 能写清：μ 控制的是“平均规模/数量”，并能从 ln 𝒵 导出 ⟨N⟩、Var(N)
-- [ ] 能跑通 MaxEnt+IPF 的 OD 推断，并明确对比：
-  - [ ] 无成本 prior vs 带成本 prior（平均成本、分布结构差异）
+初学者最容易晕的是 \(\mu\) 的符号。
+- **定义**：\(\mu = \left(\frac{\partial U}{\partial N}\right)_{S,V}\)。增加一个粒子带来的能量代价。
+- **直觉**：粒子总是从 **高 \(\mu\)** 流向 **低 \(\mu\)**。
+  - 你可以把 \(\mu\) 想象成“人口密度造成的拥挤压力”（推力）。
+  - 或者把 \(-\mu\) 想象成“该区域的吸引力因子”。
 
-## 城市问题主线（只保留最相关）
-- “开放系统 + 规模可变”是人口流动/出行强度的默认状态；μ（或等价乘子）就是总强度/规模的控制旋钮；OD 最大熵是平衡态基线。
+当两个系统粒子交换平衡时，要求 \(\mu_1 = \mu_2\)。这和热平衡要求 \(T_1 = T_2\) 是完全平行的。
+
+> 👉 **深入理解**：
+> - [[化学势 Chemical potential]]：详细的符号讨论与直觉图解。
+
+---
+
+## Part 2：巨配分函数 \(\Xi\)——双重求和
+
+在 M3 里，\(Z = \sum_i e^{-\beta E_i}\)。
+在 M4 里，我们不仅对能量求和，还要对粒子数求和：
+\[ \Xi(\mu, V, T) = \sum_{N=0}^\infty \sum_i e^{-\beta(E_i - \mu N)} \]
+注意指数部分多了 \(\mu N\)。这就像 Legendre 变换里 \(F=U-TS\) 变成了 \(J=U-TS-\mu N\)（巨势）。
+
+一旦算出 \(\Xi\)，期望粒子数就是简单的求导：
+\[ \langle N \rangle = \frac{1}{\beta} \frac{\partial \ln \Xi}{\partial \mu} \]
+
+对于无相互作用系统，$\Xi$ 往往可以分解成每个能级上的乘积，导出著名的 **Fermi-Dirac** 和 **Bose-Einstein** 分布。对于经典粒子，则导出 Maxwell-Boltzmann 密度公式。
+
+> 👉 **Swendsen 对应**：Chapter 14。他用 $\mathcal{Z}$ 表示巨配分函数（不同书符号不同，请注意）。
+
+---
+
+## Part 3：密度涨落——城市集聚的起源
+
+在 M3 里我们讨论了能量涨落（热容）。在 M4 里，我们关注 **粒子数涨落**：
+\[ \text{Var}(N) = \frac{1}{\beta} \frac{\partial \langle N \rangle}{\partial \mu} \]
+这对应物质的“压缩率”。
+在城市里，这意味着：如果你稍微提高一点吸引力（\(\mu\)），人口会暴增吗？
+- 正常区域：涨落有限。
+- 临界区域（M7）：涨落发散（集聚效应、涌现）。
+
+---
+
+## Part 4：城市映射——房价与区位均衡
+
+MaxEnt 导出的重力模型（M1）其实是一个隐式的巨正则系综。
+- 当我们说“某区域吸引了 \(O_i\) 个人”时，如果你不强制固定 \(O_i\)，而是设定该区域的“宜居度”或“平均工资”，那么流入的人口 \(N_i\) 就是一个随机变量。
+- **化学势 \(\mu\)** 在城市经济学中直接对应 **效用水平 (Utility level)** 或 **保留工资 (Reservation wage)**。
+- 空间均衡（Spatial Equilibrium）条件（所有地方的效用相等），就是物理上的 \(\mu_1 = \mu_2 = \dots\)。
+
+> 👉 [[开放系统与巨正则系综]]：城市人口流动的物理模型。
+
+---
+
+## Part 5：动手时刻 (Checklist)
+
+### 必读
+- [ ] **Reading Guide**: [[Swendsen_Ch14_GrandCanonical]] (Chapter 14: 14.1–14.3)
+  > 点击上方卡片查看本章的公式锚点与阅读路标。重点关注巨配分函数 \(\Xi\) 的定义。
+
+### 习题
+- [ ] **Written**: `exercises/written/M4_grand_canonical.md`（如有）
+  - 推导理想气体的 \(\langle N \rangle\) 与 \(\mu\) 的关系：\(\mu = k_B T \ln(n \lambda^3)\)。
+- [ ] **思考**：为什么光子气体的 \(\mu = 0\)？（提示：粒子数不守恒，但也无需“外部储库”）。
+
+### 验收标准
+- [ ] 知道何时使用巨正则（System is OPEN）。
+- [ ] 能写出 \(\Xi\) 的定义式，并知道如何对它求导得到 \(\langle N \rangle\)。
+- [ ] 能解释为什么 \(\mu\) 相等意味着粒子流动的动态平衡。

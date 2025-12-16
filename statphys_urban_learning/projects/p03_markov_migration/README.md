@@ -1,4 +1,4 @@
-# P02 区际迁移 Markov 项目（模板）
+# P03 区际迁移 Markov 项目（模板）
 
 目标：把“区域间人口/出行迁移”写成一个 Markov 动力系统，并计算：
 - 稳态分布（stationary distribution）

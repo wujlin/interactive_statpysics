@@ -7,11 +7,12 @@ export function generateStaticParams() {
   return listExerciseNotebooks().map((d) => ({ slug: d.slug }));
 }
 
-export default function ExerciseNotebookPage({ params }: { params: { slug: string } }) {
+export default async function ExerciseNotebookPage({ params }: { params: Promise<{ slug: string }> }) {
+  const { slug } = await params;
   let doc: ReturnType<typeof getExerciseNotebookBySlug>["doc"];
   let raw: string;
   try {
-    ({ doc, raw } = getExerciseNotebookBySlug(params.slug));
+    ({ doc, raw } = getExerciseNotebookBySlug(slug));
   } catch {
     notFound();
   }
@@ -52,4 +53,3 @@ export default function ExerciseNotebookPage({ params }: { params: { slug: strin
     </main>
   );
 }
-

@@ -42,13 +42,33 @@ function transformOutsideFences(markdown: string, transformLine: (line: string) 
 }
 
 function normalizeLatexDelimiters(markdown: string): string {
-  return transformOutsideFences(markdown, (line) =>
-    line
-      .replaceAll("\\(", "$")
-      .replaceAll("\\)", "$")
-      .replaceAll("\\[", "$$")
-      .replaceAll("\\]", "$$"),
-  );
+  return transformOutsideFences(markdown, (line) => {
+    // remark-math 对 display math 最稳妥的写法是：
+    // $$\n ... \n$$
+    // 如果把 `\[ ... \]` 直接替换成 `$$ ... $$`（同一行），很容易被解析成行内数学，导致排版不对。
+    const singleLineBracketDisplay = line.match(/^(\s*)\\\[\s*(.*?)\s*\\\]\s*$/);
+    if (singleLineBracketDisplay) {
+      const [, indent, inner] = singleLineBracketDisplay;
+      return `${indent}$$\n${indent}${inner}\n${indent}$$`;
+    }
+
+    // 有些内容会直接写成 `$$ ... $$` 单行，同样归一化成 block。
+    const singleLineDollarDisplay = line.match(/^(\s*)\$\$\s*(.*?)\s*\$\$\s*$/);
+    if (singleLineDollarDisplay) {
+      const [, indent, inner] = singleLineDollarDisplay;
+      return `${indent}$$\n${indent}${inner}\n${indent}$$`;
+    }
+
+    return (
+      line
+        // 注意：String.prototype.replace/replaceAll 的替换字符串里，`$$` 会被解释成单个 `$`；
+        // 用函数替换可确保输出字面量 `$`/`$$`。
+        .replaceAll("\\(", () => "$")
+        .replaceAll("\\)", () => "$")
+        .replaceAll("\\[", () => "$$")
+        .replaceAll("\\]", () => "$$")
+    );
+  });
 }
 
 function rewriteObsidianWikiLinks(markdown: string): string {

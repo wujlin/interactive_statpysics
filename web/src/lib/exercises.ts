@@ -46,6 +46,18 @@ function deriveMarkdownTitle(markdown: string, fallback: string): string {
   return fallback;
 }
 
+function stripLeadingH1(markdown: string): string {
+  const lines = markdown.split("\n");
+  let i = 0;
+  while (i < lines.length && !lines[i].trim()) i++;
+  if (i < lines.length && lines[i].startsWith("# ")) {
+    i++;
+    if (i < lines.length && !lines[i].trim()) i++;
+    return lines.slice(i).join("\n");
+  }
+  return markdown;
+}
+
 export function listWrittenExercises(): WrittenExerciseDoc[] {
   if (!fs.existsSync(WRITTEN_ROOT)) return [];
   const entries = fs.readdirSync(WRITTEN_ROOT, { withFileTypes: true });
@@ -75,7 +87,11 @@ export function getWrittenExerciseBySlug(slug: string): { doc: WrittenExerciseDo
   if (!absPath.startsWith(WRITTEN_ROOT)) throw new Error("path traversal");
   const raw = fs.readFileSync(absPath, "utf-8");
   const title = deriveMarkdownTitle(raw, slug);
-  return { doc: { slug, relPath: `exercises/written/${filename}`, title }, content: raw };
+  const parsed = matter(raw);
+  return {
+    doc: { slug, relPath: `exercises/written/${filename}`, title },
+    content: stripLeadingH1(parsed.content),
+  };
 }
 
 export function listExerciseNotebooks(): ExerciseNotebookDoc[] {
@@ -134,5 +150,9 @@ export function getExerciseSolutionBySlug(slug: string): { doc: ExerciseSolution
   if (!absPath.startsWith(SOLUTIONS_ROOT)) throw new Error("path traversal");
   const raw = fs.readFileSync(absPath, "utf-8");
   const title = deriveMarkdownTitle(raw, slug);
-  return { doc: { slug, relPath: `exercises/solutions/${filename}`, title }, content: raw };
+  const parsed = matter(raw);
+  return {
+    doc: { slug, relPath: `exercises/solutions/${filename}`, title },
+    content: stripLeadingH1(parsed.content),
+  };
 }

@@ -9,12 +9,13 @@ export function generateStaticParams() {
   return listKbDocs().map((d) => ({ slug: d.slug }));
 }
 
-export default function KbDocPage({ params }: { params: { slug: string[] } }) {
+export default async function KbDocPage({ params }: { params: Promise<{ slug: string[] }> }) {
+  const { slug } = await params;
   let doc: ReturnType<typeof getKbDocBySlug>["doc"];
   let content: string;
   let data: Record<string, unknown>;
   try {
-    ({ doc, content, data } = getKbDocBySlug(params.slug));
+    ({ doc, content, data } = getKbDocBySlug(slug));
   } catch {
     notFound();
   }

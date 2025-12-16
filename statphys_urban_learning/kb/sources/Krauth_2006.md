@@ -12,6 +12,9 @@
 - Coursera: https://www.coursera.org/learn/statistical-mechanics
 - OUP: https://global.oup.com/ukhe/product/statistical-mechanics-algorithms-and-computations-9780198515364
 
+## Local text (MinerU scan)
+- Markdown：`Book/Statistical Mechanics Algorithms and Computations/v1/md/krauth_v1.md`
+
 ## Module mapping (suggested)
 - M3：MCMC 入门
 - M5：误差/自相关

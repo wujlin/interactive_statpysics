@@ -13,11 +13,12 @@ export function generateStaticParams() {
   );
 }
 
-export default function ProjectNotebookPage({ params }: { params: { project: string; slug: string } }) {
+export default async function ProjectNotebookPage({ params }: { params: Promise<{ project: string; slug: string }> }) {
+  const { project, slug } = await params;
   let doc: ReturnType<typeof getProjectNotebookBySlug>["doc"];
   let raw: string;
   try {
-    ({ doc, raw } = getProjectNotebookBySlug(params.project, params.slug));
+    ({ doc, raw } = getProjectNotebookBySlug(project, slug));
   } catch {
     notFound();
   }
@@ -58,4 +59,3 @@ export default function ProjectNotebookPage({ params }: { params: { project: str
     </main>
   );
 }
-

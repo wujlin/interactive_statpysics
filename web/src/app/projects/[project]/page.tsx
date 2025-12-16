@@ -9,11 +9,12 @@ export function generateStaticParams() {
   return listProjects().map((p) => ({ project: p.slug }));
 }
 
-export default function ProjectPage({ params }: { params: { project: string } }) {
+export default async function ProjectPage({ params }: { params: Promise<{ project: string }> }) {
+  const { project } = await params;
   let doc: ReturnType<typeof getProjectReadmeBySlug>["doc"];
   let content: string;
   try {
-    ({ doc, content } = getProjectReadmeBySlug(params.project));
+    ({ doc, content } = getProjectReadmeBySlug(project));
   } catch {
     notFound();
   }

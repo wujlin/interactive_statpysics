@@ -32,6 +32,7 @@ function normalizeRelPath(relPath: string): string {
 function deriveKbType(relPath: string): string | undefined {
   const normalized = normalizeRelPath(relPath);
   if (normalized.startsWith("concepts/")) return "concept";
+  if (normalized.startsWith("context/")) return "context";
   if (normalized.startsWith("derivations/")) return "derivation";
   if (normalized.startsWith("methods/")) return "method";
   if (normalized.startsWith("urban-mapping/")) return "urban_mapping";
@@ -108,6 +109,10 @@ function buildKbIndex(): KbIndex {
 }
 
 function getKbIndex(): KbIndex {
+  // In development, always rebuild index to pick up new files immediately
+  if (process.env.NODE_ENV === "development") {
+    return buildKbIndex();
+  }
   if (!kbIndexCache) kbIndexCache = buildKbIndex();
   return kbIndexCache;
 }
@@ -127,19 +132,34 @@ export function findKbSlugByTitle(title: string): string[] | undefined {
   return getKbIndex().titleToSlug.get(title.trim());
 }
 
+function safeDecodePathSegment(value: string): string {
+  let out = value;
+  for (let i = 0; i < 3; i++) {
+    try {
+      const decoded = decodeURIComponent(out);
+      if (decoded === out) break;
+      out = decoded;
+    } catch {
+      break;
+    }
+  }
+  return out;
+}
+
 export function getKbDocBySlug(slug: string[]): { doc: KbDoc; content: string; data: Record<string, unknown> } {
-  assertSafeSlug(slug);
-  const relPath = path.join(...slug) + ".md";
+  const decodedSlug = slug.map((s) => safeDecodePathSegment(String(s)));
+  assertSafeSlug(decodedSlug);
+  const relPath = path.join(...decodedSlug) + ".md";
   const absPath = path.join(KB_ROOT, relPath);
   if (!absPath.startsWith(KB_ROOT)) throw new Error("path traversal");
   const raw = fs.readFileSync(absPath, "utf-8");
   const parsed = matter(raw);
-  const title = String(parsed.data?.title ?? slug[slug.length - 1]);
+  const title = String(parsed.data?.title ?? decodedSlug[decodedSlug.length - 1]);
   const derivedType = deriveKbType(relPath);
   const type = typeof parsed.data?.type === "string" ? parsed.data.type : derivedType;
   const doc: KbDoc = {
     id: typeof parsed.data?.id === "string" ? parsed.data.id : undefined,
-    slug,
+    slug: decodedSlug,
     relPath: normalizeRelPath(relPath),
     title,
     type,

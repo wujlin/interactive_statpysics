@@ -15,6 +15,8 @@ function groupLabel(type?: string): string {
   switch (type) {
     case "source":
       return "Sources";
+    case "context":
+      return "Context";
     case "module":
       return "Modules";
     case "concept":
@@ -54,12 +56,13 @@ export function KbIndexClient({ docs }: { docs: KbDocItem[] }) {
     const orderedKeys = [
       "Modules",
       "Sources",
+      "Context",
       "Concepts",
       "Derivations",
       "Methods",
       "Urban Mappings",
       ...Array.from(groups.keys()).filter(
-        (k) => !["Modules", "Sources", "Concepts", "Derivations", "Methods", "Urban Mappings"].includes(k),
+        (k) => !["Modules", "Sources", "Context", "Concepts", "Derivations", "Methods", "Urban Mappings"].includes(k),
       ),
     ].filter((k, idx, arr) => arr.indexOf(k) === idx && groups.has(k));
     return { groups, orderedKeys };
@@ -90,7 +93,7 @@ export function KbIndexClient({ docs }: { docs: KbDocItem[] }) {
           <ul style={{ marginTop: 12, paddingLeft: 18 }}>
             {(grouped.groups.get(key) ?? []).map((doc) => (
               <li key={doc.relPath} style={{ margin: "8px 0" }}>
-                <Link href={{ pathname: "/kb/" + doc.slug.join("/") }}>{doc.title}</Link>
+                <Link href={`/kb/${doc.slug.map((s) => encodeURIComponent(s)).join("/")}`}>{doc.title}</Link>
                 {doc.status ? <span className="muted"> · {doc.status}</span> : null}
               </li>
             ))}

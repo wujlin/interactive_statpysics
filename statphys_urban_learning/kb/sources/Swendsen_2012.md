@@ -17,6 +17,7 @@
 
 ## Local text (MinerU scan)
 - Markdown 目录：`Book/An Introduction to Statistical Mechanics and Thermodynamics/md/`
+- 文件命名：`ch01.md`…`ch31.md`（对应 OUP chapter 编号；已从 MinerU 原始长文件名重命名）
 - 公式编号在文本里以 `\\tag {19.53}` 的形式出现。
 - 快速定位方式：
   - `rg "\\\\tag \\{19\\.53\\}" Book/An\\ Introduction\\ to\\ Statistical\\ Mechanics\\ and\\ Thermodynamics/md -n`

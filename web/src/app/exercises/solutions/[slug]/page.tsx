@@ -9,11 +9,12 @@ export function generateStaticParams() {
   return listExerciseSolutions().map((d) => ({ slug: d.slug }));
 }
 
-export default function ExerciseSolutionPage({ params }: { params: { slug: string } }) {
+export default async function ExerciseSolutionPage({ params }: { params: Promise<{ slug: string }> }) {
+  const { slug } = await params;
   let doc: ReturnType<typeof getExerciseSolutionBySlug>["doc"];
   let content: string;
   try {
-    ({ doc, content } = getExerciseSolutionBySlug(params.slug));
+    ({ doc, content } = getExerciseSolutionBySlug(slug));
   } catch {
     notFound();
   }

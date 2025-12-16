@@ -13,6 +13,9 @@
 - Errata: https://sethna.lassp.cornell.edu/StatMech/CorrectionsToSecondEdition.pdf
 - OUP: https://global.oup.com/academic/product/statistical-mechanics-entropy-order-parameters-and-complexity-9780198865254
 
+## Local text (MinerU scan)
+- Markdown：`Book/Statistical Mechanics Entropy, Order Parameters, and Complexity/sethna_2020.md`
+
 ## Module mapping (suggested)
 - M1：最大熵/信息论视角（加强）
 - M5–M7：序参量/标度/复杂性（主力）
