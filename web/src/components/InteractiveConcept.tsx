@@ -2,7 +2,7 @@
 
 import katex from "katex";
 import type { ReactNode } from "react";
-import { useEffect, useMemo, useRef, useState } from "react";
+import { useCallback, useEffect, useMemo, useRef, useState } from "react";
 
 type Rect = { x: number; y: number; w: number; h: number };
 type ThemeColors = {
@@ -131,7 +131,11 @@ function computeSlots(n: number): { cols: number; rows: number; u: number[]; v: 
   return { cols, rows, u, v };
 }
 
-function targetPos(i: number, side: 0 | 1, layout: { left: Rect; right: Rect; padding: number; slots: any }) {
+function targetPos(
+  i: number,
+  side: 0 | 1,
+  layout: { left: Rect; right: Rect; padding: number; slots: ReturnType<typeof computeSlots> },
+) {
   const box = side === 0 ? layout.left : layout.right;
   const u = layout.slots.u[i] ?? 0.5;
   const v = layout.slots.v[i] ?? 0.5;
@@ -232,36 +236,39 @@ function EntropyCounter() {
     syncUiFromRefs();
   }
 
-  function performJump(nowMs: number) {
-    const layout = layoutRef.current;
-    if (!layout) return;
-    const particles = particlesRef.current;
-    if (!particles.length) return;
+  const performJump = useCallback(
+    (nowMs: number) => {
+      const layout = layoutRef.current;
+      if (!layout) return;
+      const particles = particlesRef.current;
+      if (!particles.length) return;
 
-    const idx = Math.floor(Math.random() * particles.length);
-    const p = particles[idx];
-    const nextSide: 0 | 1 = p.side === 0 ? 1 : 0;
+      const idx = Math.floor(Math.random() * particles.length);
+      const p = particles[idx];
+      const nextSide: 0 | 1 = p.side === 0 ? 1 : 0;
 
-    if (p.side === 0) leftCountRef.current -= 1;
-    else leftCountRef.current += 1;
+      if (p.side === 0) leftCountRef.current -= 1;
+      else leftCountRef.current += 1;
 
-    p.side = nextSide;
-    const target = targetPos(idx, nextSide, layout);
-    p.fromX = p.x;
-    p.fromY = p.y;
-    p.toX = target.x;
-    p.toY = target.y;
-    p.moveStartMs = nowMs;
-    p.moveDurationMs = moveDurationMs;
-    p.moving = true;
+      p.side = nextSide;
+      const target = targetPos(idx, nextSide, layout);
+      p.fromX = p.x;
+      p.fromY = p.y;
+      p.toX = target.x;
+      p.toY = target.y;
+      p.moveStartMs = nowMs;
+      p.moveDurationMs = moveDurationMs;
+      p.moving = true;
 
-    const nextS = normalizedEntropy(particles.length, leftCountRef.current);
-    sNormRef.current = nextS;
-    historyRef.current.push({ t: simTimeRef.current, s: nextS });
-    if (historyRef.current.length > 500) historyRef.current = historyRef.current.slice(-500);
+      const nextS = normalizedEntropy(particles.length, leftCountRef.current);
+      sNormRef.current = nextS;
+      historyRef.current.push({ t: simTimeRef.current, s: nextS });
+      if (historyRef.current.length > 500) historyRef.current = historyRef.current.slice(-500);
 
-    syncUiFromRefs();
-  }
+      syncUiFromRefs();
+    },
+    [moveDurationMs],
+  );
 
   function drawSimulation(ctx: CanvasRenderingContext2D, w: number, h: number) {
     const theme = themeRef.current ?? getThemeColors();
@@ -488,7 +495,7 @@ function EntropyCounter() {
 
     raf = window.requestAnimationFrame(loop);
     return () => window.cancelAnimationFrame(raf);
-  }, []);
+  }, [performJump]);
 
   const rightCount = n - leftCount;
 
