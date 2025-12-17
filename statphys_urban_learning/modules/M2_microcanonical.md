@@ -9,7 +9,7 @@
 
 ---
 
-## Introduction（科学史/核心矛盾）
+## Introduction
 
 热力学在 M0 给了我们一套可操作的“语言”：用偏导定义 \(T,P,\mu\)，用势函数写平衡判据。但这套语言把一个关键问题留给了统计物理：这些偏导为什么有意义？更具体地说，为什么 \(1/T\) 会等价于“熵对能量的斜率”，而且在 \(10^{23}\) 个自由度的系统上看起来几乎不带噪声？
 
@@ -17,8 +17,8 @@
 
 城市镜像也对应两层含义：一方面，微正则提供一个“最少假设”的封闭基线——当你只知道总预算/总资源/总人数等硬约束时，计数本身就会把系统推向最概然宏观态；另一方面，真实城市通常是开放且受持续驱动的，所以微正则更像坐标系而不是终点，后续 M3/M4 会把硬约束转写成更可操作的“软约束”（热库/粒子库），以便建模与计算。
 
-## References（Seminal papers，SSOT）
-- **Khinchin 1949**: *Mathematical Foundations*. 导读见 `references/seminal_papers.md`（条目：`SP-M2-Khinchin1949`）。
+## References
+- **Khinchin 1949**: *Mathematical Foundations*. 导读见 [Seminal papers](/references/seminal_papers)（条目：`SP-M2-Khinchin1949`）。
   - 必读导读：了解为什么 Khinchin 认为我们不需要物理上的“各态历经假说”来支撑统计力学。
 
 ---

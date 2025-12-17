@@ -9,7 +9,7 @@
 
 ---
 
-## Introduction（被遗忘的假设）
+## Introduction
 
 在 M0 中我们建立了热力学势的语言。但当我们把这套宏观语言应用到微观粒子（或城市个体）时，一个巨大的**历史困境**出现了：
 微观力学方程（牛顿方程或薛定谔方程）在时间上是完全可逆的。如果把电影倒放，原路返回的粒子完全遵守物理定律。
@@ -17,9 +17,9 @@
 
 这个“微观可逆 vs 宏观不可逆”的矛盾（Loschmidt Paradox），曾让 Boltzmann 备受攻击。他的反击不仅挽救了热力学，更开创了一种全新的世界观：**我们观测到的“定律”，其实只是“大概率事件”的集合。**
 
-## References（Seminal papers，SSOT）
-- Jaynes 1957：导读见 `references/seminal_papers.md`（条目：`SP-M1-Jaynes1957-I`、`SP-M1-Jaynes1957-II`）
-- Boltzmann 1877：导读见 `references/seminal_papers.md`（条目：`SP-M1-Boltzmann1877`）
+## References
+- Jaynes 1957：导读见 [Seminal papers](/references/seminal_papers)（条目：`SP-M1-Jaynes1957-I`；想深入可再读 `SP-M1-Jaynes1957-II`）。
+- Boltzmann 1877：导读见 [Seminal papers](/references/seminal_papers)（条目：`SP-M1-Boltzmann1877`）。
 
 ---
 
@@ -103,6 +103,6 @@ MaxEnt 在城市科学里最著名的应用就是 **OD 矩阵推断（Origin-Des
   - 跑通代码，试着改变约束值（平均骰子点数），看 \(\lambda\) 如何变化。
 
 ### 验收标准
-- [ ] 看到“已知均值为 \(\mu\)”，能脱口而出“最大熵分布是指数分布（正实数）”。
+- [ ] 看到“已知均值为 \(\bar{x}\)”，能脱口而出“最大熵分布是指数分布（正实数）”。
 - [ ] 明白为什么 Gaussian 分布是“已知方差”时的最大熵分布。
 - [ ] 能够解释：为什么 \(Z\)（配分函数）是乘子 \(\lambda\) 的核心？

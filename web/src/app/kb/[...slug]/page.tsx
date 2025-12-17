@@ -30,19 +30,18 @@ export default async function KbDocPage({ params }: { params: Promise<{ slug: st
         <h1 className="page-title" style={{ marginTop: 12 }}>
           {doc.title}
         </h1>
-        <p className="kicker">
-          {doc.type ? (
-            <>
-              type: <code>{doc.type}</code>
-            </>
-          ) : null}
-        </p>
         <details style={{ marginTop: 8 }}>
           <summary className="muted" style={{ cursor: "pointer" }}>
-            显示源文件路径
+            调试信息（路径 / 类型）
           </summary>
           <p className="kicker" style={{ marginTop: 8 }}>
             <code>kb/{doc.relPath}</code>
+            {doc.type ? (
+              <>
+                {" "}
+                · type: <code>{doc.type}</code>
+              </>
+            ) : null}
           </p>
         </details>
       </section>

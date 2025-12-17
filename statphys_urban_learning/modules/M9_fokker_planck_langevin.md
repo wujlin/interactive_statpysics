@@ -1,6 +1,6 @@
 # M9 Fokker–Planck 与 Langevin（连续随机动力学）
 
-## Introduction（科学史/核心矛盾）
+## Introduction
 主方程在 M8 里擅长处理离散状态，但很多宏观量（密度、需求强度、拥堵水平）更自然地是连续变量。矛盾在于：你既想保留随机性，又不想在巨大离散状态空间里做枚举；你需要一种“既可计算又保留噪声”的连续极限语言。
 
 扩散近似把大量小跳变的累积效应压缩成“漂移 + 扩散”，从而得到两种等价表述：Langevin 随机微分方程描述单条轨迹（见：[[Langevin 方程 Langevin equation]]），Fokker–Planck 方程描述概率密度的演化（见：[[Fokker-Planck 方程 Fokker-Planck equation]]）。这里的概念飞跃非常硬核：随机项使得“微分”不再等同于普通极限，Itô/Stratonovich 的差别不是记号之争，而是建模含义（见 Context：[[Itô vs Stratonovich：随机积分不是微积分（建模含义）]]）。因此本章的训练目标必须落到可验证的闭环：用 [[Euler–Maruyama 数值模拟]] 模拟 OU 过程，并用理论稳态均值/方差与自相关进行对照。
@@ -23,8 +23,8 @@
 ## Context（历史/方法论卡片）
 - [[Itô vs Stratonovich：随机积分不是微积分（建模含义）]]
 
-## References（Seminal papers，SSOT）
-- 本模块原始文献导读与统一书目信息见：`references/seminal_papers.md`（条目：`SP-M9-Langevin1908`，`SP-M9-Ito1944`）
+## References
+- 本模块原始文献导读与统一书目信息见 [Seminal papers](/references/seminal_papers)（条目：`SP-M9-Langevin1908`，`SP-M9-Ito1944`）。
 
 ## Checklist
 

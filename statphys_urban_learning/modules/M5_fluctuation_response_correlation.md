@@ -9,7 +9,7 @@
 
 ---
 
-## Introduction（科学史/核心矛盾）
+## Introduction
 
 前面几章训练的是“从势函数读出平均值”。但科研的下一步往往更尖锐：这个平均值可靠吗？参数轻微变化会不会把结论翻盘？如果不能给出不确定性与敏感性，就无法做模型比较，也无法把“政策扰动”变成可检验的预测。
 
@@ -17,10 +17,9 @@
 
 城市镜像对应同一条主线：真实的政策试验昂贵且不可逆，但在一个明确的平衡/近似平衡模型里，局部扰动的响应可以由现态的协方差结构估计（“不扰动的敏感性分析”）。与此同时，数值层面的学术底线也在这里变得不可回避：相关采样会虚增样本量，因此自相关时间、有效样本量（ESS）与 blocking 不是附加选项，而是你报告任何数值结论前必须交代的误差结构（见：[[MCMC 误差估计 自相关时间与 Blocking]]）。
 
-## References（Seminal papers，SSOT）
-- **Einstein 1905**: Brownian Motion. (`SP-M5-Einstein1905-Brownian`)
-- **Onsager 1931**: Regression hypothesis. (`SP-M5-Onsager1931`)
-- **Kubo 1957**: Linear Response Theory. (`SP-M5-Kubo1957`)
+## References
+- **Einstein 1905**: Brownian Motion. 导读见 [Seminal papers](/references/seminal_papers)（条目：`SP-M5-Einstein1905-Brownian`）。
+- **Kubo 1957**: Linear Response Theory. 导读见 [Seminal papers](/references/seminal_papers)（条目：`SP-M5-Kubo1957`）。
 
 ---
 
@@ -41,12 +40,12 @@ Onsager (1931) 提出了一个惊人的假设：**宏观偏离的衰减规律，
 ## Part 2：Einstein 关系——扩散就是耗散
 
 1905年，Einstein 在研究布朗运动时得出了这章最著名的公式：
-\[ D = \mu k_B T \]
+\[ D = \frac{k_B T}{\zeta} \]
 - \(D\)：扩散系数（描述微观粒子的无规**涨落**）。
-- \(\mu\)：迁移率（描述粒子在宏观外力下的漂移速度，即**耗散/响应**）。
+- \(\zeta\)：有效摩擦/阻力系数（Stokes 阻力下 \(\zeta=6\pi\eta r\)）；其倒数 \(b\equiv 1/\zeta\) 常被称为迁移率（mobility），刻画受力后的漂移速度（**耗散/响应**）。
 - \(T\)：温度（噪声源）。
 
-这是涨落-耗散定理（FDT）的第一个实例。它告诉我们：一个物体“越容易被随机力推来推去”（$D$ 大），它也就“越容易被外力推动”（$\mu$ 大）。**微观的不安分，就是宏观的顺从。**
+这是涨落-耗散定理（FDT）的第一个实例。它告诉我们：一个物体“越容易被随机力推来推去”（$D$ 大），它也就“越容易被外力推动”（\(b\) 大/ \(\zeta\) 小）。**微观的不安分，就是宏观的顺从。**
 
 ---
 
@@ -85,7 +84,7 @@ Onsager (1931) 提出了一个惊人的假设：**宏观偏离的衰减规律，
 
 ### 必读
 - [ ] **Reading Guide**: [[Einstein_1905_Brownian]] (Abs & Intro)
-  > 点击查看 $D=\mu kT$ 的原始推导逻辑。
+  > 点击查看 $D=k_B T/\zeta$ 的原始推导逻辑。
 
 ### 习题
 - [ ] **Written**: `exercises/written/M5_fluctuation_response.md`
@@ -94,6 +93,6 @@ Onsager (1931) 提出了一个惊人的假设：**宏观偏离的衰减规律，
   - 验证：用数值微分算出的敏感度，是否等于 MCMC 采样算出的协方差？这是检验代码 BUG 的绝佳手段。
 
 ### 验收标准
-- [ ] 能写出 Einstein 关系 \(D \sim \mu\)，并解释其物理含义。
+- [ ] 能写出 Einstein 关系 \(D \sim b\)（或 \(D \sim 1/\zeta\)），并解释其物理含义。
 - [ ] 遇到指数族分布，能立刻反应出“二阶导=方差”。
 - [ ] 理解为什么 MCMC 的误差不仅仅取决于样本数 \(N\)，还取决于自相关时间 \(\tau\)。

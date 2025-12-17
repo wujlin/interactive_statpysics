@@ -45,7 +45,7 @@ export default function ModulesIndexPage() {
         <h2>模块列表</h2>
         <ul style={{ marginTop: 12, paddingLeft: 18 }}>
           {modules.map((m) => (
-            <li key={m.id} style={{ margin: "8px 0" }}>
+            <li key={m.href} style={{ margin: "8px 0" }}>
               <Link href={m.href}>
                 {m.id} — {m.title}
               </Link>

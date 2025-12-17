@@ -1,6 +1,6 @@
 # M8 随机过程与主方程（离散动力学）
 
-## Introduction（科学史/核心矛盾）
+## Introduction
 到目前为止，我们主要在问“平衡分布是什么”。但城市流动的本体问题是“它如何变化”，以及“为什么会出现环流与不可逆”。核心矛盾在于：微观机制复杂得无法逐一追踪（个体决策、信息、约束不断变化），但宏观层面又确实出现稳定的时间尺度与统计规律。
 
 Markov 过程的概念飞跃是一种务实的粗粒化：在存在时间尺度分离时，把不可观测细节压缩为转移概率/转移率，并用主方程写出分布的时间演化（见：[[Markov 链与稳态分布 Markov chain]]、[[主方程 Master equation]]）。这样不仅能求稳态 \(\pi\)，还能用细致平衡与净流 \(J\) 区分平衡与非平衡：只要存在不可消除的循环流，就意味着系统受到持续驱动（见：[[细致平衡 Detailed balance 与净流]]）。这也是本章的范式转变：从“势函数极值”走向“概率守恒 + 通量”的语言。
@@ -19,8 +19,8 @@ Markov 过程的概念飞跃是一种务实的粗粒化：在存在时间尺度�
 ## 先修
 - M5（相关/涨落作为直觉背景即可）
 
-## References（Seminal papers，SSOT）
-- 本模块原始文献导读与统一书目信息见：`references/seminal_papers.md`（条目：`SP-M8-Kolmogorov1931`，`SP-M8-Gillespie1976`）
+## References
+- 本模块原始文献导读与统一书目信息见 [Seminal papers](/references/seminal_papers)（条目：`SP-M8-Kolmogorov1931`，`SP-M8-Gillespie1976`）。
 
 ## Checklist
 

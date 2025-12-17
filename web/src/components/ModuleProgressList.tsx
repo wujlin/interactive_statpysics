@@ -58,7 +58,7 @@ export function ModuleProgressList({ modules }: { modules: ModuleItem[] }) {
         {modules.map((m) => {
           const checked = Boolean(progress[m.id]);
           return (
-            <li key={m.id} className="task-item">
+            <li key={m.href} className="task-item">
               <input
                 type="checkbox"
                 checked={checked}

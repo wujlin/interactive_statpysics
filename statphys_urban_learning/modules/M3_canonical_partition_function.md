@@ -9,7 +9,7 @@
 
 ---
 
-## Introduction（科学史/核心矛盾）
+## Introduction
 
 在 M2（微正则系综）里，我们虽然建立了统计物理的逻辑基石（\(S=k\ln\Omega\)），但也留下了一个巨大的**计算困境**：对于绝大多数真实系统，计算“能量严格等于 \(E\)”的微观态体积 \(\Omega(E)\) 在数学上极其痛苦，且不符合实验现实（由于与环境的热交换，能量往往是波动的）。
 
@@ -17,8 +17,8 @@ Gibbs (1902) 的概念飞跃在于引入了**正则系综（Canonical Ensemble�
 
 城市镜像中的对应同样深刻：在建模出行选择时，我们很少能硬性规定“全城总通勤时间必须精确等于 \(C\)”（微正则）；相反，我们更容易观察到的是“对时间的敏感度/价格参数 \(\beta\)”（正则）。在这个框架下，\(e^{-\beta \cdot \text{Cost}}\) 成为描述个体选择与随机性的通用法则（Logit 模型），而配分函数 \(Z\) 则直接对应系统的总福利或可达性（Accessibility）。
 
-## References（Seminal papers，SSOT）
-- **Gibbs 1902**: *Elementary Principles in Statistical Mechanics*. 导读见 `references/seminal_papers.md`（条目：`SP-M3-Gibbs1902`）。
+## References
+- **Gibbs 1902**: *Elementary Principles in Statistical Mechanics*. 导读见 [Seminal papers](/references/seminal_papers)（条目：`SP-M3-Gibbs1902`）。
 
 ---
 
