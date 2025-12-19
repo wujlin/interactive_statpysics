@@ -13,6 +13,8 @@ type KbDocItem = {
 
 function groupLabel(type?: string): string {
   switch (type) {
+    case "overview":
+      return "Overview";
     case "source":
       return "Sources";
     case "context":
@@ -54,6 +56,7 @@ export function KbIndexClient({ docs }: { docs: KbDocItem[] }) {
       groups.set(k, arr);
     }
     const orderedKeys = [
+      "Overview",
       "Modules",
       "Sources",
       "Context",
@@ -62,7 +65,7 @@ export function KbIndexClient({ docs }: { docs: KbDocItem[] }) {
       "Methods",
       "Urban Mappings",
       ...Array.from(groups.keys()).filter(
-        (k) => !["Modules", "Sources", "Context", "Concepts", "Derivations", "Methods", "Urban Mappings"].includes(k),
+        (k) => !["Overview", "Modules", "Sources", "Context", "Concepts", "Derivations", "Methods", "Urban Mappings"].includes(k),
       ),
     ].filter((k, idx, arr) => arr.indexOf(k) === idx && groups.has(k));
     return { groups, orderedKeys };
