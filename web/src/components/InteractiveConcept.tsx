@@ -28,6 +28,7 @@ type Particle = {
 };
 
 type HistoryPoint = { t: number; s: number };
+type FlowParticle = { offset: number; speed: number };
 
 const MIN_N = 20;
 const MAX_N = 200;
@@ -585,10 +586,400 @@ function EntropyCounter() {
   );
 }
 
+function LogitPartition() {
+  const DEFAULT_COSTS = [0.9, 1.4, 2.0, 2.6, 3.1];
+  const MIN_BETA = 0.2;
+  const MAX_BETA = 4.0;
+  const LABELS = ["A", "B", "C", "D", "E"];
+
+  const [beta, setBeta] = useState(1.2);
+  const [costs, setCosts] = useState<number[]>(() => DEFAULT_COSTS);
+
+  const metrics = useMemo(() => {
+    const weights = costs.map((c) => Math.exp(-beta * c));
+    const Z = weights.reduce((acc, v) => acc + v, 0) || 1;
+    const probs = weights.map((w) => w / Z);
+    const entropy = -probs.reduce((acc, p) => acc + (p > 0 ? p * Math.log(p) : 0), 0);
+    const logZ = Math.log(Z);
+    const inclusive = -logZ / beta;
+    return { Z, probs, entropy, logZ, inclusive };
+  }, [beta, costs]);
+
+  function shuffleCosts() {
+    setCosts(
+      DEFAULT_COSTS.map(() => {
+        const v = 0.7 + Math.random() * 2.9;
+        return Math.round(v * 100) / 100;
+      }),
+    );
+  }
+
+  return (
+    <section className="ic-card">
+      <header className="ic-header">
+        <div className="ic-title">
+          <div className="ic-title-main">Logit 与配分函数：从“均匀”到“极化”</div>
+          <div className="ic-title-sub">
+            调节 <MathInline tex={"\\beta"} className="ic-math" /> 观察概率收缩；{" "}
+            <MathInline tex={"Z=\\sum e^{-\\beta c_i}"} className="ic-math" /> 是所有选择的“加权计数”。
+          </div>
+        </div>
+        <div className="ic-controls">
+          <label className="ic-slider">
+            <span className="ic-slider-label">
+              β = <span className="ic-mono">{beta.toFixed(2)}</span>
+            </span>
+            <input
+              type="range"
+              min={MIN_BETA}
+              max={MAX_BETA}
+              step={0.05}
+              value={beta}
+              onChange={(e) => setBeta(clamp(Number(e.target.value) || 1, MIN_BETA, MAX_BETA))}
+            />
+          </label>
+          <button className="ic-btn" onClick={shuffleCosts}>
+            随机成本
+          </button>
+        </div>
+      </header>
+
+      <div className="ic-chart">
+        {costs.map((cost, idx) => (
+          <div key={`${cost}-${idx}`} className="ic-bar-row">
+            <div className="ic-bar-label">Option {LABELS[idx] ?? idx + 1}</div>
+            <div className="ic-bar-track">
+              <div className="ic-bar-fill" style={{ width: `${metrics.probs[idx]! * 100}%` }} />
+            </div>
+            <div className="ic-bar-meta">
+              <span className="ic-mono">c={cost.toFixed(2)}</span>
+              <span className="ic-mono">p={metrics.probs[idx]!.toFixed(2)}</span>
+            </div>
+          </div>
+        ))}
+      </div>
+
+      <div className="ic-metrics">
+        <div className="ic-metric">
+          <div className="ic-metric-label">
+            Z <MathInline tex={"\\sum e^{-\\beta c_i}"} className="ic-math" />
+          </div>
+          <div className="ic-metric-value">
+            <span className="ic-mono">{metrics.Z.toFixed(2)}</span>
+          </div>
+        </div>
+        <div className="ic-metric">
+          <div className="ic-metric-label">log Z</div>
+          <div className="ic-metric-value">
+            <span className="ic-mono">{metrics.logZ.toFixed(2)}</span>
+          </div>
+        </div>
+        <div className="ic-metric">
+          <div className="ic-metric-label">-log Z / β</div>
+          <div className="ic-metric-value">
+            <span className="ic-mono">{metrics.inclusive.toFixed(2)}</span>
+          </div>
+        </div>
+        <div className="ic-metric">
+          <div className="ic-metric-label">Entropy</div>
+          <div className="ic-metric-value">
+            <span className="ic-mono">{metrics.entropy.toFixed(2)}</span>
+          </div>
+        </div>
+      </div>
+
+      <p className="ic-footnote">
+        当 <MathInline tex={"\\beta"} className="ic-math" /> 增大时，分布向“最低成本”集中；当{" "}
+        <MathInline tex={"\\beta\\to 0"} className="ic-math" /> 时，分布趋于均匀。
+      </p>
+    </section>
+  );
+}
+
+function computeFlow(drive: number) {
+  const stay = 0.28;
+  const cw = 1 + drive;
+  const ccw = 1 - drive;
+  const P = Array.from({ length: 3 }, () => [0, 0, 0]);
+  for (let i = 0; i < 3; i++) {
+    const total = stay + cw + ccw;
+    P[i]![i] = stay / total;
+    P[i]![(i + 1) % 3] = cw / total;
+    P[i]![(i + 2) % 3] = ccw / total;
+  }
+
+  let pi = [1 / 3, 1 / 3, 1 / 3];
+  for (let step = 0; step < 120; step++) {
+    const next = [0, 0, 0];
+    for (let i = 0; i < 3; i++) {
+      for (let j = 0; j < 3; j++) {
+        next[j] += pi[i]! * P[i]![j]!;
+      }
+    }
+    pi = next;
+  }
+
+  const J01 = pi[0]! * P[0]![1]! - pi[1]! * P[1]![0]!;
+  const J12 = pi[1]! * P[1]![2]! - pi[2]! * P[2]![1]!;
+  const J20 = pi[2]! * P[2]![0]! - pi[0]! * P[0]![2]!;
+  const Jcw = J01 + J12 + J20;
+  const dir = Math.abs(Jcw) < 1e-4 ? 0 : Jcw > 0 ? 1 : -1;
+  return { P, pi, Jcw, dir };
+}
+
+function NetFlow() {
+  const [drive, setDrive] = useState(0);
+  const flow = useMemo(() => computeFlow(drive), [drive]);
+
+  const containerRef = useRef<HTMLDivElement | null>(null);
+  const canvasRef = useRef<HTMLCanvasElement | null>(null);
+  const flowRef = useRef(flow);
+  const particlesRef = useRef<FlowParticle[]>([]);
+  const nodesRef = useRef<Point[]>([]);
+  const lastFrameRef = useRef<number | null>(null);
+  const reduceMotionRef = useRef(false);
+
+  useEffect(() => {
+    flowRef.current = flow;
+  }, [flow]);
+
+  useEffect(() => {
+    const media = window.matchMedia?.("(prefers-reduced-motion: reduce)");
+    const handler = () => {
+      reduceMotionRef.current = Boolean(media?.matches);
+    };
+    handler();
+    media?.addEventListener?.("change", handler);
+    return () => media?.removeEventListener?.("change", handler);
+  }, []);
+
+  useEffect(() => {
+    const container = containerRef.current;
+    const canvas = canvasRef.current;
+    if (!container || !canvas) return;
+
+    function resetParticles(count: number) {
+      particlesRef.current = Array.from({ length: count }, () => ({
+        offset: Math.random(),
+        speed: 0.6 + Math.random() * 0.8,
+      }));
+    }
+
+    function buildNodes(w: number, h: number) {
+      const center = { x: w / 2, y: h / 2 };
+      const radius = Math.min(w, h) * 0.32;
+      const angles = [-90, 30, 150].map((a) => (a * Math.PI) / 180);
+      nodesRef.current = angles.map((a) => ({
+        x: center.x + Math.cos(a) * radius,
+        y: center.y + Math.sin(a) * radius,
+      }));
+    }
+
+    function resize() {
+      const w = container.clientWidth;
+      const h = clamp(Math.round(w * 0.58), 220, 320);
+      const ctx = applyCanvasSize(canvas, w, h);
+      if (!ctx) return;
+      buildNodes(w, h);
+      resetParticles(clamp(Math.round((w * h) / 8000), 30, 90));
+      lastFrameRef.current = null;
+    }
+
+    const ro = new ResizeObserver(resize);
+    ro.observe(container);
+    resize();
+    return () => ro.disconnect();
+  }, []);
+
+  useEffect(() => {
+    let raf = 0;
+    const canvas = canvasRef.current;
+    const ctx = canvas?.getContext("2d");
+    if (!canvas || !ctx) return;
+
+    function drawArrow(from: Point, to: Point, color: string, width: number) {
+      const angle = Math.atan2(to.y - from.y, to.x - from.x);
+      const size = 8 + width * 0.8;
+      ctx.strokeStyle = color;
+      ctx.lineWidth = width;
+      ctx.beginPath();
+      ctx.moveTo(from.x, from.y);
+      ctx.lineTo(to.x, to.y);
+      ctx.stroke();
+      ctx.fillStyle = color;
+      ctx.beginPath();
+      ctx.moveTo(to.x, to.y);
+      ctx.lineTo(to.x - size * Math.cos(angle - Math.PI / 6), to.y - size * Math.sin(angle - Math.PI / 6));
+      ctx.lineTo(to.x - size * Math.cos(angle + Math.PI / 6), to.y - size * Math.sin(angle + Math.PI / 6));
+      ctx.closePath();
+      ctx.fill();
+    }
+
+    function buildCycle(nodes: Point[], dir: number) {
+      const order = dir >= 0 ? [0, 1, 2, 0] : [0, 2, 1, 0];
+      const segments = [];
+      let total = 0;
+      for (let i = 0; i < 3; i++) {
+        const a = nodes[order[i]!]!;
+        const b = nodes[order[i + 1]!]!;
+        const len = Math.hypot(b.x - a.x, b.y - a.y);
+        segments.push({ a, b, len });
+        total += len;
+      }
+      return { segments, total };
+    }
+
+    function pointOnCycle(segments: { a: Point; b: Point; len: number }[], total: number, offset: number) {
+      let dist = offset * total;
+      for (const seg of segments) {
+        if (dist <= seg.len) {
+          const t = seg.len === 0 ? 0 : dist / seg.len;
+          return { x: seg.a.x + (seg.b.x - seg.a.x) * t, y: seg.a.y + (seg.b.y - seg.a.y) * t };
+        }
+        dist -= seg.len;
+      }
+      const last = segments[segments.length - 1]!;
+      return last.b;
+    }
+
+    const loop = (now: number) => {
+      const flowState = flowRef.current;
+      const nodes = nodesRef.current;
+      if (!nodes.length) {
+        raf = window.requestAnimationFrame(loop);
+        return;
+      }
+
+      const last = lastFrameRef.current ?? now;
+      const dt = Math.min(0.04, (now - last) / 1000);
+      lastFrameRef.current = now;
+
+      const w = canvas.width / (window.devicePixelRatio || 1);
+      const h = canvas.height / (window.devicePixelRatio || 1);
+
+      const theme = getThemeColors();
+      ctx.clearRect(0, 0, w, h);
+      ctx.fillStyle = theme.surface;
+      ctx.fillRect(0, 0, w, h);
+
+      const dir = flowState.dir === 0 ? 1 : flowState.dir;
+      const flowMag = Math.abs(flowState.Jcw);
+      const lineWidth = clamp(1 + flowMag * 18, 1, 5);
+      const baseSpeed = reduceMotionRef.current ? 0 : clamp(flowMag * 3 + 0.06, 0.06, 0.36);
+
+      const { segments, total } = buildCycle(nodes, dir);
+      const nodeRadius = 14;
+
+      if (flowState.dir === 0) {
+        ctx.strokeStyle = theme.border;
+        ctx.setLineDash([6, 6]);
+        ctx.lineWidth = 1.2;
+        ctx.beginPath();
+        ctx.moveTo(nodes[0]!.x, nodes[0]!.y);
+        ctx.lineTo(nodes[1]!.x, nodes[1]!.y);
+        ctx.lineTo(nodes[2]!.x, nodes[2]!.y);
+        ctx.closePath();
+        ctx.stroke();
+        ctx.setLineDash([]);
+      } else {
+        for (const seg of segments) {
+          const dx = seg.b.x - seg.a.x;
+          const dy = seg.b.y - seg.a.y;
+          const len = Math.hypot(dx, dy) || 1;
+          const ux = dx / len;
+          const uy = dy / len;
+          const start = { x: seg.a.x + ux * nodeRadius, y: seg.a.y + uy * nodeRadius };
+          const end = { x: seg.b.x - ux * (nodeRadius + 6), y: seg.b.y - uy * (nodeRadius + 6) };
+          drawArrow(start, end, theme.primary, lineWidth);
+        }
+      }
+
+      ctx.fillStyle = theme.accent;
+      for (const n of nodes) {
+        ctx.beginPath();
+        ctx.arc(n.x, n.y, nodeRadius, 0, Math.PI * 2);
+        ctx.fill();
+      }
+
+      if (baseSpeed > 0) {
+        ctx.fillStyle = theme.primary;
+        for (const p of particlesRef.current) {
+          p.offset = (p.offset + (baseSpeed * p.speed * dt) / total) % 1;
+          const pt = pointOnCycle(segments, total, p.offset);
+          ctx.beginPath();
+          ctx.arc(pt.x, pt.y, 2.4, 0, Math.PI * 2);
+          ctx.fill();
+        }
+      }
+
+      raf = window.requestAnimationFrame(loop);
+    };
+
+    raf = window.requestAnimationFrame(loop);
+    return () => window.cancelAnimationFrame(raf);
+  }, []);
+
+  return (
+    <section className="ic-card">
+      <header className="ic-header">
+        <div className="ic-title">
+          <div className="ic-title-main">净流（Net Flow）：细致平衡是否被打破？</div>
+          <div className="ic-title-sub">
+            调节驱动强度，观察稳态与净流的变化；<MathInline tex={"J_{ij}=\\pi_i P_{ij}-\\pi_j P_{ji}"} className="ic-math" />。
+          </div>
+        </div>
+        <div className="ic-controls">
+          <label className="ic-slider">
+            <span className="ic-slider-label">
+              Drive = <span className="ic-mono">{drive.toFixed(2)}</span>
+            </span>
+            <input
+              type="range"
+              min={0}
+              max={0.9}
+              step={0.02}
+              value={drive}
+              onChange={(e) => setDrive(clamp(Number(e.target.value) || 0, 0, 0.9))}
+            />
+          </label>
+          <button className="ic-btn" onClick={() => setDrive(0)}>
+            细致平衡
+          </button>
+        </div>
+      </header>
+
+      <div ref={containerRef} className="ic-flow-panel">
+        <canvas ref={canvasRef} className="ic-canvas ic-flow-canvas" aria-label="Net flow canvas" />
+      </div>
+
+      <div className="ic-metrics">
+        <div className="ic-metric">
+          <div className="ic-metric-label">π (stationary)</div>
+          <div className="ic-metric-value">
+            <span className="ic-mono">{flow.pi.map((v) => v.toFixed(2)).join(" · ")}</span>
+          </div>
+        </div>
+        <div className="ic-metric">
+          <div className="ic-metric-label">Net circulation</div>
+          <div className="ic-metric-value">
+            <span className="ic-mono">{flow.Jcw.toFixed(3)}</span>
+          </div>
+        </div>
+      </div>
+
+      <p className="ic-footnote">
+        当 Drive → 0 时，净流趋于 0（细致平衡成立）；Drive 增大后出现稳定的环流方向。
+      </p>
+    </section>
+  );
+}
+
 // --- Main Registry ---
 
 const COMPONENT_MAP: Record<string, React.FC> = {
   "entropy-counter": EntropyCounter,
+  "logit-partition": LogitPartition,
+  "net-flow": NetFlow,
 };
 
 export function InteractiveConcept({ type }: { type: string }) {

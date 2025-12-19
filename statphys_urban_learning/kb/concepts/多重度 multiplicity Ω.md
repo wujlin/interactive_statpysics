@@ -8,7 +8,7 @@ status: ready
 ---
 
 ## 一句话
-多重度 Ω(E,V,N) 是满足给定宏观约束的微观态数（或相空间体积），其对数给出 Boltzmann 熵 S=k_B ln Ω。
+多重度 $\Omega(E,V,N)$ 是满足给定宏观约束的微观态数（或相空间体积），其对数给出 Boltzmann 熵 $S = k_B \ln \Omega$。
 
 ## 典型形式
 - 离散计数（组合学）：\(\Omega = \#\{\text{microstates consistent with macro constraints}\}\)

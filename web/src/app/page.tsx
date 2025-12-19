@@ -1,6 +1,5 @@
-import Link from "next/link";
-
 import { ModuleProgressList } from "@/components/ModuleProgressList";
+import { UrbanPotentialHero } from "@/components/UrbanPotentialHero";
 import { listModuleDocs } from "@/lib/modules";
 
 export default function Home() {
@@ -12,19 +11,7 @@ export default function Home() {
 
   return (
     <main className="container stack">
-      <section className="card">
-        <h1 className="page-title">StatPhys × Urban Learning</h1>
-        <p className="kicker">
-          路线 A：阅读 + 检索 + 进度；代码验证走本地 <code>pytest</code>。
-        </p>
-        <div className="toolbar" style={{ marginTop: 12 }}>
-          <Link href="/modules">Modules</Link>
-          <Link href="/checklist">Checklist</Link>
-          <Link href="/kb">KB</Link>
-          <Link href="/exercises">Exercises</Link>
-          <Link href="/projects">Projects</Link>
-        </div>
-      </section>
+      <UrbanPotentialHero />
 
       <section className="card">
         <ModuleProgressList modules={modules} />

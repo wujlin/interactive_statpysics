@@ -8,7 +8,7 @@ status: ready
 ---
 
 ## 一句话
-配分函数 Z(β) 是正则系综中 Boltzmann 权重的归一化常数 Z=∑_x exp(−βE(x))，同时作为生成函数使得 ln Z 的导数产生能量的累积量并给出自由能 F=−k_B T ln Z。
+配分函数 $Z(\beta)$ 是正则系综中 Boltzmann 权重的归一化常数 $Z=\sum_x \exp(-\beta E(x))$，同时作为生成函数使得 $\ln Z$ 的导数产生能量的累积量并给出自由能 $F=-k_B T \ln Z$。
 
 ## 定义（正则）
 \[

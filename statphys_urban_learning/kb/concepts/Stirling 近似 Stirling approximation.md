@@ -8,7 +8,7 @@ status: ready
 ---
 
 ## 一句话
-Stirling 近似给出 ln n! 的渐近展开 ln n!=n ln n−n+O(ln n)，使组合计数与熵密度在大 N 极限下可用连续极值方法处理。
+Stirling 近似给出 $\ln n!$ 的渐近展开 $\ln n! = n\ln n - n + O(\ln n)$，使组合计数与熵密度在大 $N$ 极限下可用连续极值方法处理。
 
 ## 公式（最常用版本）
 \[
