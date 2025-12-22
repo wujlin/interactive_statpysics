@@ -233,11 +233,13 @@ export function UrbanPotentialHero() {
     const container = containerRef.current;
     const canvas = canvasRef.current;
     if (!container || !canvas) return;
+    const containerEl = container;
+    const canvasEl = canvas;
 
     function resize() {
-      const w = container.clientWidth;
-      const h = container.clientHeight;
-      const ctx = applyCanvasSize(canvas, w, h);
+      const w = containerEl.clientWidth;
+      const h = containerEl.clientHeight;
+      const ctx = applyCanvasSize(canvasEl, w, h);
       if (!ctx) return;
 
       const pad = clamp(Math.min(w, h) * 0.08, 18, 36);
@@ -286,7 +288,7 @@ export function UrbanPotentialHero() {
     }
 
     const ro = new ResizeObserver(resize);
-    ro.observe(container);
+    ro.observe(containerEl);
     resize();
 
     return () => ro.disconnect();
@@ -298,6 +300,7 @@ export function UrbanPotentialHero() {
     if (!canvas) return;
     const ctx = canvas.getContext("2d");
     if (!ctx) return;
+    const ctx2d = ctx;
 
     const loop = (now: number) => {
       const layout = layoutRef.current;
@@ -311,13 +314,13 @@ export function UrbanPotentialHero() {
       const dt = Math.min(0.04, (now - last) / 1000);
       lastFrameRef.current = now;
 
-      ctx.clearRect(0, 0, layout.w, layout.h);
-      ctx.drawImage(staticCanvas, 0, 0);
+      ctx2d.clearRect(0, 0, layout.w, layout.h);
+      ctx2d.drawImage(staticCanvas, 0, 0);
 
       const colors = getHeroColors();
-      ctx.strokeStyle = colors.flow;
-      ctx.lineWidth = 1.1;
-      ctx.globalAlpha = 0.7;
+      ctx2d.strokeStyle = colors.flow;
+      ctx2d.lineWidth = 1.1;
+      ctx2d.globalAlpha = 0.7;
 
       const speedBase = reduceMotionRef.current ? 0 : 0.1;
       for (const p of particlesRef.current) {
@@ -349,12 +352,12 @@ export function UrbanPotentialHero() {
         const ay = layout.pad + p.prevY * layout.gridH;
         const bx = layout.pad + p.x * layout.gridW;
         const by = layout.pad + p.y * layout.gridH;
-        ctx.beginPath();
-        ctx.moveTo(ax, ay);
-        ctx.lineTo(bx, by);
-        ctx.stroke();
+        ctx2d.beginPath();
+        ctx2d.moveTo(ax, ay);
+        ctx2d.lineTo(bx, by);
+        ctx2d.stroke();
       }
-      ctx.globalAlpha = 1;
+      ctx2d.globalAlpha = 1;
 
       raf = window.requestAnimationFrame(loop);
     };

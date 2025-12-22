@@ -36,6 +36,27 @@ status: ready
 \boxed{\partial_\beta^2 \ln Z = \langle E^2\rangle - \langle E\rangle^2 = \mathrm{Var}(E).}
 \]
 
+## 热容与能量涨落（把二阶导变成可观测量）
+定义定容热容：
+\[
+C_V \equiv \left(\frac{\partial \langle E\rangle}{\partial T}\right)_{V,N}.
+\]
+利用 \(\beta=1/(k_B T)\)，有
+\[
+\frac{\partial}{\partial T}=\frac{\partial \beta}{\partial T}\frac{\partial}{\partial \beta}
+=-\frac{1}{k_B T^2}\frac{\partial}{\partial \beta}.
+\]
+因此
+\[
+C_V
+=-\frac{1}{k_B T^2}\left(\frac{\partial \langle E\rangle}{\partial \beta}\right)_{V,N}
+=\frac{\mathrm{Var}(E)}{k_B T^2}.
+\]
+等价地：
+\[
+\boxed{\mathrm{Var}(E)=k_B T^2 C_V.}
+\]
+
 ## 检查
 - 维度：\(\beta\) 的单位是 1/能量 ⇒ \(\partial_\beta\ln Z\) 的单位是能量
 - 高温极限 \(\beta\to 0\)：分布趋于均匀
@@ -43,3 +64,4 @@ status: ready
 ## Source anchors
 - Swendsen Eq 19.53：\(\partial_\beta \ln Z = -\langle E\rangle\)
 - Swendsen Eq 19.59：\(\partial_\beta \langle E\rangle = -\langle E^2\rangle + \langle E\rangle^2\)
+- Swendsen Eq 19.60：热容与涨落（\(C_V\) 与 \(\mathrm{Var}(E)\)）

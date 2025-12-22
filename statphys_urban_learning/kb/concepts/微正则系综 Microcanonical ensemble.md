@@ -22,6 +22,12 @@ p(\Gamma)=\frac{1}{\Omega(E,V,N)}.
 S(E,V,N)=k_B\ln \Omega(E,V,N).
 \]
 
+## 温度定义（偏导）
+\[
+\frac{1}{T}=\left(\frac{\partial S}{\partial E}\right)_{V,N}.
+\]
+- 与热力学的基本关系对齐，见：[[T,P,μ 作为熵的偏导定义]]。
+
 ## 为什么重要
 - 它是其他系综（正则、巨正则）的“源头参照”：
   - 子系统与热浴耦合 ⇒ 正则

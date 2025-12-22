@@ -35,6 +35,7 @@
 - [x] Derivation：
   - [x] `kb/derivations/Boltzmann 分布的最大熵推导.md`
   - [x] `kb/derivations/最大熵推出指数族分布（通用模板）.md`
+  - [x] `kb/derivations/MaxEnt 与正则系综等价（信息等价）.md`（桥接 M3）
 - [x] Method：
   - [x] `kb/methods/拉格朗日乘子法（最大熵）.md`
 - [x] Urban mapping：
@@ -70,6 +71,7 @@
 - [x] Derivation：
   - [x] `kb/derivations/从正则分布到自由能 F=-kT ln Z.md`
   - [x] `kb/derivations/平均能量与 ln Z 的导数关系.md`
+  - [x] `kb/derivations/MaxEnt 与正则系综等价（信息等价）.md`（桥接 M1）
 - [x] Method：
   - [x] `kb/methods/Metropolis-Hastings（最小 MCMC）.md`
   - [x] `kb/methods/MCMC 误差估计 自相关时间与 Blocking.md`

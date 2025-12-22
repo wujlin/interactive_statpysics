@@ -5,6 +5,7 @@ import type { ReactNode } from "react";
 import { useEffect, useMemo, useRef, useState } from "react";
 
 type Rect = { x: number; y: number; w: number; h: number };
+type Point = { x: number; y: number };
 type ThemeColors = {
   text: string;
   muted: string;
@@ -757,6 +758,8 @@ function NetFlow() {
     const container = containerRef.current;
     const canvas = canvasRef.current;
     if (!container || !canvas) return;
+    const containerEl = container;
+    const canvasEl = canvas;
 
     function resetParticles(count: number) {
       particlesRef.current = Array.from({ length: count }, () => ({
@@ -776,9 +779,9 @@ function NetFlow() {
     }
 
     function resize() {
-      const w = container.clientWidth;
+      const w = containerEl.clientWidth;
       const h = clamp(Math.round(w * 0.58), 220, 320);
-      const ctx = applyCanvasSize(canvas, w, h);
+      const ctx = applyCanvasSize(canvasEl, w, h);
       if (!ctx) return;
       buildNodes(w, h);
       resetParticles(clamp(Math.round((w * h) / 8000), 30, 90));
@@ -786,7 +789,7 @@ function NetFlow() {
     }
 
     const ro = new ResizeObserver(resize);
-    ro.observe(container);
+    ro.observe(containerEl);
     resize();
     return () => ro.disconnect();
   }, []);
@@ -796,23 +799,25 @@ function NetFlow() {
     const canvas = canvasRef.current;
     const ctx = canvas?.getContext("2d");
     if (!canvas || !ctx) return;
+    const canvasEl = canvas;
+    const ctx2d = ctx;
 
     function drawArrow(from: Point, to: Point, color: string, width: number) {
       const angle = Math.atan2(to.y - from.y, to.x - from.x);
       const size = 8 + width * 0.8;
-      ctx.strokeStyle = color;
-      ctx.lineWidth = width;
-      ctx.beginPath();
-      ctx.moveTo(from.x, from.y);
-      ctx.lineTo(to.x, to.y);
-      ctx.stroke();
-      ctx.fillStyle = color;
-      ctx.beginPath();
-      ctx.moveTo(to.x, to.y);
-      ctx.lineTo(to.x - size * Math.cos(angle - Math.PI / 6), to.y - size * Math.sin(angle - Math.PI / 6));
-      ctx.lineTo(to.x - size * Math.cos(angle + Math.PI / 6), to.y - size * Math.sin(angle + Math.PI / 6));
-      ctx.closePath();
-      ctx.fill();
+      ctx2d.strokeStyle = color;
+      ctx2d.lineWidth = width;
+      ctx2d.beginPath();
+      ctx2d.moveTo(from.x, from.y);
+      ctx2d.lineTo(to.x, to.y);
+      ctx2d.stroke();
+      ctx2d.fillStyle = color;
+      ctx2d.beginPath();
+      ctx2d.moveTo(to.x, to.y);
+      ctx2d.lineTo(to.x - size * Math.cos(angle - Math.PI / 6), to.y - size * Math.sin(angle - Math.PI / 6));
+      ctx2d.lineTo(to.x - size * Math.cos(angle + Math.PI / 6), to.y - size * Math.sin(angle + Math.PI / 6));
+      ctx2d.closePath();
+      ctx2d.fill();
     }
 
     function buildCycle(nodes: Point[], dir: number) {
@@ -854,13 +859,13 @@ function NetFlow() {
       const dt = Math.min(0.04, (now - last) / 1000);
       lastFrameRef.current = now;
 
-      const w = canvas.width / (window.devicePixelRatio || 1);
-      const h = canvas.height / (window.devicePixelRatio || 1);
+      const w = canvasEl.width / (window.devicePixelRatio || 1);
+      const h = canvasEl.height / (window.devicePixelRatio || 1);
 
       const theme = getThemeColors();
-      ctx.clearRect(0, 0, w, h);
-      ctx.fillStyle = theme.surface;
-      ctx.fillRect(0, 0, w, h);
+      ctx2d.clearRect(0, 0, w, h);
+      ctx2d.fillStyle = theme.surface;
+      ctx2d.fillRect(0, 0, w, h);
 
       const dir = flowState.dir === 0 ? 1 : flowState.dir;
       const flowMag = Math.abs(flowState.Jcw);
@@ -871,16 +876,16 @@ function NetFlow() {
       const nodeRadius = 14;
 
       if (flowState.dir === 0) {
-        ctx.strokeStyle = theme.border;
-        ctx.setLineDash([6, 6]);
-        ctx.lineWidth = 1.2;
-        ctx.beginPath();
-        ctx.moveTo(nodes[0]!.x, nodes[0]!.y);
-        ctx.lineTo(nodes[1]!.x, nodes[1]!.y);
-        ctx.lineTo(nodes[2]!.x, nodes[2]!.y);
-        ctx.closePath();
-        ctx.stroke();
-        ctx.setLineDash([]);
+        ctx2d.strokeStyle = theme.border;
+        ctx2d.setLineDash([6, 6]);
+        ctx2d.lineWidth = 1.2;
+        ctx2d.beginPath();
+        ctx2d.moveTo(nodes[0]!.x, nodes[0]!.y);
+        ctx2d.lineTo(nodes[1]!.x, nodes[1]!.y);
+        ctx2d.lineTo(nodes[2]!.x, nodes[2]!.y);
+        ctx2d.closePath();
+        ctx2d.stroke();
+        ctx2d.setLineDash([]);
       } else {
         for (const seg of segments) {
           const dx = seg.b.x - seg.a.x;
@@ -894,21 +899,21 @@ function NetFlow() {
         }
       }
 
-      ctx.fillStyle = theme.accent;
+      ctx2d.fillStyle = theme.accent;
       for (const n of nodes) {
-        ctx.beginPath();
-        ctx.arc(n.x, n.y, nodeRadius, 0, Math.PI * 2);
-        ctx.fill();
+        ctx2d.beginPath();
+        ctx2d.arc(n.x, n.y, nodeRadius, 0, Math.PI * 2);
+        ctx2d.fill();
       }
 
       if (baseSpeed > 0) {
-        ctx.fillStyle = theme.primary;
+        ctx2d.fillStyle = theme.primary;
         for (const p of particlesRef.current) {
           p.offset = (p.offset + (baseSpeed * p.speed * dt) / total) % 1;
           const pt = pointOnCycle(segments, total, p.offset);
-          ctx.beginPath();
-          ctx.arc(pt.x, pt.y, 2.4, 0, Math.PI * 2);
-          ctx.fill();
+          ctx2d.beginPath();
+          ctx2d.arc(pt.x, pt.y, 2.4, 0, Math.PI * 2);
+          ctx2d.fill();
         }
       }
 

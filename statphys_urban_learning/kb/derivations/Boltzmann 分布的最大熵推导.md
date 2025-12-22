@@ -4,11 +4,13 @@ title: Boltzmann 分布的最大熵推导
 tags: [maxent, canonical]
 prereq: [熵 Entropy]
 source: [Swendsen, Sethna]
-status: seed
+status: ready
 ---
 
 ## 目标
 在“归一化 + 平均能量约束”下，最大化熵，得到 Boltzmann 分布。
+
+> 对照：物理推导（系统与热库）见 [[从系统与热库推出 Boltzmann 分布（正则系综）]]；两条路线等价原因见 [[MaxEnt 与正则系综等价（信息等价）]]。
 
 ## 假设/约束
 - \(\sum_x p(x)=1\)

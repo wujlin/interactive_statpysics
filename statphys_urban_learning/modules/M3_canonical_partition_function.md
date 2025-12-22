@@ -26,6 +26,8 @@ Gibbs (1902) 的概念飞跃在于引入了**正则系综（Canonical Ensemble�
 
 城市镜像中的对应同样深刻：在建模出行选择时，我们很少能硬性规定“全城总通勤时间必须精确等于 \(C\)”（微正则）；相反，我们更容易观察到的是“对时间的敏感度/价格参数 \(\beta\)”（正则）。在这个框架下，\(e^{-\beta \cdot \text{Cost}}\) 成为描述个体选择与随机性的通用法则（Logit 模型），而配分函数 \(Z\) 则直接对应系统的总福利或可达性（Accessibility）。
 
+MaxEnt 与 canonical 的合流点在这里最清晰：它们编码的是同一份信息，只是语言不同（见：[[MaxEnt 与正则系综等价（信息等价）]]）。
+
 ## References
 - **Gibbs 1902**: *Elementary Principles in Statistical Mechanics*. 导读见 [Seminal papers](/references/seminal_papers)（条目：`SP-M3-Gibbs1902`）。
 
