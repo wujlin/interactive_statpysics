@@ -47,6 +47,12 @@
   - 它是“各态历经假说”的数学终结者。Khinchin 证明了我们不需要强假设（Ergodicity），只需要“相位函数的性质”加上大数定律，就能保证物理量的测量值等于相空间平均值。
   - 阅读它能让你明白：物理学家用的微正则系综其实比数学家以为的要稳固得多。
 
+### SP-M2-Ramsey1956-NegativeTemperature
+- N. F. Ramsey, “Thermodynamics and Statistical Mechanics at Negative Absolute Temperatures,” *Physical Review* **103**, 20–28 (1956).
+- Why this paper?
+  - 负温度最容易被误解成“比 0 K 更冷”。Ramsey 用严格的统计力学与热力学一致性解释：负温度对应 \(\partial S/\partial E<0\)，并且在热接触意义上比任何正温度都“更热”。
+  - 它把“能量谱必须有上界”这一必要条件讲清楚，是你在自旋/Ising 以及城市模型里讨论“饱和/上界/反转”现象时的关键概念锚点。
+
 ## M3（正则系综）
 
 ### SP-M3-Gibbs1902

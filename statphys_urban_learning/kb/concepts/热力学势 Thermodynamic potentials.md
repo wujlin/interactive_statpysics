@@ -22,7 +22,8 @@ dU = T\,dS - P\,dV + \mu\,dN.
 \[
 dF = -S\,dT - P\,dV + \mu\,dN.
 \]
-- 在统计物理里：\(F=-kT\ln Z\)。
+- 在统计物理里：\(F=-k_BT\ln Z\)（见：[[从正则分布到自由能 F=-kT ln Z]]）。
+- 进一步：在热力学极限下，\(\ln Z\) 与微正则熵 \(S(E)=k_B\ln\Omega(E)\) 通过 Legendre 对偶联系，从而 \(F(T)\approx \min_E[E-TS(E)]\)（见：[[F=-kT ln Z 与 S(E) 的 Legendre 对偶（势函数视角）]]）。
 
 ### Gibbs 自由能 \(G(T,P,N)=F+PV\)
 - 自然变量：\((T,P,N)\)

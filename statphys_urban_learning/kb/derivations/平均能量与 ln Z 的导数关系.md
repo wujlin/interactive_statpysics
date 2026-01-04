@@ -61,6 +61,9 @@ C_V
 - 维度：\(\beta\) 的单位是 1/能量 ⇒ \(\partial_\beta\ln Z\) 的单位是能量
 - 高温极限 \(\beta\to 0\)：分布趋于均匀
 
+## 对照（微正则视角）
+- 同一标度结论也可从“总体系微正则 + 总熵二阶展开”推出，并直接得到相对涨落 \(\sim 1/\sqrt{N}\)：[[能量涨落的高斯近似与 1/√N 标度（微正则推导）]]。
+
 ## Source anchors
 - Swendsen Eq 19.53：\(\partial_\beta \ln Z = -\langle E\rangle\)
 - Swendsen Eq 19.59：\(\partial_\beta \langle E\rangle = -\langle E^2\rangle + \langle E\rangle^2\)

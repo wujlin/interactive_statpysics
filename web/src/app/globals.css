@@ -394,6 +394,14 @@ pre {
   line-height: 1.65;
 }
 
+.markdown strong {
+  font-weight: 700;
+}
+
+.markdown em {
+  font-style: italic;
+}
+
 .markdown :is(h1, h2, h3, h4) {
   margin: 1.2em 0 0.6em;
   scroll-margin-top: 96px;

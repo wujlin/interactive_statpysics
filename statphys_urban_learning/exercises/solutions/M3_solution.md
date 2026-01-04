@@ -1,7 +1,7 @@
 ---
 type: solution
 id: M3_solution
-title: M3 ln Z 导数关系（参考解答）
+title: M3 参考解答：配分函数导数生成均值与涨落
 tags: [canonical, partition-function, fluctuation, solution]
 ---
 

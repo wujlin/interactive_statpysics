@@ -1,12 +1,14 @@
 ---
 type: exercise
 id: M3_written
-title: M3 正则系综：ln Z 的一阶/二阶导与涨落
+title: M3 正则系综：配分函数导数生成均值与涨落
 difficulty: 2
 tags: [canonical, partition-function, fluctuation]
 ---
 
-# M3 正则系综与 ln Z — Written
+# M3 正则系综：配分函数导数生成均值与涨落 — Written
+
+> 记号提示：\(Z(\beta)\) 是配分函数；我们常用 \(\ln Z\) 是因为它的导数会直接给出均值与方差（生成函数）。
 
 ## 问题 1：平均能量 ⟨E⟩ 与 ∂β ln Z 的关系
 

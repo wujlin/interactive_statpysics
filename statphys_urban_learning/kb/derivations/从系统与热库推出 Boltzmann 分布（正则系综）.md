@@ -16,6 +16,10 @@ status: ready
 2) **态数相乘**：独立子系统的可达态数相乘（或熵相加）。  
 3) **热库熵展开 + 温度定义**：\(S_B(E_{\text{tot}}-E_i)\) 一阶展开，\(\partial_E S = 1/T\)。
 
+## 先澄清一个常见误解（两层意思）
+- **微正则“单系统版本”**：能量被固定在 \(E\)（能壳/能量窗）上，因此分布是“能壳上的等概率”，不会出现 \(e^{-\beta E}\) 这种“按能量加权”的形式（因为能量根本不允许变化）。  
+- **从微正则出发导出正则**：把系统放进更大的孤立体系（系统 + 热库）并对热库自由度做边缘化，才会得到 \(p_i\propto \Omega_B(E_{\text{tot}}-E_i)\approx e^{-\beta E_i}\)；指数权重与配分函数 \(Z\) 是这样“长出来”的。
+
 ---
 
 ## 推导 A：系统接触热库（微正则 \(\Rightarrow\) 正则）
@@ -58,7 +62,7 @@ S_B(E_{\text{tot}}-E_i)
 \approx
 S_B(E_{\text{tot}})-E_i\left.\frac{\partial S_B}{\partial E_B}\right|_{E_{\text{tot}}}.
 \]
-（二阶项控制能量涨落大小；要算涨落见：[[平均能量与 ln Z 的导数关系]]。）
+（二阶项控制能量涨落大小；见：[[能量涨落的高斯近似与 1/√N 标度（微正则推导）]]；从正则系综也可得到同一结果：[[平均能量与 ln Z 的导数关系]]。）
 
 ### 4) 用温度定义引入 \(\beta\)
 热力学定义：
@@ -95,6 +99,39 @@ Z=\sum_E g(E)e^{-\beta E}.
 
 ---
 
+## 推导 A'：由正则分布推出 \(F=-k_BT\ln Z\)（桥接公式）
+
+这一步的作用是把“归一化常数 \(Z\)”升级为“热力学势函数 \(F\)”：一旦你能计算 \(Z\)，热力学量就能通过导数系统性生成。
+
+### 1) 起点：正则分布与能量平均
+\[
+p_i=\frac{e^{-\beta E_i}}{Z},\qquad Z=\sum_i e^{-\beta E_i},\qquad \beta=\frac{1}{k_BT}.
+\]
+定义内能（平均能量）：
+\[
+U\equiv \langle E\rangle = \sum_i p_i E_i.
+\]
+
+### 2) 计算熵并代回 \(F\equiv U-TS\)
+Gibbs 熵：
+\[
+S\equiv -k_B\sum_i p_i\ln p_i.
+\]
+由 \(\ln p_i=-\beta E_i-\ln Z\)，得到
+\[
+S=-k_B\sum_i p_i(-\beta E_i-\ln Z)
+=k_B\beta \sum_i p_iE_i + k_B\ln Z
+=k_B\beta U + k_B\ln Z.
+\]
+因此
+\[
+F\equiv U-TS
+=U-T(k_B\beta U+k_B\ln Z)
+=-k_BT\ln Z.
+\]
+
+---
+
 ## 推导 B（对照）：最大熵 \(\Rightarrow\) Boltzmann
 这条路线把正则分布视作“在信息不足下的最诚实推断”。只假设两条约束：
 - 归一化：\(\sum_i p_i=1\)
@@ -114,7 +151,7 @@ p_i=\frac{e^{-\beta E_i}}{Z}.
 
 ## 下一步（把分布变成可计算量）
 - \(\langle E\rangle=-\partial_\beta \ln Z\)，\(\mathrm{Var}(E)=\partial_\beta^2\ln Z\)：[[平均能量与 ln Z 的导数关系]]
-- 自由能：\(F=-k_B T\ln Z\)：[[从正则分布到自由能 F=-kT ln Z]]
+- 自由能：\(F=-k_B T\ln Z\)（本页推导 A'）；也可单独阅读：[[从正则分布到自由能 F=-kT ln Z]]
 
 ## 检查
 - 可积性/收敛：\(Z\) 必须有限（否则分布不可归一化）。
@@ -124,7 +161,10 @@ p_i=\frac{e^{-\beta E_i}}{Z}.
 - 条件：热库足够大（使一阶展开足够精确）；二阶项不忽略时会给出能量涨落。
 
 ## Source anchors
+- Swendsen Eq 19.15：\(\partial_{E_T}\ln\Omega_R(E_T)=\beta=\frac{1}{k_BT}\)
+- Swendsen Eq 19.16：\(\ln P(E)=\ln\Omega(E)-\beta E-\ln Z\)
 - Swendsen Eq 19.17：\(P(E)=\frac{1}{Z}\Omega(E)\,e^{-\beta E}\)
 - Swendsen Eq 19.18：\(Z=\int dE\,\Omega(E,V,N)\,e^{-\beta E}\)
 - Swendsen Eq 19.23：相空间正则分布 \(P(p,q)\propto e^{-\beta H(p,q)}\)
+- Swendsen Eq 19.49：\(F(T,V,N)=-k_B T\ln Z\)
 - Jaynes 1957（条目：`SP-M1-Jaynes1957-I`）：最大熵作为推断规则的视角（对照路线）

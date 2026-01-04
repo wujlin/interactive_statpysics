@@ -50,6 +50,8 @@ status: ready
 - Eq 5.12：独立性 \(\Rightarrow P(x|y)=P_x(x)\)（教授建议的典型“锚点”）
 
 ### M3 正则系综与 ln Z
+- Eq 19.15：\(\partial_{E_T}\ln\Omega_R(E_T)=\beta=\frac{1}{k_BT}\)
+- Eq 19.16：\(\ln P(E)=\ln\Omega(E)-\beta E-\ln Z\)
 - Eq 19.17：\(P(E)=\frac{1}{Z}\,\Omega(E)\,e^{-\beta E}\)
 - Eq 19.18：\(Z(T,V,N)=\int dE\,\Omega(E,V,N)\,e^{-\beta E}\)
 - Eq 19.23：相空间正则分布 \(P(p,q)\propto e^{-\beta H(p,q)}\)

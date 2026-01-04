@@ -22,12 +22,12 @@ p_{t+1}=p_t P.
 
 给定稳态 \(\pi\)，在边 \(i\to j\) 上的稳态流量为 \(\pi_i P_{ij}\)。
 
-- **细致平衡（detailed balance）**要求对所有成对状态：
+- **细致平衡**（detailed balance）要求对所有成对状态：
   \[
   \pi_i P_{ij}=\pi_j P_{ji},
   \]
   这意味着每条边上正反流量完全抵消，因此净流为零。
-- **稳态净流（steady-state flux）**允许在稳态下仍存在非零环流。定义净流：
+- **稳态净流**（steady-state flux）允许在稳态下仍存在非零环流。定义净流：
   \[
   J_{ij}=\pi_i P_{ij}-\pi_j P_{ji}.
   \]

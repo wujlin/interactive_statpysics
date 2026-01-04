@@ -697,6 +697,639 @@ function LogitPartition() {
   );
 }
 
+function TwoLevelSchottky() {
+  // Units: set k_B = 1, Δ = 1 by default. Only the dimensionless combination βΔ matters.
+  const T_MIN = 0.05;
+  const T_MAX = 5.0;
+
+  const [T, setT] = useState(0.42);
+  const [g1, setG1] = useState(1);
+  const [isPlaying, setIsPlaying] = useState(false);
+
+  const uPanelRef = useRef<HTMLDivElement | null>(null);
+  const uCanvasRef = useRef<HTMLCanvasElement | null>(null);
+  const cvPanelRef = useRef<HTMLDivElement | null>(null);
+  const cvCanvasRef = useRef<HTMLCanvasElement | null>(null);
+
+  const state = useMemo(() => {
+    const TClamped = clamp(T, T_MIN, T_MAX);
+    const betaDelta = 1 / TClamped;
+    const w = Math.exp(-betaDelta);
+    const Z = 1 + g1 * w;
+    const pExcited = (g1 * w) / Z;
+    const pGround = 1 - pExcited;
+    const logZ = Math.log(Z);
+    const U_over_Delta = pExcited;
+    const Cv_over_kB = betaDelta * betaDelta * pExcited * (1 - pExcited);
+    const F_over_Delta = -TClamped * logZ;
+    return { T: TClamped, betaDelta, Z, logZ, pGround, pExcited, U_over_Delta, Cv_over_kB, F_over_Delta };
+  }, [T, g1]);
+
+  const curve = useMemo(() => {
+    const n = 360;
+    const xs = new Array(n);
+    const u = new Array(n);
+    const cv = new Array(n);
+    let cvMax = 0;
+    for (let i = 0; i < n; i++) {
+      const t = i / (n - 1);
+      const Ti = T_MIN + (T_MAX - T_MIN) * t;
+      const betaDelta = 1 / Ti;
+      const w = Math.exp(-betaDelta);
+      const Z = 1 + g1 * w;
+      const pExcited = (g1 * w) / Z;
+      xs[i] = Ti;
+      u[i] = pExcited;
+      const cvi = betaDelta * betaDelta * pExcited * (1 - pExcited);
+      cv[i] = cvi;
+      cvMax = Math.max(cvMax, cvi);
+    }
+    return { xs, u, cv, cvMax };
+  }, [g1]);
+
+  useEffect(() => {
+    if (!isPlaying) return;
+    let raf = 0;
+    let lastMs = 0;
+    const speed = 0.55; // T units per second
+    const loop = (now: number) => {
+      if (!lastMs) lastMs = now;
+      const dt = Math.min(0.05, (now - lastMs) / 1000);
+      lastMs = now;
+      setT((prev) => {
+        const next = prev + speed * dt;
+        return next > T_MAX ? T_MIN : next;
+      });
+      raf = window.requestAnimationFrame(loop);
+    };
+    raf = window.requestAnimationFrame(loop);
+    return () => window.cancelAnimationFrame(raf);
+  }, [isPlaying]);
+
+  useEffect(() => {
+    const panels: Array<[HTMLDivElement, HTMLCanvasElement]> = [];
+    if (uPanelRef.current && uCanvasRef.current) panels.push([uPanelRef.current, uCanvasRef.current]);
+    if (cvPanelRef.current && cvCanvasRef.current) panels.push([cvPanelRef.current, cvCanvasRef.current]);
+    if (!panels.length) return;
+
+    const resize = () => {
+      for (const [panel, canvas] of panels) {
+        const w = panel.clientWidth;
+        const h = clamp(Math.round(w * 0.55), 220, 300);
+        applyCanvasSize(canvas, w, h);
+      }
+    };
+
+    const ro = new ResizeObserver(resize);
+    for (const [panel] of panels) ro.observe(panel);
+    resize();
+    return () => ro.disconnect();
+  }, []);
+
+  useEffect(() => {
+    function drawPlot(canvas: HTMLCanvasElement, title: string, xs: number[], ys: number[], yMax: number) {
+      const ctx = canvas.getContext("2d");
+      if (!ctx) return;
+
+      const dpr = window.devicePixelRatio || 1;
+      const w = canvas.width / dpr;
+      const h = canvas.height / dpr;
+
+      const theme = getThemeColors();
+      ctx.clearRect(0, 0, w, h);
+      ctx.fillStyle = theme.surface;
+      ctx.fillRect(0, 0, w, h);
+
+      const padL = 42;
+      const padR = 14;
+      const padT = 18;
+      const padB = 34;
+      const pw = w - padL - padR;
+      const ph = h - padT - padB;
+
+      const xMin = xs[0] ?? 0;
+      const xMax = xs[xs.length - 1] ?? 1;
+      const yMin = 0;
+      const yMax2 = Math.max(1e-6, yMax);
+
+      const xTo = (x: number) => padL + ((x - xMin) / (xMax - xMin)) * pw;
+      const yTo = (y: number) => padT + (1 - (y - yMin) / (yMax2 - yMin)) * ph;
+
+      // Frame
+      ctx.strokeStyle = theme.border;
+      ctx.lineWidth = 1;
+      ctx.beginPath();
+      ctx.rect(padL, padT, pw, ph);
+      ctx.stroke();
+
+      // Grid + ticks
+      const tickN = 4;
+      ctx.font = "12px ui-sans-serif, system-ui, -apple-system, Segoe UI, Roboto, Helvetica, Arial";
+      ctx.fillStyle = theme.muted;
+      ctx.textBaseline = "middle";
+      for (let i = 0; i <= tickN; i++) {
+        const tx = i / tickN;
+        const xv = xMin + (xMax - xMin) * tx;
+        const px = xTo(xv);
+        ctx.globalAlpha = 0.18;
+        ctx.beginPath();
+        ctx.moveTo(px, padT);
+        ctx.lineTo(px, padT + ph);
+        ctx.stroke();
+        ctx.globalAlpha = 1;
+        ctx.textAlign = "center";
+        ctx.fillText(xv.toFixed(1), px, padT + ph + 14);
+      }
+
+      for (let i = 0; i <= tickN; i++) {
+        const ty = i / tickN;
+        const yv = yMin + (yMax2 - yMin) * ty;
+        const py = yTo(yv);
+        ctx.globalAlpha = 0.18;
+        ctx.beginPath();
+        ctx.moveTo(padL, py);
+        ctx.lineTo(padL + pw, py);
+        ctx.stroke();
+        ctx.globalAlpha = 1;
+        ctx.textAlign = "right";
+        ctx.fillText(yv.toFixed(2), padL - 6, py);
+      }
+
+      // Title
+      ctx.textAlign = "left";
+      ctx.textBaseline = "alphabetic";
+      ctx.fillStyle = theme.text;
+      ctx.font = "13px ui-sans-serif, system-ui, -apple-system, Segoe UI, Roboto, Helvetica, Arial";
+      ctx.fillText(title, padL, 14);
+
+      // Curve
+      ctx.strokeStyle = theme.primary;
+      ctx.lineWidth = 2;
+      ctx.beginPath();
+      for (let i = 0; i < xs.length; i++) {
+        const px = xTo(xs[i]!);
+        const py = yTo(ys[i]!);
+        if (i === 0) ctx.moveTo(px, py);
+        else ctx.lineTo(px, py);
+      }
+      ctx.stroke();
+
+      // Marker at current T
+      const markY = title.startsWith("U") ? state.U_over_Delta : state.Cv_over_kB;
+      const mx = xTo(state.T);
+      const my = yTo(markY);
+      ctx.fillStyle = theme.accent;
+      ctx.beginPath();
+      ctx.arc(mx, my, 4.2, 0, Math.PI * 2);
+      ctx.fill();
+      ctx.strokeStyle = theme.surface;
+      ctx.lineWidth = 1.5;
+      ctx.stroke();
+    }
+
+    const uCanvas = uCanvasRef.current;
+    const cvCanvas = cvCanvasRef.current;
+    if (uCanvas) drawPlot(uCanvas, "U/Δ (excited probability)", curve.xs, curve.u, 1);
+    if (cvCanvas) drawPlot(cvCanvas, "C_V/k_B (Schottky peak)", curve.xs, curve.cv, curve.cvMax * 1.12);
+  }, [curve, state]);
+
+  return (
+    <section className="ic-card">
+      <header className="ic-header">
+        <div className="ic-title">
+          <div className="ic-title-main">两能级系统：Schottky anomaly（热容单峰）</div>
+          <div className="ic-title-sub">
+            只靠一个可解玩具模型，把 <MathInline tex={"Z\\,\\to\\,\\ln Z\\,\\to\\,U\\,\\to\\,C_V"} className="ic-math" /> 的生成关系练到条件反射。
+            这里取 <MathInline tex={"k_B=1"} className="ic-math" />、<MathInline tex={"\\Delta=1"} className="ic-math" />；形状只依赖{" "}
+            <MathInline tex={"\\beta\\Delta"} className="ic-math" /> 与简并度。
+          </div>
+        </div>
+        <div className="ic-controls">
+          <label className="ic-slider">
+            <span className="ic-slider-label">
+              T = <span className="ic-mono">{state.T.toFixed(2)}</span>
+            </span>
+            <input
+              type="range"
+              min={T_MIN}
+              max={T_MAX}
+              step={0.01}
+              value={state.T}
+              onChange={(e) => setT(clamp(Number(e.target.value) || 0.42, T_MIN, T_MAX))}
+            />
+          </label>
+          <label className="ic-slider">
+            <span className="ic-slider-label">
+              g₁ = <span className="ic-mono">{g1}</span>
+            </span>
+            <input
+              type="range"
+              min={1}
+              max={20}
+              step={1}
+              value={g1}
+              onChange={(e) => setG1(clamp(Number(e.target.value) || 1, 1, 20))}
+            />
+          </label>
+          <button className="ic-btn ic-btn-primary" onClick={() => setIsPlaying((v) => !v)}>
+            {isPlaying ? "暂停" : "播放"}
+          </button>
+          <button
+            className="ic-btn"
+            onClick={() => {
+              setIsPlaying(false);
+              setT(0.42);
+              setG1(1);
+            }}
+          >
+            重置
+          </button>
+        </div>
+      </header>
+
+      <div className="ic-chart" style={{ marginTop: 12 }}>
+        <div className="ic-bar-row">
+          <div className="ic-bar-label">Ground (E=0)</div>
+          <div className="ic-bar-track">
+            <div className="ic-bar-fill" style={{ width: `${state.pGround * 100}%` }} />
+          </div>
+          <div className="ic-bar-meta">
+            <span className="ic-mono">p={state.pGround.toFixed(2)}</span>
+          </div>
+        </div>
+        <div className="ic-bar-row">
+          <div className="ic-bar-label">Excited (E=Δ)</div>
+          <div className="ic-bar-track">
+            <div className="ic-bar-fill" style={{ width: `${state.pExcited * 100}%` }} />
+          </div>
+          <div className="ic-bar-meta">
+            <span className="ic-mono">p={state.pExcited.toFixed(2)}</span>
+          </div>
+        </div>
+      </div>
+
+      <div className="ic-canvas-grid" style={{ gridTemplateColumns: "repeat(auto-fit, minmax(260px, 1fr))" }}>
+        <div ref={uPanelRef} className="ic-flow-panel">
+          <canvas ref={uCanvasRef} className="ic-canvas" aria-label="Two-level U plot" />
+        </div>
+        <div ref={cvPanelRef} className="ic-flow-panel">
+          <canvas ref={cvCanvasRef} className="ic-canvas" aria-label="Two-level Cv plot" />
+        </div>
+      </div>
+
+      <div className="ic-metrics">
+        <div className="ic-metric">
+          <div className="ic-metric-label">
+            βΔ <MathInline tex={"=\\Delta/(k_BT)"} className="ic-math" />
+          </div>
+          <div className="ic-metric-value">
+            <span className="ic-mono">{state.betaDelta.toFixed(2)}</span>
+          </div>
+        </div>
+        <div className="ic-metric">
+          <div className="ic-metric-label">
+            Z <MathInline tex={"=1+g_1 e^{-\\beta\\Delta}"} className="ic-math" />
+          </div>
+          <div className="ic-metric-value">
+            <span className="ic-mono">{state.Z.toFixed(3)}</span>
+          </div>
+        </div>
+        <div className="ic-metric">
+          <div className="ic-metric-label">log Z</div>
+          <div className="ic-metric-value">
+            <span className="ic-mono">{state.logZ.toFixed(3)}</span>
+          </div>
+        </div>
+        <div className="ic-metric">
+          <div className="ic-metric-label">
+            F/Δ <MathInline tex={"=-T\\ln Z"} className="ic-math" />
+          </div>
+          <div className="ic-metric-value">
+            <span className="ic-mono">{state.F_over_Delta.toFixed(3)}</span>
+          </div>
+        </div>
+        <div className="ic-metric">
+          <div className="ic-metric-label">U/Δ</div>
+          <div className="ic-metric-value">
+            <span className="ic-mono">{state.U_over_Delta.toFixed(3)}</span>
+          </div>
+        </div>
+        <div className="ic-metric">
+          <div className="ic-metric-label">C_V/k_B</div>
+          <div className="ic-metric-value">
+            <span className="ic-mono">{state.Cv_over_kB.toFixed(3)}</span>
+          </div>
+        </div>
+      </div>
+
+      <p className="ic-footnote">
+        microstates 的底层定义是 <MathInline tex={"Z=\\sum_{j\\in\\text{microstates}} e^{-\\beta E_j}"} className="ic-math" />；
+        若按能级分组（简并度 <MathInline tex={"g(E)"} className="ic-math" />），也可写成{" "}
+        <MathInline tex={"Z=\\sum_E g(E)e^{-\\beta E}"} className="ic-math" />。
+      </p>
+    </section>
+  );
+}
+
+function computePoissonPmf(lambda: number, maxN: number): { p: number[]; tail: number } {
+  const out = new Array(maxN + 1).fill(0);
+  if (!(lambda >= 0)) return { p: out, tail: 1 };
+  out[0] = Math.exp(-lambda);
+  for (let n = 1; n <= maxN; n++) {
+    out[n] = out[n - 1]! * (lambda / n);
+  }
+  const mass = out.reduce((a, b) => a + b, 0);
+  return { p: out, tail: Math.max(0, 1 - mass) };
+}
+
+function sampleDiscreteFromCdf(cdf: number[]): number {
+  const u = Math.random();
+  for (let i = 0; i < cdf.length; i++) {
+    if (u <= cdf[i]!) return i;
+  }
+  return Math.max(0, cdf.length - 1);
+}
+
+function GrandCanonicalPoisson() {
+  // A minimal grand-canonical toy model where Z_N ∝ 1/N!  ⇒  𝒵 = Σ (e^{α})^N / N! = exp(e^{α})
+  // Here α := βμ (absorbing a constant like ln Z_1), so:
+  // ln 𝒵 = e^{α},   ⟨N⟩ = ∂_α ln 𝒵 = e^{α},   Var(N) = ∂_α^2 ln 𝒵 = e^{α}.
+  const ALPHA_MIN = -2.0;
+  const ALPHA_MAX = 5.0;
+
+  const [alpha, setAlpha] = useState(1.2);
+  const [isRunning, setIsRunning] = useState(true);
+  const [sampleN, setSampleN] = useState(0);
+  const [canvasTick, setCanvasTick] = useState(0);
+
+  const panelRef = useRef<HTMLDivElement | null>(null);
+  const canvasRef = useRef<HTMLCanvasElement | null>(null);
+  const sizeRef = useRef<{ w: number; h: number }>({ w: 640, h: 280 });
+
+  const stats = useMemo(() => {
+    const a = clamp(alpha, ALPHA_MIN, ALPHA_MAX);
+    const lambda = Math.exp(a);
+    const { p, tail } = computePoissonPmf(lambda, MAX_N);
+    const mass = 1 - tail;
+    const cdf: number[] = new Array(MAX_N + 1);
+    let acc = 0;
+    for (let n = 0; n <= MAX_N; n++) {
+      acc += mass > 0 ? p[n]! / mass : 0;
+      cdf[n] = acc;
+    }
+    const displayMaxN = clamp(Math.ceil(lambda + 6 * Math.sqrt(lambda + 1)), 24, MAX_N);
+    return {
+      alpha: a,
+      lambda,
+      lnXi: lambda,
+      mean: lambda,
+      varN: lambda,
+      pmf: p,
+      cdf,
+      displayMaxN,
+      tail,
+    };
+  }, [alpha]);
+
+  useEffect(() => {
+    const panel = panelRef.current;
+    const canvas = canvasRef.current;
+    if (!panel || !canvas) return;
+
+    const resize = () => {
+      const w = Math.max(280, panel.clientWidth);
+      const h = clamp(Math.round(w * 0.52), 220, 320);
+      sizeRef.current = { w, h };
+      applyCanvasSize(canvas, w, h);
+      setCanvasTick((t) => t + 1);
+    };
+
+    const ro = new ResizeObserver(resize);
+    ro.observe(panel);
+    resize();
+    return () => ro.disconnect();
+  }, []);
+
+  useEffect(() => {
+    if (!isRunning) return;
+    let raf = 0;
+    let last = 0;
+    let acc = 0;
+    const period = 0.55; // seconds per sample
+    const loop = (now: number) => {
+      if (!last) last = now;
+      const dt = Math.min(0.05, (now - last) / 1000);
+      last = now;
+      acc += dt;
+      if (acc >= period) {
+        acc = acc % period;
+        setSampleN(sampleDiscreteFromCdf(stats.cdf.slice(0, stats.displayMaxN + 1)));
+      }
+      raf = window.requestAnimationFrame(loop);
+    };
+    raf = window.requestAnimationFrame(loop);
+    return () => window.cancelAnimationFrame(raf);
+  }, [isRunning, stats.cdf, stats.displayMaxN]);
+
+  useEffect(() => {
+    const canvas = canvasRef.current;
+    if (!canvas) return;
+    const ctx = canvas.getContext("2d");
+    if (!ctx) return;
+
+    const theme = getThemeColors();
+    const { w, h } = sizeRef.current;
+    const padL = 46;
+    const padR = 16;
+    const padT = 28;
+    const padB = 30;
+    const plotW = w - padL - padR;
+    const plotH = h - padT - padB;
+
+    const maxN = stats.displayMaxN;
+    const barW = plotW / (maxN + 1);
+
+    let yMax = 0;
+    for (let n = 0; n <= maxN; n++) yMax = Math.max(yMax, stats.pmf[n] ?? 0);
+    yMax = yMax > 0 ? yMax * 1.12 : 1;
+
+    const xOf = (n: number) => padL + n * barW;
+    const yOf = (p: number) => padT + plotH - (p / yMax) * plotH;
+
+    // background
+    ctx.clearRect(0, 0, w, h);
+    ctx.fillStyle = theme.surface;
+    ctx.fillRect(0, 0, w, h);
+
+    // axis + grid
+    ctx.strokeStyle = theme.border;
+    ctx.lineWidth = 1;
+    ctx.beginPath();
+    ctx.moveTo(padL, padT);
+    ctx.lineTo(padL, padT + plotH);
+    ctx.lineTo(padL + plotW, padT + plotH);
+    ctx.stroke();
+
+    ctx.font = "12px ui-sans-serif, system-ui, -apple-system, Segoe UI, Roboto, Helvetica, Arial";
+    ctx.fillStyle = theme.muted;
+    ctx.textBaseline = "middle";
+    ctx.textAlign = "right";
+    for (const frac of [0, 0.5, 1]) {
+      const yv = yMax * frac;
+      const py = yOf(yv);
+      ctx.globalAlpha = frac === 0 ? 0.3 : 0.18;
+      ctx.beginPath();
+      ctx.moveTo(padL, py);
+      ctx.lineTo(padL + plotW, py);
+      ctx.stroke();
+      ctx.globalAlpha = 1;
+      ctx.fillText(yv.toFixed(frac === 0 ? 0 : 2), padL - 8, py);
+    }
+
+    // title
+    ctx.textAlign = "left";
+    ctx.textBaseline = "alphabetic";
+    ctx.fillStyle = theme.text;
+    ctx.font = "13px ui-sans-serif, system-ui, -apple-system, Segoe UI, Roboto, Helvetica, Arial";
+    ctx.fillText("P(N) under grand canonical (Poisson toy model)", padL, 16);
+
+    // mean line
+    const meanX = padL + stats.mean * barW;
+    ctx.strokeStyle = theme.accent;
+    ctx.globalAlpha = 0.75;
+    ctx.beginPath();
+    ctx.moveTo(meanX, padT);
+    ctx.lineTo(meanX, padT + plotH);
+    ctx.stroke();
+    ctx.globalAlpha = 1;
+
+    // bars
+    for (let n = 0; n <= maxN; n++) {
+      const p = stats.pmf[n] ?? 0;
+      const x = xOf(n);
+      const y = yOf(p);
+      const hh = padT + plotH - y;
+      const isHit = n === sampleN;
+      ctx.fillStyle = isHit ? theme.accent : theme.primary;
+      ctx.globalAlpha = isHit ? 0.92 : 0.72;
+      ctx.fillRect(x + 0.6, y, Math.max(1, barW - 1.2), hh);
+    }
+    ctx.globalAlpha = 1;
+
+    // x labels
+    ctx.fillStyle = theme.muted;
+    ctx.textAlign = "center";
+    ctx.textBaseline = "top";
+    const ticks = [0, Math.floor(maxN / 2), maxN].filter((v, i, a) => a.indexOf(v) === i);
+    for (const t of ticks) {
+      ctx.fillText(String(t), xOf(t) + barW * 0.5, padT + plotH + 6);
+    }
+
+    // sample marker label
+    const markerX = xOf(sampleN) + barW * 0.5;
+    ctx.fillStyle = theme.text;
+    ctx.textAlign = "center";
+    ctx.textBaseline = "bottom";
+    ctx.font = "12px ui-monospace, SFMono-Regular, Menlo, Monaco, Consolas, Liberation Mono, Courier New, monospace";
+    ctx.fillText(`N=${sampleN}`, markerX, padT - 4);
+  }, [stats, sampleN, canvasTick]);
+
+  return (
+    <section className="ic-card">
+      <header className="ic-header">
+        <div className="ic-title">
+          <div className="ic-title-main">巨正则直觉：调 μ 看 P(N)</div>
+          <div className="ic-title-sub">
+            用一个可解玩具模型把{" "}
+            <MathInline
+              tex={"\\mathcal{Z}\\,\\to\\,\\ln\\mathcal{Z}\\,\\to\\,\\langle N\\rangle\\,\\to\\,\\mathrm{Var}(N)"}
+              className="ic-math"
+            />{" "}
+            串起来。
+            这里把 <MathInline tex={"\\alpha:=\\beta\\mu"} className="ic-math" />（吸收常数）作为旋钮，得到{" "}
+            <MathInline tex={"P(N)=e^{-\\lambda}\\,\\lambda^N/N!"} className="ic-math" />，其中{" "}
+            <MathInline tex={"\\lambda=e^{\\alpha}"} className="ic-math" />。
+          </div>
+        </div>
+        <div className="ic-controls">
+          <label className="ic-slider">
+            <span className="ic-slider-label">
+              α = βμ = <span className="ic-mono">{stats.alpha.toFixed(2)}</span>
+            </span>
+            <input
+              type="range"
+              min={ALPHA_MIN}
+              max={ALPHA_MAX}
+              step={0.01}
+              value={stats.alpha}
+              onChange={(e) => setAlpha(clamp(Number(e.target.value) || 0, ALPHA_MIN, ALPHA_MAX))}
+            />
+          </label>
+          <button className="ic-btn ic-btn-primary" onClick={() => setIsRunning((v) => !v)}>
+            {isRunning ? "暂停采样" : "开始采样"}
+          </button>
+          <button className="ic-btn" onClick={() => setSampleN(sampleDiscreteFromCdf(stats.cdf.slice(0, stats.displayMaxN + 1)))}>
+            采样一次
+          </button>
+        </div>
+      </header>
+
+      <div ref={panelRef} className="ic-flow-panel">
+        <canvas ref={canvasRef} className="ic-canvas" aria-label="Grand canonical P(N) canvas" />
+      </div>
+
+      <div className="ic-metrics">
+        <div className="ic-metric">
+          <div className="ic-metric-label">
+            λ <MathInline tex={"=e^{\\alpha}"} className="ic-math" />
+          </div>
+          <div className="ic-metric-value">
+            <span className="ic-mono">{stats.lambda.toFixed(3)}</span>
+          </div>
+        </div>
+        <div className="ic-metric">
+          <div className="ic-metric-label">
+            <MathInline tex={"\\ln\\mathcal{Z}"} className="ic-math" />{" "}
+            <MathInline tex={"=e^{\\alpha}"} className="ic-math" />
+          </div>
+          <div className="ic-metric-value">
+            <span className="ic-mono">{stats.lnXi.toFixed(3)}</span>
+          </div>
+        </div>
+        <div className="ic-metric">
+          <div className="ic-metric-label">
+            ⟨N⟩ <MathInline tex={"=\\partial_{\\alpha}\\ln\\mathcal{Z}"} className="ic-math" />
+          </div>
+          <div className="ic-metric-value">
+            <span className="ic-mono">{stats.mean.toFixed(3)}</span>
+          </div>
+        </div>
+        <div className="ic-metric">
+          <div className="ic-metric-label">
+            Var(N) <MathInline tex={"=\\partial_{\\alpha}^2\\ln\\mathcal{Z}"} className="ic-math" />
+          </div>
+          <div className="ic-metric-value">
+            <span className="ic-mono">{stats.varN.toFixed(3)}</span>
+          </div>
+        </div>
+        <div className="ic-metric">
+          <div className="ic-metric-label">Sample N(t)</div>
+          <div className="ic-metric-value">
+            <span className="ic-mono">{sampleN}</span>
+          </div>
+        </div>
+      </div>
+
+      <p className="ic-footnote">
+        这不是“巨正则的全部”，但它把两件最关键的结构钉死：①{" "}
+        <MathInline tex={"\\mathcal{Z}"} className="ic-math" /> 只是权重的归一化常数；②{" "}
+        <MathInline tex={"\\ln\\mathcal{Z}"} className="ic-math" /> 的导数生成均值与涨落。更一般情形为{" "}
+        <MathInline tex={"\\mathcal{Z}=\\sum_N e^{\\beta\\mu N} Z_N"} className="ic-math" />（见 M4 Part 2）。
+      </p>
+    </section>
+  );
+}
+
 function computeFlow(drive: number) {
   const stay = 0.28;
   const cw = 1 + drive;
@@ -984,6 +1617,8 @@ function NetFlow() {
 const COMPONENT_MAP: Record<string, React.FC> = {
   "entropy-counter": EntropyCounter,
   "logit-partition": LogitPartition,
+  "two-level-schottky": TwoLevelSchottky,
+  "grand-canonical-poisson": GrandCanonicalPoisson,
   "net-flow": NetFlow,
 };
 
