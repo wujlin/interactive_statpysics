@@ -602,8 +602,9 @@ function LogitPartition() {
     const probs = weights.map((w) => w / Z);
     const entropy = -probs.reduce((acc, p) => acc + (p > 0 ? p * Math.log(p) : 0), 0);
     const logZ = Math.log(Z);
-    const inclusive = -logZ / beta;
-    return { Z, probs, entropy, logZ, inclusive };
+    const freeEnergy = -logZ / beta;
+    const logsum = logZ / beta;
+    return { Z, probs, entropy, logZ, freeEnergy, logsum };
   }, [beta, costs]);
 
   function shuffleCosts() {
@@ -676,9 +677,15 @@ function LogitPartition() {
           </div>
         </div>
         <div className="ic-metric">
-          <div className="ic-metric-label">-log Z / β</div>
+          <div className="ic-metric-label">logsum = log Z / β</div>
           <div className="ic-metric-value">
-            <span className="ic-mono">{metrics.inclusive.toFixed(2)}</span>
+            <span className="ic-mono">{metrics.logsum.toFixed(2)}</span>
+          </div>
+        </div>
+        <div className="ic-metric">
+          <div className="ic-metric-label">F = -log Z / β</div>
+          <div className="ic-metric-value">
+            <span className="ic-mono">{metrics.freeEnergy.toFixed(2)}</span>
           </div>
         </div>
         <div className="ic-metric">
@@ -691,7 +698,8 @@ function LogitPartition() {
 
       <p className="ic-footnote">
         当 <MathInline tex={"\\beta"} className="ic-math" /> 增大时，分布向“最低成本”集中；当{" "}
-        <MathInline tex={"\\beta\\to 0"} className="ic-math" /> 时，分布趋于均匀。
+        <MathInline tex={"\\beta\\to 0"} className="ic-math" /> 时，分布趋于均匀。logsum 增大表示“选项集合更好”（可达性/福利提升），对应自由能{" "}
+        <MathInline tex={"F=-(1/\\beta)\\ln Z"} className="ic-math" /> 下降。
       </p>
     </section>
   );
