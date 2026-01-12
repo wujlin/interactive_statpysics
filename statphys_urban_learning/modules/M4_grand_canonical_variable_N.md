@@ -172,7 +172,7 @@ E=\sum_r n_r\varepsilon_r,\qquad N=\sum_r n_r.
 - \(\mathcal{A}=\{0,1,2,\dots\}\)（玻色子） \(\to\) [[Bose–Einstein 分布 Bose-Einstein distribution]]
 - \(\langle n_r\rangle\ll 1\)（经典极限） \(\to\) [[Maxwell–Boltzmann 分布 Maxwell-Boltzmann distribution]]
 
-完整推导（含活度 \(z=e^{\beta\mu}\)、玻色收敛条件 \(\mu<\varepsilon_0\)、以及 MB 密度公式 \(n(\mathbf x)=(1/\lambda_T^3)e^{\beta(\mu-U(\mathbf x))}\)）见：[[从巨配分函数到 Fermi–Dirac / Bose–Einstein / Maxwell–Boltzmann（占据数法）]]。
+完整推导（含活度 \(z=e^{\beta\mu}\)、玻色收敛条件 \(\mu<\varepsilon_0\)、以及 MB 密度公式 \(n(\mathbf x)=(1/\lambda_T^3)e^{\beta(\mu-U(\mathbf x))}\)（其中 \(U(\mathbf x)\) 为外势/势能））见：[[从巨配分函数到 Fermi–Dirac / Bose–Einstein / Maxwell–Boltzmann（占据数法）]]。
 
 > 记号提醒：本仓库统一用 \(\mathcal{Z}\) 表示巨配分函数；符号约定见：[[符号约定与映射（本仓库统一：Swendsen 体系）]]。
 

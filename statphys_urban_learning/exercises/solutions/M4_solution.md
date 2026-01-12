@@ -1,9 +1,92 @@
 ---
 type: solution
 id: M4_solution
-title: M4 参考解答：巨配分函数导数（规模与涨落）与 OD（起讫矩阵）最大熵乘子结构
+title: M4 参考解答：同一最小 KL/最大熵引擎（巨正则与 OD）
 tags: [grand-canonical, chemical-potential, maxent, od, solution]
 ---
+
+## (0) 通用引擎：最小 KL \(\Rightarrow\) 指数族；\(\ln Z\) 的导数 \(\Rightarrow\) 均值与协方差
+
+在有限状态空间 \(\mathcal{Z}\) 上，给定 prior \(q(z)>0\)，考虑
+\[
+\min_{p}\; KL(p\|q)
+\quad\text{s.t.}\quad
+\sum_{z} p(z)=1,\;\;
+\mathbb{E}_p[f_k(z)]=F_k\ (k=1,\dots,K),
+\]
+其中
+\[
+KL(p\|q)=\sum_{z\in\mathcal{Z}} p(z)\ln\frac{p(z)}{q(z)}.
+\]
+
+构造拉格朗日函数（\(\alpha\) 处理归一化，\(\lambda_k\) 处理矩约束）：
+\[
+\mathcal{L}(p,\alpha,\lambda)
+=\sum_{z} p(z)\ln\frac{p(z)}{q(z)}
+-\alpha\left(\sum_z p(z)-1\right)
+-\sum_{k=1}^K \lambda_k\left(\sum_z p(z)f_k(z)-F_k\right).
+\]
+
+对每个 \(p(z)\) 求偏导并令 0。用到的唯一恒等式是
+\(\frac{\partial}{\partial p}\big[p\ln(p/q)\big]=\ln(p/q)+1\)。因此
+\[
+0=\frac{\partial\mathcal{L}}{\partial p(z)}
+=\ln\frac{p(z)}{q(z)}+1-\alpha-\sum_{k}\lambda_k f_k(z).
+\]
+整理得
+\[
+\ln\frac{p(z)}{q(z)}=\alpha-1+\sum_k \lambda_k f_k(z)
+\quad\Rightarrow\quad
+p(z)=q(z)\,e^{\alpha-1}\exp\!\Big(\sum_k \lambda_k f_k(z)\Big).
+\]
+
+用归一化 \(\sum_z p(z)=1\) 吸收常数 \(e^{\alpha-1}\)。令
+\[
+Z(\lambda)\equiv \sum_z q(z)\exp\!\Big(\sum_k \lambda_k f_k(z)\Big),
+\]
+则
+\[
+1=e^{\alpha-1}Z(\lambda)\quad\Rightarrow\quad e^{\alpha-1}=\frac{1}{Z(\lambda)}.
+\]
+于是最优解写成指数族：
+\[
+\boxed{
+p_\lambda(z)=\frac{1}{Z(\lambda)}\,q(z)\exp\!\Big(\sum_k \lambda_k f_k(z)\Big)
+}.
+\]
+
+接下来推导 \(\ln Z\) 的导数规则。一阶导：
+\[
+\frac{\partial Z}{\partial \lambda_k}
+=\sum_z q(z)\,f_k(z)\exp\!\Big(\sum_j \lambda_j f_j(z)\Big)
+\quad\Rightarrow\quad
+\frac{\partial}{\partial \lambda_k}\ln Z
+=\frac{1}{Z}\frac{\partial Z}{\partial \lambda_k}
+=\sum_z f_k(z)\,p_\lambda(z)
+=\mathbb{E}_{p_\lambda}[f_k(z)].
+\]
+
+二阶导可以从“对期望再求导”得到。先写出
+\[
+\partial_{\lambda_\ell}\ln p_\lambda(z)
+= f_\ell(z)-\partial_{\lambda_\ell}\ln Z
+= f_\ell(z)-\mathbb{E}_{p_\lambda}[f_\ell(z)],
+\]
+因此
+\[
+\partial_{\lambda_\ell}p_\lambda(z)
+=p_\lambda(z)\Big(f_\ell(z)-\mathbb{E}_{p_\lambda}[f_\ell]\Big).
+\]
+于是
+\[
+\frac{\partial^2}{\partial \lambda_k\partial \lambda_\ell}\ln Z
+=\frac{\partial}{\partial \lambda_\ell}\mathbb{E}_{p_\lambda}[f_k]
+=\sum_z f_k(z)\,\partial_{\lambda_\ell}p_\lambda(z)
+=\mathbb{E}[f_k f_\ell]-\mathbb{E}[f_k]\mathbb{E}[f_\ell]
+=\mathrm{Cov}_{p_\lambda}(f_k,f_\ell).
+\]
+
+> 当 \(q\) 取均匀分布时，最小化 \(KL(p\|q)\) 与最大化熵是等价的（只差一个常数）。
 
 ## (1) 巨正则分布与巨配分函数
 
@@ -69,8 +152,8 @@ KL(T\|Q)=\sum_{ij} T_{ij}\ln\frac{T_{ij}}{Q_{ij}}
 \[
 \mathcal{L}
 =\sum_{ij} T_{ij}\ln\frac{T_{ij}}{Q_{ij}}
-\sum_i \alpha_i\Big(\sum_j T_{ij}-O_i\Big)
-\sum_j \gamma_j\Big(\sum_i T_{ij}-D_j\Big).
++\sum_i \alpha_i\Big(\sum_j T_{ij}-O_i\Big)
++\sum_j \gamma_j\Big(\sum_i T_{ij}-D_j\Big).
 \]
 
 对每个 \(T_{ij}\) 求偏导并令 0（注意 \(\partial(T\ln T)/\partial T=\ln T+1\)）：
@@ -90,13 +173,62 @@ a_i=\exp(-\alpha_i),\qquad b_j=\exp(-\gamma_j)\times e^{-1},
 \]
 其中 \(a_i,b_j\) 由边际约束唯一确定（这就是 IPF/RAS 的出发点）。
 
-## (4) 无成本 prior vs 带成本 prior 的直觉
+## (4) \(\beta\) 的意义：无成本 prior vs 带成本 prior
 
-- 无成本 prior：若 \(Q_{ij}\) 是常数（或仅与 \(i,j\) 无关），则 \(T\) 的结构主要由边际 \(O_i,D_j\) 决定，等价于“在边际约束下最均匀/最少偏见”的基线。
-- 带成本 prior：若 \(Q_{ij}=\exp(-\beta c_{ij})\)，当 \(\beta\) 增大时高成本（大 \(c_{ij}\)）的条目被指数抑制，通常会：
-  - 降低平均成本 \(\sum_{ij} T_{ij}c_{ij}/\sum_{ij}T_{ij}\)
-  - 减少长距离/跨区流占比（若成本与距离正相关）
-  - 使流量更“局域化”（更集中在低成本对上）
+### (4.1) \(Q_{ij}\) 为常数：显式基线 \(T_{ij}=\frac{O_i D_j}{N_{\text{tot}}}\)
+
+当 \(Q_{ij}\) 是常数时，(3) 给出 \(T_{ij}=a_i b_j Q_{ij}\)，吸收常数后等价于
+\[
+T_{ij}=a_i b_j.
+\]
+记总量 \(N_{\text{tot}}=\sum_i O_i=\sum_j D_j\)。由行和约束：
+\[
+O_i=\sum_j T_{ij}=\sum_j a_i b_j=a_i\sum_j b_j.
+\]
+令 \(B\equiv \sum_j b_j\)，则 \(a_i=O_i/B\)。同理列和约束给出：
+\[
+D_j=\sum_i T_{ij}=\sum_i a_i b_j=b_j\sum_i a_i.
+\]
+令 \(A\equiv \sum_i a_i\)，则 \(b_j=D_j/A\)。再由
+\[
+A=\sum_i a_i=\sum_i \frac{O_i}{B}=\frac{N_{\text{tot}}}{B}
+\quad\Rightarrow\quad
+B=\frac{N_{\text{tot}}}{A},
+\]
+消去 \(A,B\) 得到
+\[
+\boxed{
+T_{ij}=\frac{O_i D_j}{N_{\text{tot}}}
+}.
+\]
+直觉：当 prior 不提供任何“谁更偏好谁”的结构时，最小 KL（最少偏见）只能把信息压缩到边际上，因此得到一个只由 \(O_i,D_j\) 决定的独立基线（秩 1）。
+
+### (4.2) \(Q_{ij}=\exp(-\beta c_{ij})\)：熵项 + \(\beta\)×成本项
+
+从
+\[
+KL(T\|Q)=\sum_{ij}T_{ij}\ln\frac{T_{ij}}{Q_{ij}}
+\]
+展开：
+\[
+KL(T\|Q)=\sum_{ij}T_{ij}\ln T_{ij}-\sum_{ij}T_{ij}\ln Q_{ij}.
+\]
+若 \(Q_{ij}=\exp(-\beta c_{ij})\)，则 \(\ln Q_{ij}=-\beta c_{ij}\)，因此
+\[
+KL(T\|Q)=\sum_{ij}T_{ij}\ln T_{ij}
+\;+\;\beta\sum_{ij}T_{ij}c_{ij}.
+\]
+（若把 \(T\) 视作“总量固定的概率质量”，还会差一个与常数有关的项，但不影响最优解的结构与方向性。）
+
+这把 (4) 题变成非常直观的权衡：
+- \(\sum_{ij}T_{ij}\ln T_{ij}\)：倾向于“更分散/更均匀”（熵更大）；
+- \(\sum_{ij}T_{ij}c_{ij}\)：倾向于“更低成本/更短距离”；
+- \(\beta\) 控制两者谁更重要：\(\beta\) 越大，越“成本敏感”（更像降温），流量更集中到低 \(c_{ij}\) 的 OD 对上。
+
+因此当 \(\beta\) 增大时，通常会看到：
+- 平均成本下降；
+- 长距离/跨区流占比下降（若成本随距离上升）；
+- 集中度上升、矩阵熵下降（更多流量压到少数低成本对上）。
 
 ## (5) 理想气体：\(\langle N\rangle\) 与 \(\mu\) 的关系（\(\mu=k_BT\ln(n\lambda_T^3)\)）
 
@@ -104,7 +236,17 @@ a_i=\exp(-\alpha_i),\qquad b_j=\exp(-\gamma_j)\times e^{-1},
 
 ### Step 1：先算单粒子正则配分函数 \(Z_1(T,V)\)
 
-经典单粒子（无外势，只有动能）的能量为
+这一步很多人会卡在一个“突然出现的写法”上：为什么单粒子能量要写成 \(\varepsilon(\mathbf p,\mathbf x)\)？
+
+原因很简单：在经典统计里，单粒子的**微观态**就是相空间点 \((\mathbf x,\mathbf p)\)。正则系综的权重是 \(e^{-\beta \varepsilon}\)，因此我们必须把能量写成“给定一个相空间点时它的能量是多少”的函数。
+
+对最常见的非相对论粒子，单粒子能量（哈密顿量）由**动能 + 外势能**组成：
+\[
+\varepsilon(\mathbf p,\mathbf x)=\frac{\mathbf p^2}{2m}+U(\mathbf x).
+\]
+这里 \(U(\mathbf x)\) 表示外势/势能（空间非均匀性），**不是**热力学里“内能 \(U\)”的那个 \(U\)。
+
+本题讨论均匀理想气体（无外势），因此取 \(U(\mathbf x)\equiv 0\)，得到
 \[
 \varepsilon(\mathbf p)=\frac{\mathbf p^2}{2m}.
 \]

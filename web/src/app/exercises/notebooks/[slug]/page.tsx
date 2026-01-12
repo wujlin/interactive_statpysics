@@ -1,6 +1,7 @@
 import Link from "next/link";
 import { notFound } from "next/navigation";
 
+import { OdSensitivityDemo } from "@/components/demos/OdSensitivityDemo";
 import { getExerciseNotebookBySlug, listExerciseNotebooks } from "@/lib/exercises";
 
 export function generateStaticParams() {
@@ -36,6 +37,12 @@ export default async function ExerciseNotebookPage({ params }: { params: Promise
           </p>
         </details>
       </section>
+
+      {slug === "E05_sensitivity_od" ? (
+        <section className="stack">
+          <OdSensitivityDemo />
+        </section>
+      ) : null}
 
       <section className="card">
         <h2>本地运行</h2>

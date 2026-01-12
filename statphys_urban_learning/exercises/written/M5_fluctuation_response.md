@@ -1,56 +1,72 @@
 ---
 type: exercise
 id: M5_written
-title: M5 涨落—响应：导数=协方差（指数族通用结构）
+title: M5 涨落—响应：灵敏度由差异性决定
 difficulty: 2
-tags: [fluctuation-response, exponential-family, sensitivity]
+tags: [fluctuation-response, static-FDT, policy-sensitivity]
 ---
 
 # M5 涨落—响应 — Written
 
+## 核心叙事
+本模块的核心不再是单纯的推导指数族性质，而是要建立统计物理中最深刻的直觉之一：**系统的微观差异性（涨落）决定了它对宏观政策的敏感度（响应）。**
+
+---
+
 ## 题目
 
-### (1) 指数族的“导数=协方差”结构（推导骨架）
+### (1) 静态涨落-耗散定理 (Static FDT)
 
-考虑指数族
-\[
-p_\theta(x)=\frac{1}{Z(\theta)}\exp\big(\theta^\top f(x)\big),
-\qquad Z(\theta)=\sum_x \exp\big(\theta^\top f(x)\big).
-\]
+在热力学中，我们经常想知道：稍微调大一点参数 $\lambda$（例如增加由于拥堵带来的惩罚），系统的平均状态 $\langle H \rangle$（例如平均通勤耗时）会怎么变？
 
-证明（或写出最小推导骨架）：
-\[
-\frac{\partial}{\partial\theta}\,\mathbb{E}_\theta[f(x)]
-=\mathrm{Cov}_\theta\!\big(f(x),f(x)\big).
-\]
-（一维情形就是 \(\partial_\theta \mathbb{E}[f]=\mathrm{Var}(f)\)。）
+考虑系统概率分布 $P_\lambda(x) = \frac{1}{Z(\lambda)} e^{-\lambda H(x)}$。
 
-### (2) 城市映射：\(\beta\) 变化如何影响“集中程度”
+1.  **响应 (Response)**：
+    推导平均值对参数 $\lambda$ 的**敏感度**（一阶导数）：
+    $$ \chi = \frac{\partial \langle H \rangle_\lambda}{\partial \lambda} $$
+    请写出详细推导步骤，证明它等于：
+    $$ \chi = -\text{Var}_\lambda(H) = -(\langle H^2 \rangle - \langle H \rangle^2) $$
 
-把 logit/softmax 写成 Boltzmann 形式：
-\[
-p(i)\propto \exp\big(-\beta c_i\big),
-\]
-其中 \(\beta\) 可以理解为“理性度/噪声强度的倒数”。用 5–10 句话解释：\(\beta\) 变大/变小会让分布更尖/更平，以及这对城市流动/选择意味着什么。
+2.  **物理诠释**：
+    这个公式左边是「响应」（施加控制后系统变了多少），右边是「涨落」（不施加控制时系统自己乱动的程度）。
+    *   **符号的意义**：为什么必须是负的？（提示：$\lambda$ 是成本的权重，增加 $\lambda$ 意味着什么？）
+    *   **大小的意义**：如果一个系统在平衡态下完全没有涨落（$\text{Var}(H)=0$，所有人行为一致），通过调节 $\lambda$ 能改变它的状态吗？
 
 ---
 
-## 提示（先做 20–30 分钟再看）
+### (2) 城市映射：僵化的系统 vs 活跃的系统
 
-- (1) 先证明 \(\partial_\theta \ln Z=\mathbb{E}[f]\)，再对两边求一次导数。
-- (1) 用到的唯一技巧：\(\partial_\theta p_\theta(x)=p_\theta(x)\big(f(x)-\mathbb{E}[f]\big)\)。
-- (2) 自检可以看两个极限：\(\beta\to 0\) 与 \(\beta\to\infty\)。
+假设我们有两个城市区域 A 和 B，居民正在进行出行方式选择（开车 vs 公交）。我们用简单的 MaxEnt 模型描述，$\lambda$ 是对能耗高的方式的惩罚系数。
+
+我们**不需要**知道具体的成本函数 $H(x)$，只需要观察现状：
+
+*   **城市 A**：人群选择非常多样化，有的开车有的坐公交，能耗分布的方差很大 ($\text{Var}(H)_A = 100$)。
+*   **城市 B**：人群行为高度一致（例如绝大多数人都开车，或者绝大多数都坐公交），能耗分布的方差很小 ($\text{Var}(H)_B = 10$)。
+
+**公共政策问题**：
+政府决定推行一项新的“节能减排”政策，统一轻微提高对高能耗行为的惩罚 $\lambda$（例如由 $\lambda$ 变为 $\lambda + \delta$）。
+
+1.  **预测**：根据你在题 (1) 中推导的定理，**哪个城市的平均能耗下降得更多**？请定量给出两者响应幅度的比值。
+2.  **直觉**：用通俗的语言解释为什么？（提示：想象一个“热”的系统和一个“冷”的系统，谁更容易被只有微弱力量的“风”吹动？）
 
 ---
 
-## 自检（Self-Check）
+## 提示
 
-- [ ] 你写出的推导是否只依赖 \(Z(\theta)\) 的一阶/二阶导？
-- [ ] 一维情况下，你得到的是 \(\partial_\theta \mathbb{E}[f]=\mathrm{Var}(f)\ge 0\) 吗？
-- [ ] \(\beta\to 0\) 时分布应趋于“更均匀”；\(\beta\to\infty\) 时分布应集中到最小成本项。
+1.  **导数技巧**：回忆 $\frac{\partial}{\partial \lambda} \ln Z = -\langle H \rangle$。
+2.  **商法则/链式法则**：对 $\langle H \rangle = \sum x P(x) H(x)$ 求导时，核心在于 $\partial_\lambda P(x)$ 的展开。
+3.  **城市直觉**：方差大意味着系统处于一种“模棱两可”的高熵状态，这种状态下微小的外力就能打破平衡，导致大批人倒向另一边。方差小意味着系统被“锁死”在一个深势阱里，微小的外力不足以将其推出来。
+
+---
+
+## 自检 (Self-Check)
+
+- [ ] 数学上，你是否得到了 $\chi = -\text{Var}(H)$？注意负号是否存在。
+- [ ] 逻辑上，你是否理解了为什么**不需要**求解具体的模型（logit/probit等）就能预测响应？（因为涨落包含了所有需要的局部信息）。
+- [ ] 城市叙事上，你是否把“差异性/多样性”看作是系统“灵活性/可塑性”的标志？
 
 ---
 
 ## 参考解答
 
-👉 [查看参考解答](../solutions/M5_solution.md)（建议自己推导完成后再核对）
+👉 [查看参考解答](../solutions/M5_solution.md)

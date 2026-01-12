@@ -22,6 +22,16 @@ C_V = \frac{\mathrm{Var}(E)}{k_B T^2}.
   - 一阶导给均值：\(\partial_{\lambda_k}\ln Z = -\mathbb{E}[f_k]\)
   - 二阶导给协方差：\(\partial_{\lambda_k}\partial_{\lambda_\ell}\ln Z = \mathrm{Cov}(f_k,f_\ell)\)
 
+**关键提醒（避免常见误解）**
+- 二阶导给的是“协方差矩阵”（涨落矩阵）：对角元是方差，非对角元是协方差。
+  - \(k=\ell\)：\(\partial_{\lambda_k}^2\ln Z=\mathrm{Var}(f_k)\)
+  - \(k\neq \ell\)：\(\partial_{\lambda_k}\partial_{\lambda_\ell}\ln Z=\mathrm{Cov}(f_k,f_\ell)\)
+- 如果你问的是“量 \(A\)”对“偏好 \(B\)”的旋钮的响应（能量里有 \(-\lambda B(x)\)），通用形式是：
+\[
+\frac{\partial\langle A\rangle}{\partial \lambda}=\beta\,\mathrm{Cov}(A,B),
+\]
+其中“二阶导=方差”只是取 \(A=B\) 的特例。
+
 ## 直觉
 - “波动大”意味着系统对外界扰动更敏感（容易被推着走）。
 - 临界点附近涨落变大 ⇒ 响应变大（易感性峰值）。

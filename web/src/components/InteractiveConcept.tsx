@@ -4,6 +4,8 @@ import katex from "katex";
 import type { ReactNode } from "react";
 import { useEffect, useMemo, useRef, useState } from "react";
 
+import { FiniteSizeScalingDemo } from "@/components/demos/FiniteSizeScalingDemo";
+
 type Rect = { x: number; y: number; w: number; h: number };
 type Point = { x: number; y: number };
 type ThemeColors = {
@@ -1620,13 +1622,328 @@ function NetFlow() {
   );
 }
 
+function MeanFieldBifurcation() {
+  const MIN_BETA = 0;
+  const MAX_BETA = 3;
+
+  const [beta, setBeta] = useState(0.9);
+  const [isPlaying, setIsPlaying] = useState(false);
+
+  const containerRef = useRef<HTMLDivElement | null>(null);
+  const canvasRef = useRef<HTMLCanvasElement | null>(null);
+
+  const fixedPoints = useMemo(() => {
+    const f = (m: number) => Math.tanh(beta * m) - m;
+    const roots: number[] = [];
+
+    const grid = 900;
+    let prevM = -1;
+    let prevF = f(prevM);
+
+    const bisect = (a0: number, b0: number, fa0: number, fb0: number) => {
+      let a = a0;
+      let b = b0;
+      let fa = fa0;
+      let fb = fb0;
+      for (let it = 0; it < 60; it++) {
+        const mid = (a + b) / 2;
+        const fm = f(mid);
+        if (fa * fm <= 0) {
+          b = mid;
+          fb = fm;
+        } else {
+          a = mid;
+          fa = fm;
+        }
+      }
+      return (a + b) / 2;
+    };
+
+    for (let i = 1; i <= grid; i++) {
+      const m = -1 + (2 * i) / grid;
+      const fm = f(m);
+
+      if (prevF === 0) roots.push(prevM);
+      if (fm === 0) roots.push(m);
+      if (prevF * fm < 0) roots.push(bisect(prevM, m, prevF, fm));
+
+      prevM = m;
+      prevF = fm;
+    }
+
+    roots.sort((a, b) => a - b);
+    const dedup: number[] = [];
+    const eps = 2e-3;
+    for (const r of roots) {
+      if (!Number.isFinite(r)) continue;
+      const v = clamp(r, -1, 1);
+      const last = dedup[dedup.length - 1];
+      if (dedup.length === 0 || Math.abs(v - last) > eps) dedup.push(v);
+    }
+
+    return dedup.map((m) => {
+      const slope = beta * (1 - m * m);
+      const stable = slope < 1;
+      return { m, slope, stable };
+    });
+  }, [beta]);
+
+  useEffect(() => {
+    if (!isPlaying) return;
+    let raf = 0;
+    let lastMs = 0;
+    const speed = 0.55; // beta units per second
+    const loop = (now: number) => {
+      if (!lastMs) lastMs = now;
+      const dt = Math.min(0.05, (now - lastMs) / 1000);
+      lastMs = now;
+      setBeta((prev) => {
+        const next = prev + speed * dt;
+        return next > MAX_BETA ? MIN_BETA : next;
+      });
+      raf = window.requestAnimationFrame(loop);
+    };
+    raf = window.requestAnimationFrame(loop);
+    return () => window.cancelAnimationFrame(raf);
+  }, [isPlaying]);
+
+  useEffect(() => {
+    const container = containerRef.current;
+    const canvas = canvasRef.current;
+    if (!container || !canvas) return;
+    const containerEl = container;
+    const canvasEl = canvas;
+
+    const resize = () => {
+      const w = containerEl.clientWidth;
+      const h = clamp(Math.round(w * 0.62), 240, 360);
+      applyCanvasSize(canvasEl, w, h);
+    };
+
+    const ro = new ResizeObserver(resize);
+    ro.observe(containerEl);
+    resize();
+    return () => ro.disconnect();
+  }, []);
+
+  useEffect(() => {
+    const canvas = canvasRef.current;
+    const ctx = canvas?.getContext("2d");
+    if (!canvas || !ctx) return;
+
+    const dpr = window.devicePixelRatio || 1;
+    const w = canvas.width / dpr;
+    const h = canvas.height / dpr;
+
+    const theme = getThemeColors();
+    ctx.clearRect(0, 0, w, h);
+    ctx.fillStyle = theme.surface;
+    ctx.fillRect(0, 0, w, h);
+
+    const padL = 44;
+    const padR = 16;
+    const padT = 18;
+    const padB = 36;
+    const pw = w - padL - padR;
+    const ph = h - padT - padB;
+
+    const xMin = -1;
+    const xMax = 1;
+    const yMin = -1;
+    const yMax = 1;
+
+    const xTo = (x: number) => padL + ((x - xMin) / (xMax - xMin)) * pw;
+    const yTo = (y: number) => padT + (1 - (y - yMin) / (yMax - yMin)) * ph;
+
+    ctx.strokeStyle = theme.border;
+    ctx.lineWidth = 1;
+    ctx.beginPath();
+    ctx.rect(padL, padT, pw, ph);
+    ctx.stroke();
+
+    // Axes + grid
+    ctx.font = "12px ui-sans-serif, system-ui, -apple-system, Segoe UI, Roboto, Helvetica, Arial";
+    ctx.fillStyle = theme.muted;
+    ctx.textBaseline = "middle";
+    const ticks = [-1, -0.5, 0, 0.5, 1];
+    for (const t of ticks) {
+      const px = xTo(t);
+      const py = yTo(t);
+
+      ctx.globalAlpha = t === 0 ? 0.35 : 0.18;
+      ctx.beginPath();
+      ctx.moveTo(px, padT);
+      ctx.lineTo(px, padT + ph);
+      ctx.stroke();
+
+      ctx.beginPath();
+      ctx.moveTo(padL, py);
+      ctx.lineTo(padL + pw, py);
+      ctx.stroke();
+      ctx.globalAlpha = 1;
+
+      ctx.textAlign = "center";
+      ctx.fillText(t.toFixed(1), px, padT + ph + 14);
+      ctx.textAlign = "right";
+      ctx.fillText(t.toFixed(1), padL - 8, py);
+    }
+
+    // y = x (reference line)
+    ctx.strokeStyle = theme.muted;
+    ctx.lineWidth = 1.8;
+    ctx.setLineDash([6, 6]);
+    ctx.beginPath();
+    ctx.moveTo(xTo(-1), yTo(-1));
+    ctx.lineTo(xTo(1), yTo(1));
+    ctx.stroke();
+    ctx.setLineDash([]);
+
+    // y = tanh(beta x)
+    ctx.strokeStyle = theme.primary;
+    ctx.lineWidth = 2.4;
+    ctx.beginPath();
+    const n = 520;
+    for (let i = 0; i < n; i++) {
+      const x = -1 + (2 * i) / (n - 1);
+      const y = Math.tanh(beta * x);
+      const px = xTo(x);
+      const py = yTo(y);
+      if (i === 0) ctx.moveTo(px, py);
+      else ctx.lineTo(px, py);
+    }
+    ctx.stroke();
+
+    // Intersections
+    for (const fp of fixedPoints) {
+      const x = fp.m;
+      const y = fp.m;
+      const px = xTo(x);
+      const py = yTo(y);
+      const r = 5.2;
+
+      ctx.save();
+      if (fp.stable) {
+        ctx.fillStyle = theme.accent;
+        ctx.strokeStyle = "rgba(0,0,0,0.18)";
+        ctx.lineWidth = 1.5;
+        ctx.beginPath();
+        ctx.arc(px, py, r, 0, Math.PI * 2);
+        ctx.fill();
+        ctx.stroke();
+      } else {
+        ctx.strokeStyle = theme.accent;
+        ctx.lineWidth = 2.2;
+        ctx.beginPath();
+        ctx.arc(px, py, r, 0, Math.PI * 2);
+        ctx.stroke();
+      }
+      ctx.restore();
+    }
+
+    // Labels
+    ctx.fillStyle = theme.muted;
+    ctx.textAlign = "left";
+    ctx.textBaseline = "top";
+    ctx.fillText(`β = ${beta.toFixed(2)}   (βc = 1)`, padL, 8);
+    ctx.fillText("x = m", padL + pw - 44, padT + ph + 6);
+    ctx.save();
+    ctx.translate(16, padT + 10);
+    ctx.rotate(-Math.PI / 2);
+    ctx.fillText("y", 0, 0);
+    ctx.restore();
+  }, [beta, fixedPoints]);
+
+  const pointSummary = useMemo(() => {
+    const fmt = (m: number) => (Math.abs(m) < 1e-3 ? "0" : m.toFixed(3));
+    const values = fixedPoints.map((p) => fmt(p.m)).join(", ");
+    const stable = fixedPoints
+      .filter((p) => p.stable)
+      .map((p) => fmt(p.m))
+      .join(", ");
+    const unstable = fixedPoints
+      .filter((p) => !p.stable)
+      .map((p) => fmt(p.m))
+      .join(", ");
+    return { values: values || "—", stable: stable || "—", unstable: unstable || "—" };
+  }, [fixedPoints]);
+
+  return (
+    <section className="ic-card">
+      <header className="ic-header">
+        <div className="ic-title">
+          <div className="ic-title-main">
+            平均场分叉（Graphical Solution）：<MathInline tex={"m=\\tanh(\\beta m)"} className="ic-math" />
+          </div>
+          <div className="ic-title-sub">
+            这张图只做一件事：画出 <MathInline tex={"y=x"} className="ic-math" /> 与{" "}
+            <MathInline tex={"y=\\tanh(\\beta x)"} className="ic-math" /> 的交点。β 经过{" "}
+            <MathInline tex={"\\beta_c\\approx 1"} className="ic-math" /> 后，交点从 1 个变成 3 个（分叉）。
+          </div>
+        </div>
+        <div className="ic-controls">
+          <label className="ic-slider">
+            <span className="ic-slider-label">
+              β = <span className="ic-mono">{beta.toFixed(2)}</span>
+            </span>
+            <input
+              type="range"
+              min={MIN_BETA}
+              max={MAX_BETA}
+              step={0.01}
+              value={beta}
+              onChange={(e) => setBeta(clamp(Number(e.target.value) || 1, MIN_BETA, MAX_BETA))}
+            />
+          </label>
+          <button className={"ic-btn " + (isPlaying ? "ic-btn-primary" : "")} onClick={() => setIsPlaying((v) => !v)}>
+            {isPlaying ? "暂停动画" : "播放动画"}
+          </button>
+          <button className="ic-btn ic-btn-ghost" onClick={() => setBeta(1)} disabled={isPlaying}>
+            跳到 β=1
+          </button>
+        </div>
+      </header>
+
+      <div ref={containerRef} className="ic-flow-panel">
+        <canvas ref={canvasRef} className="ic-canvas" aria-label="Mean-field bifurcation canvas" />
+      </div>
+
+      <div className="ic-metrics">
+        <div className="ic-metric">
+          <div className="ic-metric-label">固定点（交点）</div>
+          <div className="ic-metric-value">
+            <span className="ic-mono">{pointSummary.values}</span>
+          </div>
+        </div>
+        <div className="ic-metric">
+          <div className="ic-metric-label">稳定 / 不稳定</div>
+          <div className="ic-metric-value">
+            <span className="ic-mono">
+              stable: {pointSummary.stable}
+              <br />
+              unstable: {pointSummary.unstable}
+            </span>
+          </div>
+        </div>
+      </div>
+
+      <p className="ic-footnote">
+        这里把 <MathInline tex={"Jz"} className="ic-math" /> 吸收到{" "}
+        <MathInline tex={"\\beta"} className="ic-math" />（只看几何结构）。圆点是稳定解；空心圈是不稳定解（在迭代
+        <MathInline tex={"m\\leftarrow\\tanh(\\beta m)"} className="ic-math" /> 时会被推出去）。
+      </p>
+    </section>
+  );
+}
+
 // --- Main Registry ---
 
 const COMPONENT_MAP: Record<string, React.FC> = {
   "entropy-counter": EntropyCounter,
+  "finite-size-scaling": FiniteSizeScalingDemo,
   "logit-partition": LogitPartition,
   "two-level-schottky": TwoLevelSchottky,
   "grand-canonical-poisson": GrandCanonicalPoisson,
+  "mean-field-bifurcation": MeanFieldBifurcation,
   "net-flow": NetFlow,
 };
 

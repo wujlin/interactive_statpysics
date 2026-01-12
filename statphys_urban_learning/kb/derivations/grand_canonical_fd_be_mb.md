@@ -231,11 +231,27 @@ z e^{-\beta\varepsilon_r}\ll 1.
 
 ---
 
-## 7) Maxwell–Boltzmann 密度公式（把“单态占据”变成“空间密度”）
-若你想从“单粒子态占据”走到更常用的“空间密度 \(n(\mathbf x)\)”，可在经典极限下把单粒子能量写成
+### 7) Maxwell–Boltzmann 密度公式（从“能级”回到“空间”）
+
+此前我们讨论的是抽象能级 \(r\) 的占据数。但在经典极限下，能级非常密集，我们更关心**粒子在相空间 \((\mathbf x, \mathbf p)\) 中的分布**。
+
+我们需要写出单粒子的能量函数（哈密顿量）\(\varepsilon(\mathbf x, \mathbf p)\)。对于最常见的非相对论粒子，这个能量可以拆解为两部分：
+
+1.  **动能项（Kinetic）** \(\frac{\mathbf p^2}{2m}\)：与位置无关，只取决于动量/速度。这代表了粒子“运动”的普适代价。
+2.  **势能项（Potential）** \(U(\mathbf x)\)：与动量无关，只取决于位置。这代表了空间的非均匀性（如重力场、吸引力场或城市里的房租/区位成本）。
+
+因此写为：
 \[
 \varepsilon(\mathbf p,\mathbf x)=\frac{\mathbf p^2}{2m}+U(\mathbf x).
 \]
+
+**为什么要写成这种分离形式？**
+因为它允许我们在数学上实现**动量与位置的解耦**：
+\[
+e^{-\beta\varepsilon} = e^{-\beta \frac{\mathbf p^2}{2m}} \cdot e^{-\beta U(\mathbf x)}.
+\]
+这意味我们可以单独对动量 \(\mathbf p\) 积分（算出各种常数因子），而把剩下的位置因子 \(e^{-\beta U(\mathbf x)}\) 直接留给空间密度分布。这就是为什么你在城市模型里往往只看到 \(e^{-\beta Cost}\) 而看不到动量项的原因——动量项被积掉了。
+
 此时局域相空间分布（每个相空间元的平均占据）具有 Maxwell–Boltzmann 形状：
 \[
 f(\mathbf p,\mathbf x)\propto z\,\exp\!\left[-\beta\left(\frac{\mathbf p^2}{2m}+U(\mathbf x)\right)\right].
