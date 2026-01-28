@@ -16,12 +16,26 @@
 - Why this paper?
   - 把“系综”从动力学假设（各态历经）抽离出来，改写为“信息不完备下的推断问题”；
   - 给出最大熵 ⇒ 指数族的推断框架，是本项目 M1→M3/M4→城市 MaxEnt 的统一入口。
+- Reading prompt（带着问题去读）
+  - 这篇论文真正“重新定义”的对象是什么：是热力学量，还是“概率分布的来源”？
+  - 在 Jaynes 的视角里，\(\beta\)、\(\mu\) 这类拉格朗日乘子究竟代表“物理温度/化学势”，还是“你手里缺失信息的影子”？
+- Modern lens（用今天的语言复述）
+  - MaxEnt 等价于：在满足约束下，选择熵最大的分布；更一般可视为在给定先验测度下最小化 KL（最小信息增量）。
+  - 指数族、log-partition function（\(\ln Z\)）与凸优化的对偶结构，统一解释了“为什么 \(\ln Z\) 的导数会给出平均与协方差”。
+- Exercise（用今天的符号重做一遍）
+  - 用 MaxEnt 推出 \(p(x)\propto e^{-\beta E(x)}\)，并显式写出 \(\partial_\beta \ln Z\) 与 \(\partial_\beta^2\ln Z\) 的物理含义；再用一个最小离散例子数值验证（对应：`exercises/notebooks/E01_maxent_discrete_numeric.ipynb`）。
 
 ### SP-M1-Jaynes1957-II
 - E. T. Jaynes, “Information Theory and Statistical Mechanics. II,” *Physical Review* **108**, 171–190 (1957).
 - Why this paper?
   - 进一步讨论约束、先验测度与可交换性等关键细节，能帮助你理解“最大熵的边界在哪里”；
   - 适合作为你把 MaxEnt 从“会推导”提升到“会批判/会用”的分水岭阅读。
+- Reading prompt（带着问题去读）
+  - 约束一旦变复杂（非线性/不完备），MaxEnt 的“最诚实”到底指什么？哪些地方需要你明确先验测度？
+- Modern lens（用今天的语言复述）
+  - 这篇更接近“MaxEnt = 推断原则”的边界讨论：你必须说清楚你在最大化的到底是哪一个熵（以及相对于什么基准）。
+- Exercise（用今天的符号重做一遍）
+  - 选一个非均匀先验测度（或基准分布）\(\pi_0(x)\)，证明“最大相对熵”给出 \(p(x)\propto \pi_0(x)\exp(-\sum_k\lambda_k f_k(x))\)，并讨论它在城市 OD 推断里对应什么“先验结构”。
 
 ### SP-M1-Boltzmann1877
 - L. Boltzmann, “Über die Beziehung zwischen dem zweiten Hauptsatze der mechanischen Wärmetheorie und der Wahrscheinlichkeitsrechnung …” (1877).
@@ -82,6 +96,13 @@
 - Why this paper?
   - 给出布朗运动的最小可检验预测：均方位移随时间线性增长，并把扩散系数 \(D\) 与温度/阻力（迁移率）联系起来；
   - 它是涨落—耗散思想的历史起点：微观“乱动”的强度与宏观“好推”的程度必须匹配，否则就会违背平衡。
+- Reading prompt（带着问题去读）
+  - 这篇论文里哪些量是“可观测”的（位移分布/均方位移）？哪些量是“间接引入”的（扩散系数、摩擦/迁移率）？
+  - Einstein 关系 \(D\sim k_BT/\zeta\) 的逻辑链条到底依赖哪些平衡假设？
+- Modern lens（用今天的语言复述）
+  - 这篇工作在现代语言里对应：扩散方程（或 Langevin/FP）给出 \(p(x,t)\)，而平衡要求把“扩散流”与“漂移/耗散”绑定（涨落—耗散的一维原型）。
+- Exercise（用今天的符号重做一遍）
+  - 用“零净流 \(J=0\)”推导 Einstein 关系的最短版本，并用数值实验验证均方位移 \(\langle (x(t)-x(0))^2\rangle\propto t\)（可对照：`kb/sources/guides/Einstein_1905_Brownian.md` 与 M9 的 OU/扩散闭环）。
 
 ### SP-M5-Onsager1931
 - L. Onsager, “Reciprocal Relations in Irreversible Processes. I,” *Physical Review* **37**, 405–426 (1931).
@@ -128,6 +149,14 @@
 - Why this paper?
   - 给出临界普适性的机制解释：临界点处不同尺度的涨落耦合，必须用“粗粒化 + 流”来组织；
   - 读它能让你知道：哪些结论是“尺度不变”带来的，哪些依赖微观细节（城市系统做标度时尤其要谨慎）。
+- Reading prompt（带着问题去读）
+  - Wilson 解决的“主问题”不是算出某个 \(Z\)，而是解释：为什么会出现幂律？为什么指数是这些数？为什么不同系统会相同？
+  - 找到文中把“粗粒化 = 对短尺度自由度求和”讲清楚的关键段落，并用你自己的话复述它。
+- Modern lens（用今天的语言复述）
+  - RG 可以看作对“有效模型”的迭代映射：参数随尺度流动，固定点给出普适行为；relevant/irrelevant 方向解释了“哪些微观差异会被洗掉”。
+  - FSS/data collapse 是 RG 在有限系统上的可操作投影：用不同 \(L\) 代替不同观察尺度。
+- Exercise（用今天的符号重做一遍）
+  - 在 2D Ising 的有限尺寸数据上做一次 \(\chi\) 的 data collapse，并从 \(\chi_{\max}(L)\) 拟合外推出 \(\gamma/\nu\)（对应：`exercises/notebooks/E07_ising_critical_signals.ipynb` 与模块 `modules/M7b_renormalization_group.md`）。
 
 ## M8（Markov / 主方程 / 细致平衡与净流）
 
@@ -156,3 +185,30 @@
 - Why this paper?
   - 解释为什么 SDE 不是普通微积分：离散化规则决定了漂移项的含义（Itô vs Stratonovich）；
   - 是你把 Euler–Maruyama 当作“可控的数值实验”而不是“拍脑袋算法”的理论底座。
+
+## M10（NESS / 熵产生 / 不可逆性刻度）
+
+### SP-M10-Schnakenberg1976
+- J. Schnakenberg, “Network theory of microscopic and macroscopic behavior of master equation systems,” *Reviews of Modern Physics* **48**, 571–585 (1976).
+- Why this paper?
+  - 给出把“主方程系统”写成网络并定义熵产生的经典框架：用边流与对数比值量化不可逆性；
+  - 非常适合作为 M10 的最小闭环：细致平衡 \(\Leftrightarrow\) 环流为零 \(\Leftrightarrow\) 熵产生为零。
+- Reading prompt（带着问题去读）
+  - 这篇论文里“网络表示”到底解决了什么难点？它把哪些量变成了可加的、可分解的对象？
+  - 熵产生的表达式里，哪一部分对应“流”，哪一部分对应“力”（对数比值）？
+- Modern lens（用今天的语言复述）
+  - 对离散 Markov 跳跃过程，EPR 可写成 \(\sum J_{ij}\ln(J_{ij}^+/J_{ij}^-)\) 的形式；它是 NESS 不可逆性的可计算刻度。
+- Exercise（用今天的符号重做一遍）
+  - 任选一个三态环流模型，算出稳态 \(\pi\)、净流 \(J_{ij}\) 与 \(\sigma_{\mathrm{ss}}\)，并验证当你把驱动调到 0 时 \(\sigma_{\mathrm{ss}}\to 0\)（对应：[[p06_entropy_production/README]] 与 `modules/M10_nonequilibrium_steady_state_entropy_production.md`）。
+
+### SP-M10-LebowitzSpohn1999
+- J. L. Lebowitz and H. Spohn, “A Gallavotti–Cohen-type symmetry in the large deviation functional for stochastic dynamics,” *Journal of Statistical Physics* **95**, 333–365 (1999).
+- Why this paper?
+  - 给出 NESS 里“熵产生/不可逆性”的更深层结构：在大偏差层面出现的对称性把第二定律写成概率论陈述；
+  - 适合作为 M10 的“前沿一跳”：知道它存在即可，不要求推导细节。
+- Reading prompt（带着问题去读）
+  - 这篇论文里“对称性”究竟是对什么对象的对称？它与“时间反演”是什么关系？
+- Modern lens（用今天的语言复述）
+  - 这条线索最终导向涨落定理：\(\Pr(\Delta S<0)\) 虽非零但被指数压制；是非平衡“第二定律”的概率版本。
+- Exercise（用今天的符号重做一遍）
+  - 在三态环流上做一个最小数值实验：统计有限时间窗内的熵产生增量分布，观察其对称性是否近似出现（只要求定性，不要求收敛到严格极限）。
