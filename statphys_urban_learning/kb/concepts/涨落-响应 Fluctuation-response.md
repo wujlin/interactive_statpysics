@@ -22,7 +22,7 @@ C_V = \frac{\mathrm{Var}(E)}{k_B T^2}.
   - 一阶导给均值：\(\partial_{\lambda_k}\ln Z = -\mathbb{E}[f_k]\)
   - 二阶导给协方差：\(\partial_{\lambda_k}\partial_{\lambda_\ell}\ln Z = \mathrm{Cov}(f_k,f_\ell)\)
 
-**关键提醒（避免常见误解）**
+**关键提醒**（避免常见误解）
 - 二阶导给的是“协方差矩阵”（涨落矩阵）：对角元是方差，非对角元是协方差。
   - \(k=\ell\)：\(\partial_{\lambda_k}^2\ln Z=\mathrm{Var}(f_k)\)
   - \(k\neq \ell\)：\(\partial_{\lambda_k}\partial_{\lambda_\ell}\ln Z=\mathrm{Cov}(f_k,f_\ell)\)

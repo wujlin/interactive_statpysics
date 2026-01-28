@@ -198,7 +198,7 @@ $$\tau \frac{\partial f}{\partial t} = \frac{\langle \Delta^2 \rangle_\tau}{2} \
 
 $$D \equiv \frac{\langle \Delta^2 \rangle_\tau}{2\tau}$$
 
-得到著名的**扩散方程（热方程）**：
+得到著名的**扩散方程**（热方程）：
 
 $$\boxed{\frac{\partial f}{\partial t} = D \frac{\partial^2 f}{\partial x^2}}$$
 

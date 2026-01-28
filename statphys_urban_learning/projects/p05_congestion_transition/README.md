@@ -5,10 +5,10 @@
 这种非线性的突变行为无法用线性外推预测，是城市韧性 (Resilience) 的核心。
 
 ## 统计物理对应
-- **自由流 (Free Flow)** $\leftrightarrow$ **气体相 / 无序相**
-- **拥堵流 (Congested Flow)** $\leftrightarrow$ **液体相 / 晶体 / 有序相（紧密排列）**
+- **自由流**（Free Flow）$\leftrightarrow$ **气体相 / 无序相**
+- **拥堵流**（Congested Flow）$\leftrightarrow$ **液体相 / 晶体 / 有序相**（紧密排列）
 - **临界密度 $\rho_c$** $\leftrightarrow$ **相变点 $T_c$**
-- **基本图 (Fundamental Diagram)** $\leftrightarrow$ **物态方程 (Equation of State)**
+- **基本图**（Fundamental Diagram）$\leftrightarrow$ **物态方程**（Equation of State）
 
 ## 你将产出
 1. **Nagel-Schreckenberg (NaSch) 模型**: 写一个最简单的 1D 细胞自动机 (CA)。

@@ -6,18 +6,20 @@
 
 ## TL;DR (30秒概览)
 这一章填补了从分布（Part I）到模拟（Part II）的缺口。
-核心矛盾：如果有分布 $P \propto e^{-\beta E}$，我们怎么构造一个动力学过程，让它收敛到这个分布？这既是 MCMC 的原理，也是非平衡过程的基础。
+核心矛盾：如果有分布 $p \propto e^{-\beta E}$，我们怎么构造一个动力学过程，让它收敛到这个分布？这既是 MCMC 的原理，也是非平衡过程的基础。
 重点理解 **Detailed Balance**。
+
+> 记号提醒：Swendsen 原文常用大写 $P_i$ 表示“处在状态 $i$ 的概率”。为了避免与本仓库离散时间 Markov 链的转移矩阵 $P_{ij}$ 混淆，这份导读统一用小写 $p_i$ 表示分布。
 
 ## Key Equations (公式锚点)
 
 - **Eq 18.2**: 主方程 (Master Equation)
-  \[ \frac{dP_j}{dt} = \sum_i (W_{ij} P_i - W_{ji} P_j) \]
+  \[ \frac{dp_j}{dt} = \sum_i (W_{ij} p_i - W_{ji} p_j) \]
   - *含义*: 概率流的守恒方程。
 
 - **Eq 18.5**: 细致平衡 (Detailed Balance)
-  \[ W_{ij} P_i^{eq} = W_{ji} P_j^{eq} \]
-  - *含义*: 保证稳态解是 $P^{eq}$ 的充分条件。Metropolis 算法就是构造满足此式子的 $W$。
+  \[ W_{ij} p_i^{eq} = W_{ji} p_j^{eq} \]
+  - *含义*: 保证稳态解是 $p^{eq}$ 的充分条件。Metropolis 算法就是构造满足此式子的 $W$。
 
 ## Signposts (阅读路标)
 

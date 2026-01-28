@@ -1,6 +1,6 @@
 import numpy as np
 
-from projects.p02_markov_migration.src.markov import (
+from projects.p03_markov_migration.src.markov import (
     stationary_distribution,
     net_flux,
     detailed_balance_violation,

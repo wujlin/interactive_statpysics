@@ -4,7 +4,11 @@ import katex from "katex";
 import type { ReactNode } from "react";
 import { useEffect, useMemo, useRef, useState } from "react";
 
+import { ClusterChainReactionDemo } from "@/components/demos/ClusterChainReactionDemo";
+import { DiffusionHeatmapDemo } from "@/components/demos/DiffusionHeatmapDemo";
+import { EffectiveCouplingDemo } from "@/components/demos/EffectiveCouplingDemo";
 import { FiniteSizeScalingDemo } from "@/components/demos/FiniteSizeScalingDemo";
+import { OuProcessDemo } from "@/components/demos/OuProcessDemo";
 
 type Rect = { x: number; y: number; w: number; h: number };
 type Point = { x: number; y: number };
@@ -1939,7 +1943,11 @@ function MeanFieldBifurcation() {
 
 const COMPONENT_MAP: Record<string, React.FC> = {
   "entropy-counter": EntropyCounter,
+  "cluster-chain-reaction": ClusterChainReactionDemo,
+  "effective-coupling": EffectiveCouplingDemo,
   "finite-size-scaling": FiniteSizeScalingDemo,
+  "ou-process": OuProcessDemo,
+  "diffusion-heatmap": DiffusionHeatmapDemo,
   "logit-partition": LogitPartition,
   "two-level-schottky": TwoLevelSchottky,
   "grand-canonical-poisson": GrandCanonicalPoisson,

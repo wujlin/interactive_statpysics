@@ -16,7 +16,7 @@ Z(\beta) = \sum_x e^{-\beta E(x)}.
 \]
 
 ## 为什么是“对 microstates 求和”
-配分函数的底层定义是对**微观态（microstates）**求和/积分：概率分配在微观态上，而能量 \(E(x)\) 是微观态的函数，因此
+配分函数的底层定义是对**微观态**（microstates）求和/积分：概率分配在微观态上，而能量 \(E(x)\) 是微观态的函数，因此
 \[
 Z=\sum_{x\in\text{microstates}} e^{-\beta E(x)}.
 \]

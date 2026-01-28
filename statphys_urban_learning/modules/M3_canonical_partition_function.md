@@ -67,13 +67,13 @@ M2 里的系统是**孤立**的（Energy fixed），这叫微正则。但现实�
 
 \[ Z = \sum_i e^{-\beta E_i} \]
 
-乍一看 \(Z\) 只是个归一化常数（为了让 \(\sum p_i = 1\)）。但它其实是**生成函数（Generating Function）**。
+乍一看 \(Z\) 只是个归一化常数（为了让 \(\sum p_i = 1\)）。但它其实是**生成函数**（generating function）。
 这就好比你有一个多项式 \(f(x) = \sum a_n x^n\)，它的系数 \(a_n\) 藏着信息。对 \(Z\) 而言：
 - 取对数：\(F = -k_B T \ln Z\)（直接得到自由能！）
 - 求一阶导：\(\langle E \rangle = -\frac{\partial \ln Z}{\partial \beta}\)（得到内能）
 - 求对体积导数：\(P = k_B T \frac{\partial \ln Z}{\partial V}\)（得到压强）
 
-**记住：Z 知道一切。** 你不需要去分别对 \(E\) 或 \(P\) 积分，你只需要把 \(Z(\beta, V, N)\) 算出来，然后求导就行了。
+**记住**：\(Z\) 知道一切。你不需要去分别对 \(E\) 或 \(P\) 积分，你只需要把 \(Z(\beta, V, N)\) 算出来，然后求导就行了。
 
 更关键的一点是：\(F\) 不是“另起炉灶的新量”，而是一个真正的**势函数**。一方面，\(F(T,V,N)\) 以 \((T,V,N)\) 为自然变量，通过偏导直接生成 \(S,P,\mu\)；另一方面，在固定 \((T,V,N)\) 的实验条件下，自发过程让 \(F\) 降低、平衡态对应 \(F\) 的最小值（这就是势函数的极值判据）。这些基本关系与 Legendre 变换的热力学版本见：[[热力学势 Thermodynamic potentials]]、[[Legendre 变换 从 U 到 F 到 G]]。
 
@@ -86,7 +86,7 @@ Swendsen Chapter 19（例如 Eq 19.53–19.60）给出了从 \(\ln Z\) 导出 \(
 ## Part 3：涨落与响应——硬币的两面
 
 正则系综里的能量不是常数，它在涨落。
-你可能会问：“**既然能量在变，凭什么用热力学内能 \(U\)（一个定值）来代表它？**”
+你可能会问：“**既然能量在变，凭什么用热力学内能 \(U\)（一个定值）来代表它**？”
 
 答案在于**大数定律**。相对涨落 \(\frac{\sigma_E}{\langle E \rangle} \sim \frac{1}{\sqrt{N}}\)。对于 \(10^{23}\) 个粒子，涨落极小，可以忽略。
 但这个涨落本身极为重要，它与系统的**热容**（Heat Capacity）直接相关：
@@ -106,7 +106,7 @@ Swendsen Chapter 19（例如 Eq 19.53–19.60）给出了从 \(\ln Z\) 导出 \(
 
 ## Part 4：城市映射——离散选择 (Logit)
 
-在城市模型中，正则系综对应着最经典的 **Logit 模型（Multinomial Logit, MNL）**。
+在城市模型中，正则系综对应着最经典的 **Logit 模型**（Multinomial Logit, MNL）。
 - **微观态**：个体的选择（如：选哪条路，买哪个房）。
 - **能量 \(E\)**：广义成本（时间、票价、舒适度）。
 - **温度 \(\beta\)**：选择的敏感度（或不理性程度）。
@@ -138,7 +138,7 @@ Swendsen Chapter 19（例如 Eq 19.53–19.60）给出了从 \(\ln Z\) 导出 \(
 - [ ] **Written**: `exercises/written/M3_lnZ_derivatives.md`
   - 核心任务：证明 \(\langle E \rangle = -\partial_\beta \ln Z\) 和 \(\text{Var}(E) = \partial^2 \ln Z\)。
 - [ ] **Interactive**: 两能级系统的 \(Z\) 与 \(C_V(T)\)（本页上方交互图）
-- [ ] **Notebook（可选，用于复现）**: `exercises/notebooks/E03_canonical_analytic.ipynb`
+- [ ] **Notebook**（可选，用于复现）: `exercises/notebooks/E03_canonical_analytic.ipynb`
   - 同一模型的解析推导与作图代码（可在本地 Jupyter 复现）。
 
 ### 验收标准

@@ -475,6 +475,29 @@ pre {
   background: rgba(127, 127, 127, 0.12);
 }
 
+.markdown table {
+  width: 100%;
+  border-collapse: collapse;
+  margin: 0.9em 0;
+  border: 1px solid var(--border);
+  border-radius: 12px;
+  overflow: hidden;
+  background: var(--surface-solid);
+}
+
+.markdown th,
+.markdown td {
+  border: 1px solid var(--border);
+  padding: 8px 10px;
+  vertical-align: top;
+  text-align: left;
+}
+
+.markdown th {
+  font-weight: 700;
+  background: color-mix(in oklab, var(--surface-solid), var(--primary) 7%);
+}
+
 .markdown blockquote {
   padding-left: 12px;
   border-left: 4px solid rgba(127, 127, 127, 0.35);

@@ -173,8 +173,8 @@
   - [x] Notebook：`exercises/notebooks/E08_markov_migration.ipynb`
   - [x] Test：`exercises/tests/test_markov_tools.py`
   - [x] Code：`exercises/src/markov.py`
-  - [x] Project：`projects/p02_markov_migration/notebooks/P02_markov_migration.ipynb`
-  - [x] Test：`projects/p02_markov_migration/tests/test_markov_project.py`
+  - [x] Project：`projects/p03_markov_migration/notebooks/P03_markov_migration.ipynb`
+  - [x] Test：`projects/p03_markov_migration/tests/test_markov_project.py`
 
 ---
 
