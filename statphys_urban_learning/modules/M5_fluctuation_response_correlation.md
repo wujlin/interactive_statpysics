@@ -42,6 +42,15 @@ M5 的概念飞跃是把这两件事合并成一条可计算的主线：在平�
 Onsager (1931) 提出了一个惊人的假设：**宏观偏离的衰减规律，与微观自发涨落的衰减规律是一模一样的。**
 这意味着：我们不需要真的去“踢”系统一脚来通过实验测量它的恢复系数；我们只需要安安静静地观察它在平衡态的抖动（自相关函数），就能预测它受扰动后的行为。
 
+把它写成一句“可用的数学话”是：
+- 设 \(A(t)\) 是某个宏观可观测量（位置、磁化、流量……），\(\delta A(t):=A(t)-\langle A\rangle\)；
+- 自相关函数 \(C_{AA}(t):=\langle \delta A(t)\,\delta A(0)\rangle\)；
+- 在 \(t=0\) 施加一个很小扰动，让平均值偏离平衡 \(\delta\langle A(0)\rangle\neq 0\)，则回归假说断言：**回归的时间形状与自相关的时间形状一致（只差一个比例因子）**，
+  \[
+  \delta\langle A(t)\rangle \propto C_{AA}(t).
+  \]
+因此，“系统多快回到平衡”（弛豫时间尺度）可以从“系统在平衡态下怎么抖”（自相关的衰减尺度）读出来。
+
 > 👉 **深入理解**：
 > - [[相关函数 Correlation function]]：数学定义。
 
@@ -100,7 +109,7 @@ J = J_{\mathrm{diff}} + J_{\mathrm{drift}}
 0=-D(\beta n F)+n b F \quad\Rightarrow\quad D=\frac{b}{\beta}=k_BT\,b.
 \]
 
-**为什么要关心这一段**？因为它把“涨落=响应”从一句哲学断言，变成一个可检验、可复用的计算策略：你可以通过观测系统在平衡态下的随机扩散（无需施加外力），来推断它对外界微小驱动的线性响应强度。Part 3 会把这种结构推广到一般指数族：响应 \(\leftrightarrow\) 协方差（再乘上 \(\beta\)）。
+这段推导把“涨落 = 响应”从一句口号，变成一个可检验、可复用的策略：你可以通过观测系统在平衡态下的随机扩散（无需施加外力），来推断它对外界微小驱动的线性响应强度。Part 3 会把这种结构推广到一般指数族：响应 \(\leftrightarrow\) 协方差（再乘上 \(\beta\)）。
 
 ---
 
@@ -256,11 +265,48 @@ p_\lambda(x)=\frac{1}{Z(\lambda)}\exp[-\beta E_\lambda(x)].
 
 这就是“无需扰动的敏感性分析”（Sensitivity Analysis without Perturbation）：在模型已经写成指数族之后，**响应可以从现态协方差读出来**。
 
+### 一个最小例子：加费 10 元到底能“推”出多大变化？
+
+设某条过江通道当前的小时流量 \(Q\)（随机变量）在数据/模型下估计得到：
+- \(\langle Q\rangle = 10000\) 人次/小时  
+- \(\mathrm{Var}(Q)=1000^2\)（标准差 1000）
+
+若你把“收费” \(c\) 写进指数族（例如把成本线性耦合到流量），一个最简单的原型是：
+\[
+p(\text{状态}) \propto \exp\big(-\beta\,c\,Q(\text{状态})\big),
+\]
+则由 Part 3 的通用公式（响应 = \(\beta\) × 协方差），取 \(A=Q\)、\(B=Q\)（共轭响应）得到
+\[
+\frac{\partial \langle Q\rangle}{\partial c} = -\beta\,\mathrm{Var}(Q).
+\]
+因此你只要有一个成本敏感度 \(\beta\) 的估计，就能在不重跑模型的前提下做一阶预测：
+\[
+\Delta\langle Q\rangle \approx \frac{\partial \langle Q\rangle}{\partial c}\,\Delta c
+= -\beta\,\mathrm{Var}(Q)\,\Delta c.
+\]
+这个“\(\mathrm{Var}(Q)\) 越大，\(\langle Q\rangle\) 对加费越敏感”的结论，就是 FDT 在城市问题里最直接的可检验含义。
+
 > 👉 [[参数扰动与城市系统响应敏感性]]：FDT 在城市模型中的直接应用。
 
 ---
 
+## 自检问题
+
+1. Einstein 关系 \(D = k_B T b\) 是怎么从“平衡态无净通量 \(J=0\)”推出来的？
+2. 为什么热容公式里出现的是 \(\mathrm{Var}(E)\)，而不是 \(\mathrm{Cov}(E,M)\)？
+3. 在什么条件下，“涨落—响应关系”（线性响应/FDT）不再可靠？
+4. 如果你的城市模型是指数族形式，你想知道“涨价 10 元对拥堵的影响”，需要真的跑两次仿真吗？为什么？
+
 ## Part 5：动手时刻 (Checklist)
+
+### 数值验收提醒（误差条不是 \(1/\sqrt{N}\)）
+
+当你用 MCMC 采样估计 \(\langle A\rangle\)、\(\mathrm{Var}(A)\) 或协方差时，样本通常是相关的：误差不再按 \(1/\sqrt{N}\) 缩小。一个常用口径是用积分自相关时间 \(\tau_{\mathrm{int}}\) 定义有效样本量
+\[
+ESS \approx \frac{N}{\tau_{\mathrm{int}}},\qquad
+\mathrm{SE}(\bar A)\approx \sqrt{\frac{\mathrm{Var}(A)}{ESS}}.
+\]
+细节与可复现做法见：[[MCMC 误差估计 自相关时间与 Blocking]]。
 
 ### 必读
 - [ ] **Reading Guide**: [[Einstein_1905_Brownian]] (Abs & Intro)

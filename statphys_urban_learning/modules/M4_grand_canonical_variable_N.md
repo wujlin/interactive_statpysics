@@ -40,7 +40,7 @@ e^{-\beta(E-\mu N)},
 \]
 这不是“形式上的搬运”：它对应系统可能处在不同 \(N\) 分支上，而 \(\mathcal{Z}\) 把这些分支按权重加总，使得开放系统仍然可计算。接下来你会看到：\(\ln\mathcal{Z}\) 的一阶导数给平均规模 \(\langle N\rangle\)，二阶导数给规模涨落 \(\mathrm{Var}(N)\)；涨落大小本身就是响应强度（susceptibility）的可观测刻画。
 
-城市映射里，我们把 \(N\) 理解为人口/迁移事件数/OD 总需求规模，把 \(\mu\) 理解为与规模共轭的外参（吸引力/保留效用/准入门槛等，取决于你如何定义成本/效用）。因此 M4 的价值不只是“多一个符号”，而是提供一套把“外部条件变化 \(\Rightarrow\) 平均规模变化/波动放大”写成可检验预测的标准语言。
+城市映射（把 \(N\) 读成规模、把 \(\mu\) 读成吸引力/机会/门槛等外参）会在 Part 4 展开；这里先把巨正则的“数学骨架”钉死。
 
 ## References
 - **Gibbs 1902**: *Elementary Principles in Statistical Mechanics*. 导读见 [Seminal papers](/references/seminal_papers)（条目：`SP-M4-Gibbs1902`）。
@@ -142,39 +142,8 @@ J(T,V,\mu)\equiv -k_BT\ln \mathcal{Z}(T,V,\mu),
 
 <InteractiveConcept type="grand-canonical-poisson" />
 
-### 进阶：无相互作用量子气体与占据数表示
-
-巨正则里 \(N\) 在涨落。如果你仍然坚持“粒子视角”去追踪每个粒子的坐标/动量，那么微观态空间是 \(6N\) 维，**连维数都会随 \(N\) 改变**；把这样的对象塞进
-\(\mathcal{Z}=\sum_N e^{\beta\mu N}Z_N\) 的求和里，计算上几乎不可控。
-
-这里的观念转折来自 [[全同粒子与不可分辨性 Indistinguishability|全同粒子（indistinguishability）]]：对全同粒子系统，“粒子 A 在能级 1、粒子 B 在能级 2”与“A 在 2、B 在 1”不是两个不同的物理状态；可观测量不依赖粒子标签。于是，“谁在哪里”这类描述天然包含冗余信息；**唯一不冗余的微观态描述**是：每个单粒子能级（或模式）\(r\) 上有多少粒子 —— 记为占据数 \(n_r\)。
-
-这一步的读者收益是“降维打击”：从“追踪每个粒子（随 \(N\) 变维数）”切换到“追踪每个能级/位置（\(r\) 的集合固定）”。当系统无相互作用时，这个切换会把一个纠缠的 \(N\) 体计数问题，拆成一排相互独立的单能级问题。
-
-对无相互作用气体，用占据数 \(\{n_r\}\) 表示多体态时，
-\[
-E=\sum_r n_r\varepsilon_r,\qquad N=\sum_r n_r.
-\]
-代回巨正则权重 \(e^{-\beta(E-\mu N)}\)，指数对能级线性分解，从而巨配分函数因子化为
-\[
-\mathcal{Z}
-=\sum_{\{n_r\}} \exp\!\left[-\beta \sum_r n_r(\varepsilon_r-\mu)\right]
-=\prod_r \left[\sum_{n_r\in\mathcal{A}} e^{-\beta(\varepsilon_r-\mu)n_r}\right].
-\]
-因此 \(\ln\mathcal{Z}\) 也变成能级上的求和（每个“盒子”只管自己装几个粒子）。
-
-这里的集合 \(\mathcal{A}\) 不是“子系统 A”，而是**占据数 \(n_r\) 的允许取值集合**：它把“一个单粒子态最多能装几个粒子”这条物理规则写进了求和范围里。我们关心 \(\mathcal{A}\) 的原因在于：对无相互作用系统而言，巨正则推导的步骤几乎完全相同；不同统计（费米/玻色/经典极限）最终只在这一处发生分岔——**对 \(n_r\) 求和时允许取哪些值**。
-
-> 城市类比：这相当于从“追踪每辆车的轨迹（Lagrangian）”切换到“监测每条路段的流量（Eulerian）”。当我们只关心路网负载/拥堵（宏观态）时，不需要知道具体哪辆车在哪，只需要知道每条路 \(r\) 上的占据数 \(n_r\)。
-
-占据数允许集合 \(\mathcal{A}\) 的不同选择，直接导出了三大统计分布：
-- \(\mathcal{A}=\{0,1\}\)（费米子） \(\to\) [[Fermi–Dirac 分布 Fermi-Dirac distribution]]
-- \(\mathcal{A}=\{0,1,2,\dots\}\)（玻色子） \(\to\) [[Bose–Einstein 分布 Bose-Einstein distribution]]
-- \(\langle n_r\rangle\ll 1\)（经典极限） \(\to\) [[Maxwell–Boltzmann 分布 Maxwell-Boltzmann distribution]]
-
-完整推导（含活度 \(z=e^{\beta\mu}\)、玻色收敛条件 \(\mu<\varepsilon_0\)、以及 MB 密度公式 \(n(\mathbf x)=(1/\lambda_T^3)e^{\beta(\mu-U(\mathbf x))}\)（其中 \(U(\mathbf x)\) 为外势/势能））见：[[从巨配分函数到 Fermi–Dirac / Bose–Einstein / Maxwell–Boltzmann（占据数法）]]。
-
-> 记号提醒：本仓库统一用 \(\mathcal{Z}\) 表示巨配分函数；符号约定见：[[符号约定与映射（本仓库统一：Swendsen 体系）]]。
+### 进阶（可选）：无相互作用量子气体的占据数法
+如果你想把“巨配分函数为何能因子化为能级乘积”这一步看清楚，并顺手把 Fermi–Dirac / Bose–Einstein / Maxwell–Boltzmann 三大分布串成同一条推导链，见：[[从巨配分函数到 Fermi–Dirac / Bose–Einstein / Maxwell–Boltzmann（占据数法）]]。
 
 **过渡到 Part 3**  
 一阶导数给平均规模；那么二阶导数自然会给“规模的波动/涨落”。这就是巨正则版的涨落—响应关系。
@@ -256,6 +225,14 @@ E=\sum_r n_r\varepsilon_r,\qquad N=\sum_r n_r.
 
 ---
 
+## 自检问题
+1. 化学势 \(\mu\) 的两种理解方式是什么？它们在什么意义上是一致的？
+2. 为什么 \(\langle N\rangle=(1/\beta)\,\partial_\mu\ln\mathcal{Z}\)？试着从 \(P(x,N)\propto e^{-\beta(E-\mu N)}\) 出发推导。
+3. 在城市模型中，如果两座城市 \(\mu_A > \mu_B\)，人口会往哪个方向流动？（提示：平衡条件 \(\mu_A=\mu_B\)）
+4. 为什么说 \(\mathrm{Var}(N)\) 是“响应强度”的可观测刻画？（提示：\(\mathrm{Var}(N)=(1/\beta)\,\partial_\mu\langle N\rangle\)）
+
+---
+
 ## 通往下一章（M5）
 - 一旦 \(N\) 可以涨落，系统的“响应强度”就与涨落大小直接相连。
 - M5 会系统化地把“涨落 ↔ 响应 ↔ 协方差”写成可计算的关系。
@@ -269,7 +246,8 @@ E=\sum_r n_r\varepsilon_r,\qquad N=\sum_r n_r.
 ### 习题
 - [ ] **Written**: `exercises/written/M4_grand_canonical_notes.md`
   - 推导理想气体的 \(\langle N \rangle\) 与 \(\mu\) 的关系：\(\mu = k_B T \ln(n \lambda^3)\)。
-- [ ] **思考**：为什么光子气体的 \(\mu = 0\)？（提示：粒子数不守恒，但也无需“外部储库”）。
+- [ ] **思考（物理进阶，可选）**：为什么光子气体的 \(\mu = 0\)？（提示：粒子数不守恒）
+- [ ] **思考（城市版）**：如果一个区域对人口完全开放、几乎没有“准入门槛”，你会预期它的 \(\mu\) 相对更高还是更低？为什么？
 - [ ] **进阶推导**（无相互作用量子气体）：[[从巨配分函数到 Fermi–Dirac / Bose–Einstein / Maxwell–Boltzmann（占据数法）]]
 
 ### 验收标准

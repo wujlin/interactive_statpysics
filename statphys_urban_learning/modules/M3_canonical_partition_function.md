@@ -59,6 +59,34 @@ M2 里的系统是**孤立**的（Energy fixed），这叫微正则。但现实�
 
 这里的 \(\beta = 1/k_B T\) 是热库“强加”给系统的温度参数。能量越低的状态，概率越大；温度越高（\(\beta\) 越小），高能态的机会就越多。
 
+### 为什么是 \(e^{-\beta E}\)？（推导骨架）
+这条公式不是“假设出来的”，而是从 **“复合系统（系统 + 热库）仍然微正则”** 这一设定里长出来的。
+
+设小系统 \(S\) 的微观态为 \(i\)，能量为 \(E_i\)。让 \(S\) 与一个巨大的热库 \(R\) 弱耦合，总能量固定：
+\[
+E_{\text{tot}} = E_S + E_R \quad (\text{常数}).
+\]
+微正则的等概率原理告诉我们：复合系统在给定 \(E_{\text{tot}}\) 的能量壳上等概率。于是
+\[
+p_i \propto \Omega_R(E_{\text{tot}} - E_i),
+\]
+其中 \(\Omega_R\) 是热库在剩余能量下的多重度。
+
+把 \(\Omega_R\) 写成熵：
+\[
+S_R(E)=k_B\ln \Omega_R(E).
+\]
+由于热库很大、而 \(E_i\) 相对很小，可以对 \(S_R(E_{\text{tot}}-E_i)\) 在 \(E_{\text{tot}}\) 附近做一阶展开：
+\[
+S_R(E_{\text{tot}}-E_i)\approx S_R(E_{\text{tot}})-E_i\left(\frac{\partial S_R}{\partial E}\right)_{E_{\text{tot}}}.
+\]
+再用温度的统计定义 \(\left(\frac{\partial S}{\partial E}\right)=\frac{1}{T}\)，得到
+\[
+\Omega_R(E_{\text{tot}}-E_i)\propto \exp\!\left(-\frac{E_i}{k_B T}\right)=e^{-\beta E_i},
+\qquad \beta\equiv\frac{1}{k_B T}.
+\]
+最后用归一化常数把比例号变成等号，这个归一化常数就是配分函数 \(Z=\sum_i e^{-\beta E_i}\)。
+
 推导细节见 [[正则系综 Canonical ensemble]]；为什么微正则与正则在大系统极限下给出相同的宏观预测，可先从 [[热力学极限 Thermodynamic limit]] 的集中性结论理解。
 
 ---
@@ -102,6 +130,8 @@ Swendsen Chapter 19（例如 Eq 19.53–19.60）给出了从 \(\ln Z\) 导出 \(
 
 推导（不跳步）见：[[两能级系统的配分函数与 Schottky anomaly（热容单峰）]]。
 
+这里我们只用“能量涨落 \(\leftrightarrow\) 热容”做了一个最小例子；M5 会把“涨落—响应”的结构系统化（不只限于能量），并把它与相关函数的语言接起来。
+
 ---
 
 ## Part 4：城市映射——离散选择 (Logit)
@@ -112,7 +142,15 @@ Swendsen Chapter 19（例如 Eq 19.53–19.60）给出了从 \(\ln Z\) 导出 \(
 - **温度 \(\beta\)**：选择的敏感度（或不理性程度）。
 - **配分函数 \(Z\)**：分母上的 \(\sum e^{-\beta C_i}\)。
 
-在交通与城市经济里，logit 的 logsum / inclusive value 通常写成 \(\frac{1}{\beta}\ln Z\)（与效用/成本处于同一量纲；在标准 i.i.d. Gumbel 误差假设下，它与 \(\mathbb E[\max U]\) 仅差一个与选项无关的常数）。因此它不是“把效用直接相加”的总价值，而是一个**对所有选项做指数加权后的聚合势**：新增更优选项、或降低成本，会让 \(Z\) 变大，从而提升 logsum（等价地让自由能 \(F=-(1/\beta)\ln Z\) 下降）。
+在交通与城市经济里，logit 的 logsum / inclusive value 通常写成 \(\frac{1}{\beta}\ln Z\)。你可以先把它当作一个“系统级聚合量”：它把一堆选项的好坏（效用或成本）压缩成一个数，回答“**总体上我有多好选**”。新增更优选项、或降低成本，会让 \(Z\) 变大，从而让 \(\frac{1}{\beta}\ln Z\) 变大；等价地，自由能 \(F=-(1/\beta)\ln Z\) 变小。
+
+一个帮助直觉的极限是：当 \(\beta\) 很大（几乎总选最优），它会逼近“最佳选项”的效用（或对应的最低成本的相反数）：
+\[
+\lim_{\beta\to\infty}\frac{1}{\beta}\ln\sum_i e^{-\beta C_i} = -\min_i C_i.
+\]
+当 \(\beta\) 较小（选择更随机），它会更像是在“把多个选项的贡献平均起来”。
+
+技术细节：在标准 i.i.d. Gumbel 误差假设下，logsum 与 \(\mathbb E[\max U]\) 仅差一个与选项无关的常数，因此它常被解释为福利/可达性指标。
 
 跨学科对照与“势/自由能”解释见：[[Logit Softmax 与 Boltzmann 以及 log-sum-exp 自由能]]。
 
@@ -120,6 +158,14 @@ Swendsen Chapter 19（例如 Eq 19.53–19.60）给出了从 \(\ln Z\) 导出 \(
 调节 \(\beta\)（成本敏感度）观察概率如何从“均匀”向“极化”收缩；同时看 \(Z\) 与 log-sum-exp 如何随之变化。
 
 <InteractiveConcept type="logit-partition" />
+
+---
+
+## 自检问题
+1. 配分函数 \(Z\) 除了归一化之外，还在计算上扮演什么角色？（提示：生成函数）
+2. 为什么 \(\langle E \rangle = -\partial_\beta \ln Z\)？试着从 \(p_i=e^{-\beta E_i}/Z\) 出发推导。
+3. 涨落-响应关系 \(\mathrm{Var}(E)=k_B T^2 C_V\) 的物理含义是什么？
+4. 在 Logit 模型中，\(\beta\) 越大意味着选择越“理性”还是越“随机”？为什么？
 
 ## 通往下一章（M4）
 - 如果系统规模 \(N\) 也在波动（开放系统），就需要把“粒子数约束”也变成软约束。

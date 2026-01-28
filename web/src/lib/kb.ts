@@ -48,6 +48,7 @@ function deriveKbType(relPath: string): string | undefined {
   if (normalized.startsWith("context/")) return "context";
   if (normalized.startsWith("derivations/")) return "derivation";
   if (normalized.startsWith("methods/")) return "method";
+  if (normalized.startsWith("reading_guides/")) return "reading_guide";
   if (normalized.startsWith("urban-mapping/")) return "urban_mapping";
   if (normalized.startsWith("sources/")) return "source";
   return undefined;

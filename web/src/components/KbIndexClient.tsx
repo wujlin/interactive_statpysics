@@ -17,6 +17,8 @@ function groupLabel(type?: string): string {
       return "Overview";
     case "source":
       return "Sources";
+    case "reading_guide":
+      return "Reading Guides";
     case "context":
       return "Context";
     case "module":
@@ -58,6 +60,7 @@ export function KbIndexClient({ docs }: { docs: KbDocItem[] }) {
     const orderedKeys = [
       "Overview",
       "Modules",
+      "Reading Guides",
       "Sources",
       "Context",
       "Concepts",
@@ -65,7 +68,10 @@ export function KbIndexClient({ docs }: { docs: KbDocItem[] }) {
       "Methods",
       "Urban Mappings",
       ...Array.from(groups.keys()).filter(
-        (k) => !["Overview", "Modules", "Sources", "Context", "Concepts", "Derivations", "Methods", "Urban Mappings"].includes(k),
+        (k) =>
+          !["Overview", "Modules", "Reading Guides", "Sources", "Context", "Concepts", "Derivations", "Methods", "Urban Mappings"].includes(
+            k,
+          ),
       ),
     ].filter((k, idx, arr) => arr.indexOf(k) === idx && groups.has(k));
     return { groups, orderedKeys };
