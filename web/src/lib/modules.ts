@@ -28,8 +28,33 @@ function firstHeadingTitle(markdown: string): string | undefined {
 }
 
 function deriveIdFromSlug(slug: string): string {
-  const m = slug.match(/^M\d+/i);
-  return m ? m[0].toUpperCase() : slug;
+  const m = slug.match(/^M\d+[a-z]?/i);
+  if (!m) return slug;
+  const raw = m[0];
+  return raw[0].toUpperCase() + raw.slice(1);
+}
+
+type ParsedModuleId =
+  | { kind: "module"; num: number; suffix: string }
+  | { kind: "other"; key: string };
+
+function parseModuleId(id: string): ParsedModuleId {
+  const m = id.match(/^M(\d+)([a-z])?$/i);
+  if (!m) return { kind: "other", key: id };
+  return { kind: "module", num: Number(m[1]), suffix: (m[2] ?? "").toUpperCase() };
+}
+
+function compareModuleDocs(a: ModuleDoc, b: ModuleDoc): number {
+  const pa = parseModuleId(a.id);
+  const pb = parseModuleId(b.id);
+
+  if (pa.kind !== pb.kind) return pa.kind === "module" ? -1 : 1;
+  if (pa.kind === "other") return pa.key.localeCompare(pb.key, "en");
+  if (pa.num !== pb.num) return pa.num - pb.num;
+  if (pa.suffix === pb.suffix) return 0;
+  if (!pa.suffix) return -1;
+  if (!pb.suffix) return 1;
+  return pa.suffix.localeCompare(pb.suffix, "en");
 }
 
 export function listModuleDocs(): ModuleDoc[] {
@@ -58,7 +83,7 @@ export function listModuleDocs(): ModuleDoc[] {
     });
   }
 
-  docs.sort((a, b) => a.id.localeCompare(b.id, "en"));
+  docs.sort(compareModuleDocs);
   return docs;
 }
 
