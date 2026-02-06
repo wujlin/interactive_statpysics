@@ -14,9 +14,11 @@ tags: [langevin, fokker-planck, stochastic]
 
 写出最小 Langevin（Itô 形式）：
 \[
-dx = a(x)\,dt + b(x)\,dW_t,
+\mathrm{d}X_t = a(X_t)\,\mathrm{d}t + b(X_t)\,\mathrm{d}W_t
 \]
-并解释漂移 \(a(x)\) 与扩散强度 \(b(x)\) 的含义（写 6–12 句话）。
+并解释漂移 \(a(\cdot)\) 与扩散强度 \(b(\cdot)\) 的含义（写 6–12 句话）。
+
+> **记号约定**：\(X_t\) 表示随机过程；\(x\) 表示它在某一时刻可能取到的数值。
 
 ### (2) 对应的 Fokker–Planck 方程（形式 + 对象）
 

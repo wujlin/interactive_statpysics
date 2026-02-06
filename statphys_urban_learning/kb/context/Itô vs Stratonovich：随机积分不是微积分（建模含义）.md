@@ -20,11 +20,11 @@ status: ready
 
 在普通微积分里，你会写链式法则
 $$
-df(X_t)=f'(X_t)\,dX_t.
+df(X_t)=f'(X_t) dX_t.
 $$
 但当 $X_t$ 满足 SDE
 $$
-dX_t=a(X_t,t)\,dt+b(X_t,t)\,dW_t,
+dX_t=a(X_t,t) dt+b(X_t,t) dW_t.
 $$
 直接代回去会漏掉一项。根源是一句尺度事实：
 $$
@@ -39,7 +39,7 @@ $$
 
 在 Itô 的定义里，我们先把 SDE 写成一小步的增量形式（在 $X_t$ 处评估系数）：
 $$
-\Delta X \equiv X_{t+\Delta t}-X_t \approx a(X_t,t)\,\Delta t + b(X_t,t)\,\Delta W,
+\Delta X \equiv X_{t+\Delta t}-X_t \approx a(X_t,t) \Delta t + b(X_t,t) \Delta W,
 \qquad
 \Delta W \sim \mathcal N(0,\Delta t).
 $$
@@ -50,38 +50,38 @@ f(X_{t+\Delta t})
 =
 f(X_t+\Delta X)
 \approx
-f(X_t)+f'(X_t)\,\Delta X+\frac12 f''(X_t)\,(\Delta X)^2.
+f(X_t)+f'(X_t) \Delta X+\frac12 f''(X_t) (\Delta X)^2.
 $$
 
-关键就在 $(\Delta X)^2$ 的量级。把 $\Delta X=a\,\Delta t+b\,\Delta W$ 代入并展开：
+关键就在 $(\Delta X)^2$ 的量级。把 $\Delta X=a \Delta t+b \Delta W$ 代入并展开：
 $$
 (\Delta X)^2
-=(a\,\Delta t)^2+2ab\,\Delta t\,\Delta W+b^2(\Delta W)^2.
+=(a \Delta t)^2+2ab \Delta t \Delta W+b^2(\Delta W)^2.
 $$
 现在逐项看量级（只保留到 $\Delta t$ 这一级）：
 
-- $(a\,\Delta t)^2 \sim (\Delta t)^2$：可以扔掉；
-- $\Delta t\,\Delta W \sim (\Delta t)^{3/2}$：可以扔掉；
+- $(a \Delta t)^2 \sim (\Delta t)^2$：可以扔掉；
+- $\Delta t \Delta W \sim (\Delta t)^{3/2}$：可以扔掉；
 - 但 $(\Delta W)^2 \sim \Delta t$：**不能扔掉**。
 
 于是二阶项里会留下一个“同阶贡献”：
 $$
-\frac12 f''(X_t)\,(\Delta X)^2
+\frac12 f''(X_t) (\Delta X)^2
 \supset
-\frac12 f''(X_t)\,b(X_t,t)^2\,(\Delta W)^2
+\frac12 f''(X_t) b(X_t,t)^2 (\Delta W)^2
 \sim
-\frac12 f''(X_t)\,b(X_t,t)^2\,\Delta t.
+\frac12 f''(X_t) b(X_t,t)^2 \Delta t.
 $$
 
 把这条“二阶项同阶”的事实压缩成 Itô 记号，就是 Itô 引理里那一项：
 $$
-df(X_t)=f'(X_t)\,dX_t+\frac12 f''(X_t)\,b(X_t,t)^2\,dt.
+df(X_t)=f'(X_t) dX_t+\frac12 f''(X_t) b(X_t,t)^2 dt.
 $$
-（如果 $f$ 还显式依赖时间 $t$，会再多一项 $\partial_t f\,dt$；这里为了聚焦“噪声导致的额外项”，先省略。）
+（如果 $f$ 还显式依赖时间 $t$，会再多一项 $\partial_t f dt$；这里为了聚焦“噪声导致的额外项”，先省略。）
 
 因此正确的随机链式法则（Itô 引理）是
 $$
-df(X_t)=f'(X_t)\,dX_t+\frac12 f''(X_t)\,b(X_t,t)^2\,dt.
+df(X_t)=f'(X_t) dX_t+\frac12 f''(X_t) b(X_t,t)^2 dt.
 $$
 
 你可以把这句话读成一句“操作提示”：
@@ -92,10 +92,10 @@ $$
 
 关键点是：差别只在**乘性噪声**里出现（$b$ 依赖于 $X$）。如果 $b$ 是常数（加性噪声），两者等价（因为 $b'(x)=0$，见下面的转换公式）。
 
-### 一个最小反例：$dX = X\,dW$ vs $dX = X\circ dW$
+### 一个最小反例：$dX = X dW$ vs $dX = X\circ dW$
 考虑最简单的乘性噪声 SDE：
 $$
-dX_t = X_t\,dW_t \qquad (\text{Itô}),
+dX_t = X_t dW_t \qquad (\text{Itô}),
 $$
 以及它在 Stratonovich 约定下的写法：
 $$
@@ -109,14 +109,14 @@ $$
 1) **先回顾 Itô 引理长什么样**  
 对任意足够光滑的 $f(X_t)$，Itô 引理告诉你
 $$
-df(X_t)=f'(X_t)\,dX_t+\frac12 f''(X_t)\,(dX_t)^2.
+df(X_t)=f'(X_t) dX_t+\frac12 f''(X_t) (dX_t)^2.
 $$
 这里的关键规则是：因为 $dW_t\sim\sqrt{dt}$，所以 $(dW_t)^2=dt$（在只保留到 $dt$ 这个量级时）。
 
 2) **计算 $(dX_t)^2$（这是二阶项为什么留下来的根源）**  
-由 $dX_t=X_t\,dW_t$ 得
+由 $dX_t=X_t dW_t$ 得
 $$
-(dX_t)^2 = X_t^2\,(dW_t)^2 = X_t^2\,dt.
+(dX_t)^2 = X_t^2 (dW_t)^2 = X_t^2 dt.
 $$
 
 3) **把 $f(x)=\ln x$ 代入 Itô 引理**  
@@ -125,9 +125,9 @@ $$
 d\ln X_t
 = \frac{1}{X_t}dX_t+\frac12\left(-\frac{1}{X_t^2}\right)(dX_t)^2.
 $$
-代入 $dX_t=X_t\,dW_t$ 与 $(dX_t)^2=X_t^2\,dt$，就得到
+代入 $dX_t=X_t dW_t$ 与 $(dX_t)^2=X_t^2 dt$，就得到
 $$
-d\ln X_t = dW_t-\frac12\,dt.
+d\ln X_t = dW_t-\frac12 dt.
 $$
 
 4) **积分并取指数**  
@@ -147,7 +147,7 @@ $$
 #### Stratonovich 版本（普通链式法则成立）
 Stratonovich 的要点是：它对应“平滑噪声极限”，因此**普通链式法则成立**。于是
 $$
-d\ln X_t = \frac{1}{X_t}\circ dX_t = \circ dW_t,
+d\ln X_t = \frac{1}{X_t}\circ dX_t = \circ dW_t.
 $$
 积分得到
 $$
@@ -157,7 +157,7 @@ X_t=X_0 e^{W_t},
 $$
 因此
 $$
-\mathbb E[X_t]=X_0\,\mathbb E[e^{W_t}]=X_0 e^{t/2}.
+\mathbb E[X_t]=X_0 \mathbb E[e^{W_t}]=X_0 e^{t/2}.
 $$
 
 #### 小结（同形方程，不同预测）
@@ -169,7 +169,7 @@ $$
 同一个“符号级相似”的写法，会导向截然不同的长期预测。这就是为什么你必须在论文和代码里显式声明 Itô/Stratonovich：否则你甚至无法回答“这条 SDE 到底是哪一个模型？”。
 
 ## 3）差别从哪里来：你在小步里用哪个时刻的 $b(X)$？
-对确定性微分方程，$\int f(x)\,dx$ 的定义唯一；但对含噪声的 SDE，在一个小步里 $\Delta W\sim\sqrt{\Delta t}$，所以 $(\Delta W)^2\sim \Delta t$，二阶项会留下来。结果是：
+对确定性微分方程，$\int f(x) dx$ 的定义唯一；但对含噪声的 SDE，在一个小步里 $\Delta W\sim\sqrt{\Delta t}$，所以 $(\Delta W)^2\sim \Delta t$，二阶项会留下来。结果是：
 
 - 你在每个小步里用**左端点**还是**中点**去评估 $b(X)$，会改变连续极限；
 - 这不是“算法细节”，而是在定义随机积分本身。
@@ -177,14 +177,14 @@ $$
 ## 4）两种约定、数值方法与一条转换公式（1D）
 - **Itô（左端点）**：Euler–Maruyama 对应的约定
   $$
-  X_{t+\Delta t}=X_t+a(X_t)\,\Delta t+b(X_t)\,\Delta W.
+  X_{t+\Delta t}=X_t+a(X_t) \Delta t+b(X_t) \Delta W.
   $$
 - **Stratonovich（中点）**：更接近“平滑噪声极限”的约定  
   实际数值实现通常用 **Heun（预测-校正）**：先用 Euler 预测，再用预测值构造“中点”校正。
 
 同一条过程的两种写法之间有一条关键换算（1D）：
 $$
-a_{\text{Itô}}(x)=a_{\text{Strat}}(x)+\frac12\,b(x)b'(x).
+a_{\text{Itô}}(x)=a_{\text{Strat}}(x)+\frac12 b(x)b'(x).
 $$
 所以乘性噪声会生成额外漂移项，这个项经常被叫做**噪声诱导漂移**。它不是数学装饰：它会改变稳态分布与长期统计量。
 

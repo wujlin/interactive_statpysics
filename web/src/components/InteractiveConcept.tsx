@@ -5,10 +5,12 @@ import type { ReactNode } from "react";
 import { useEffect, useMemo, useRef, useState } from "react";
 
 import { ClusterChainReactionDemo } from "@/components/demos/ClusterChainReactionDemo";
+import { CoursePosterDemo } from "@/components/demos/CoursePosterDemo";
 import { DiffusionHeatmapDemo } from "@/components/demos/DiffusionHeatmapDemo";
 import { EffectiveCouplingDemo } from "@/components/demos/EffectiveCouplingDemo";
 import { FiniteSizeScalingDemo } from "@/components/demos/FiniteSizeScalingDemo";
 import { OuProcessDemo } from "@/components/demos/OuProcessDemo";
+import { ThreeStateNessDemo } from "@/components/demos/ThreeStateNessDemo";
 
 type Rect = { x: number; y: number; w: number; h: number };
 type Point = { x: number; y: number };
@@ -139,7 +141,11 @@ function computeSlots(n: number): { cols: number; rows: number; u: number[]; v: 
   return { cols, rows, u, v };
 }
 
-function targetPos(i: number, side: 0 | 1, layout: { left: Rect; right: Rect; padding: number; slots: any }) {
+function targetPos(
+  i: number,
+  side: 0 | 1,
+  layout: { left: Rect; right: Rect; padding: number; slots: { cols: number; rows: number; u: number[]; v: number[] } },
+) {
   const box = side === 0 ? layout.left : layout.right;
   const u = layout.slots.u[i] ?? 0.5;
   const v = layout.slots.v[i] ?? 0.5;
@@ -1943,6 +1949,7 @@ function MeanFieldBifurcation() {
 
 const COMPONENT_MAP: Record<string, React.FC> = {
   "entropy-counter": EntropyCounter,
+  "course-poster": CoursePosterDemo,
   "cluster-chain-reaction": ClusterChainReactionDemo,
   "effective-coupling": EffectiveCouplingDemo,
   "finite-size-scaling": FiniteSizeScalingDemo,
@@ -1953,6 +1960,7 @@ const COMPONENT_MAP: Record<string, React.FC> = {
   "grand-canonical-poisson": GrandCanonicalPoisson,
   "mean-field-bifurcation": MeanFieldBifurcation,
   "net-flow": NetFlow,
+  "three-state-ness": ThreeStateNessDemo,
 };
 
 export function InteractiveConcept({ type }: { type: string }) {

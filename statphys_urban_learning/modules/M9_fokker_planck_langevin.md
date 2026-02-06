@@ -57,7 +57,7 @@ $$
 
 你当然可以把 M8 的主方程直接推广到连续状态，但它的自然形式会变成一个“跳跃核”的积分方程（本质上是把求和 $\sum_j$ 换成积分 $\int dx'$）：
 $$
-\partial_t p(x,t)=\int \Big[W(x\mid x')p(x',t)-W(x'\mid x)p(x,t)\Big]\,dx'.
+\partial_t p(x,t)=\int \Big[W(x\mid x')p(x',t)-W(x'\mid x)p(x,t)\Big] dx'.
 $$
 
 这条式子并不“错”，但它带来两个现实问题：
@@ -85,7 +85,7 @@ Fokker–Planck 的角色就是一个非常明确的近似：当跃迁主要由�
 
 最常见的写法是（形式先看懂即可）：
 $$
-dX_t = a(X_t)\,dt + b(X_t)\,dW_t.
+dX_t = a(X_t) dt + b(X_t) dW_t.
 $$
 
 - $a(x)$：漂移（趋势项）
@@ -113,7 +113,7 @@ a(x) = -\frac{1}{\zeta}U'(x).
 $$
 这里的 $\zeta$ 是阻尼/摩擦系数；过阻尼近似的直觉是：**惯性被忽略时，速度正比于力**。把确定性力写成 $F(x)=-U'(x)$，就得到
 $$
-\zeta\,\dot X = F(X)\quad\Rightarrow\quad \dot X = -\frac{1}{\zeta}U'(X),
+\zeta \dot X = F(X)\quad\Rightarrow\quad \dot X = -\frac{1}{\zeta}U'(X),
 $$
 这就是上面那条漂移形式从哪来的。
 
@@ -140,11 +140,11 @@ $$
 
 把上面的 $a(x)$ 代回最一般的 SDE 形式，就得到：
 $$
-dX_t = -\frac{1}{\zeta}U'(X_t)\,dt + \sqrt{2D}\,dW_t.
+dX_t = -\frac{1}{\zeta}U'(X_t) dt + \sqrt{2D} dW_t.
 $$
 
 - $-\frac{1}{\zeta}U'(x)$：把状态往“低代价方向”拉回去（趋势）
-- $\sqrt{2D}\,dW_t$：随机扰动（噪声）
+- $\sqrt{2D} dW_t$：随机扰动（噪声）
 
 #### Einstein 关系：$D$ 和 $\zeta$ 在热平衡时必须匹配
 
@@ -177,11 +177,11 @@ Part 2 的 Langevin 方程描述的是**单条样本路径** $X_t$：每次你�
 
 给定 $X_t$ 的 Langevin 方程，我们关心的是概率密度
 $$
-p(x,t)\,dx \equiv \Pr\!\big(X_t\in[x,x+dx]\big).
+p(x,t) dx \equiv \Pr\!\big(X_t\in[x,x+dx]\big).
 $$
 这一步也解释了为什么后面会频繁出现期望 $\mathbb{E}[\cdot]$：对任意观测量 $A(X_t)$，
 $$
-\mathbb{E}[A(X_t)] = \int A(x)\,p(x,t)\,dx,
+\mathbb{E}[A(X_t)] = \int A(x) p(x,t) dx,
 $$
 也就是说，“对很多条轨迹取平均”与“对密度做积分”是一回事。
 
@@ -203,7 +203,7 @@ $$
 
 从 Part 1.1 的连续状态主方程出发：
 $$
-\partial_t p(x,t)=\int \Big[W(x\mid x')p(x',t)-W(x'\mid x)p(x,t)\Big]\,dx'.
+\partial_t p(x,t)=\int \Big[W(x\mid x')p(x',t)-W(x'\mid x)p(x,t)\Big] dx'.
 $$
 
 这条式子就是 M8 主方程的“连续版”（把求和 $\sum_j$ 换成积分 $\int dx'$；把 $W_{ij}$ 换成核 $W(x\mid x')$）。  
@@ -215,13 +215,13 @@ r \equiv x-x',\qquad x'=x-r.
 $$
 把它代回去，并把积分变量从 $x'$ 改成 $r$（把符号看成“把所有可能位移都扫一遍”）：
 $$
-\partial_t p(x,t)=\int \Big[W(x\mid x-r)p(x-r,t)-W(x-r\mid x)p(x,t)\Big]\,dr.
+\partial_t p(x,t)=\int \Big[W(x\mid x-r)p(x-r,t)-W(x-r\mid x)p(x,t)\Big] dr.
 $$
 
 接下来要避免“看起来像在原地打转”的关键点是：**把第二项也写成“从 $x$ 跳一个位移”的形式**。  
 由于积分变量只是哑变量，我们把第二项里的 $r$ 换成 $-r$（并不改变积分值），就得到等价写法：
 $$
-\partial_t p(x,t)=\int \Big[W(x\mid x-r)p(x-r,t)-W(x+r\mid x)p(x,t)\Big]\,dr.
+\partial_t p(x,t)=\int \Big[W(x\mid x-r)p(x-r,t)-W(x+r\mid x)p(x,t)\Big] dr.
 $$
 这样两项的结构就一致了：第一项是“从 $x-r$ 跳到 $x$”，第二项是“从 $x$ 跳到 $x+r$”。
 
@@ -231,15 +231,15 @@ w(r\mid x)\equiv W(x+r\mid x).
 $$
 用这个记号，上式变成
 $$
-\partial_t p(x,t)=\int \Big[w(r\mid x-r)p(x-r,t)-w(r\mid x)p(x,t)\Big]\,dr.
+\partial_t p(x,t)=\int \Big[w(r\mid x-r)p(x-r,t)-w(r\mid x)p(x,t)\Big] dr.
 $$
 
 **小跳变假设**说的是：$w(r\mid x)$ 在 $r$ 上主要集中在 0 附近，因此可以把第一项在 $r=0$ 处做泰勒展开。我们先只展开乘积 $w(r\mid x-r)p(x-r,t)$ 对 $x$ 的依赖（把 $r$ 当作“很小的参数”）：
 $$
 w(r\mid x-r)p(x-r,t)
 =w(r\mid x)p(x,t)
--r\,\partial_x\!\big[w(r\mid x)p(x,t)\big]
-+\frac{r^2}{2}\,\partial_x^2\!\big[w(r\mid x)p(x,t)\big]
+-r \partial_x\!\big[w(r\mid x)p(x,t)\big]
++\frac{r^2}{2} \partial_x^2\!\big[w(r\mid x)p(x,t)\big]
 +\cdots
 $$
 
@@ -248,16 +248,16 @@ $$
 \partial_t p(x,t)=\int\Big[
 \underbrace{w(r\mid x)p(x,t)}_{\text{流入的零阶}}
 -\underbrace{w(r\mid x)p(x,t)}_{\text{流出的零阶}}
--r\,\partial_x(wp)
-+\frac{r^2}{2}\,\partial_x^2(wp)
+-r \partial_x(wp)
++\frac{r^2}{2} \partial_x^2(wp)
 +\cdots
 \Big]dr.
 $$
 
 因此留下的就是一阶、二阶……项。把对 $x$ 的导数移出积分（对固定的 $x$，它只是常数算子），并把关于 $r$ 的系数收集成“跳跃位移的矩”（这一步就是把复杂核压缩成少数几个函数）：
 $$
-A(x)\equiv \int r\,w(r\mid x)\,dr,\qquad
-B(x)\equiv \int r^2\,w(r\mid x)\,dr.
+A(x)\equiv \int r w(r\mid x) dr,\qquad
+B(x)\equiv \int r^2 w(r\mid x) dr.
 $$
 
 在只保留到二阶（扩散近似）的情况下，你就得到一个局部方程：
@@ -271,7 +271,7 @@ $$
 
 在加性噪声（$b(x)=\sqrt{2D}$）下，Fokker–Planck 方程的最常用形式是：
 $$
-\partial_t p(x,t) = -\partial_x\big(a(x)p(x,t)\big) + D\,\partial_x^2 p(x,t).
+\partial_t p(x,t) = -\partial_x\big(a(x)p(x,t)\big) + D \partial_x^2 p(x,t).
 $$
 
 为了把它和 Part 2 的 Langevin 口径对齐，在 **Itô 解释**下两者的对应关系是：
@@ -282,13 +282,24 @@ $$
 你可以把它读成一句“流入−流出”的连续版：
 
 - $-\partial_x(a p)$ 是**漂移带来的概率流**（趋势把概率往某个方向推）
-- $D\,\partial_x^2 p$ 是**噪声带来的扩散**（把概率摊开）
+- $D \partial_x^2 p$ 是**噪声带来的扩散**（把概率摊开）
 
 把它写成“流入−流出”的守恒形式会更像 M8：
 $$
-\partial_t p(x,t)=-\partial_x J(x,t),
-\qquad
-J(x,t)=a(x)\,p(x,t)-D\,\partial_x p(x,t).
+\partial_t p(x,t)=-\partial_x J(x,t).
+$$
+这里 $J$ 的表达式不是“由平衡推出”的，而是把右边凑成 $\partial_x(\cdot)$ 时自然定义出来的。具体地：
+$$
+\partial_t p
+=-\partial_x(ap)+D\partial_x^2 p
+=-\partial_x(ap)+D\partial_x(\partial_x p)
+=-\partial_x(ap)-\partial_x(-D\partial_x p)
+=-\partial_x\big(ap-D\partial_x p\big)
+\equiv -\partial_x J.
+$$
+因此
+$$
+J(x,t)=a(x)p(x,t)-D \partial_x p(x,t).
 $$
 
 ### 3.2 平衡稳态：零概率流 $J=0$ 与 Boltzmann 形式（把 M3 的直觉接回来）
@@ -302,7 +313,7 @@ a(x)=-\frac{1}{\zeta}U'(x),\qquad D=\frac{k_BT}{\zeta}.
 $$
 把它代入概率流：
 $$
-J(x,t)= -\frac{1}{\zeta}U'(x)\,p(x,t)-D\,\partial_x p(x,t).
+J(x,t)= -\frac{1}{\zeta}U'(x) p(x,t)-D \partial_x p(x,t).
 $$
 
 **平衡稳态**的连续版“细致平衡”就是：没有持续的概率环流，因此取
@@ -311,7 +322,7 @@ J(x)=0.
 $$
 于是得到一个一阶方程：
 $$
-0=-\frac{1}{\zeta}U'(x)\,p(x)-D\,\partial_x p(x)
+0=-\frac{1}{\zeta}U'(x) p(x)-D \partial_x p(x)
 \quad\Rightarrow\quad
 \partial_x\ln p(x)= -\frac{U'(x)}{\zeta D}.
 $$
@@ -323,7 +334,7 @@ $$
 $$
 也就是
 $$
-\boxed{\,p_{\mathrm{eq}}(x)\propto e^{-U(x)/(k_BT)}\,}.
+\boxed{ p_{\mathrm{eq}}(x)\propto e^{-U(x)/(k_BT)} }.
 $$
 
 你可以把这段推导读成一句话：**势函数给了漂移方向，Einstein 关系把噪声强度钉到同一个温度刻度上，于是“零概率流”迫使稳态分布变成 Boltzmann 形式。**
@@ -332,12 +343,12 @@ $$
 
 ### 3.3 Itô vs Stratonovich：什么时候你必须在这里做选择？
 
-你在 Part 2 看到 $b(X_t)\,dW_t$ 时，真正会出现“解释差异”的场景是**乘性噪声**：$b$ 随状态变。  
+你在 Part 2 看到 $b(X_t) dW_t$ 时，真正会出现“解释差异”的场景是**乘性噪声**：$b$ 随状态变。  
 这也是为什么我们要关心“随机积分”：你不仅想写下 $dX_t$，还想对 $f(X_t)$ 这类量做微积分（比如平方、阈值、代价函数），而这一步会用到随机版链式法则（Itô 引理）。一旦 $b$ 依赖于 $X$，你在一个小步里“用哪个时刻的 $X$ 去评估 $b(X)$”就会改变结果。
 
 这不是记号之争，而是一个建模事实：同样的符号写法，在不同约定下会导出**不同的物理预测**。最小的反例是
 $$
-dX_t = X_t\,dW_t,
+dX_t = X_t dW_t,
 $$
 它在 Itô 与 Stratonovich 下给出不同的长期行为（完整解释见 Context 卡）。所以：**只要是乘性噪声，你就必须声明约定**。
 
@@ -358,7 +369,7 @@ OU 过程是“最小的连续随机动力学基准件”：它有漂移、有�
 
 一个常见写法是
 $$
-dX_t = -\theta X_t\,dt + \sigma\,dW_t,\qquad \theta>0.
+dX_t = -\theta X_t dt + \sigma dW_t,\qquad \theta>0.
 $$
 
 它对应“线性回复 + 加性噪声”。你应该能在本章完成三个对照：
@@ -411,7 +422,7 @@ $$
 
 于是你得到 OU 的城市版本：
 $$
-dX_t=-\theta X_t\,dt+\sigma\,dW_t,\qquad (D=\sigma^2/2).
+dX_t=-\theta X_t dt+\sigma dW_t,\qquad (D=\sigma^2/2).
 $$
 
 它立刻给出两个你真正会用的可解释量：
@@ -425,7 +436,7 @@ $$
 |---|---|---|
 | 状态空间 | 离散（有限或可数） | 连续（$\mathbb{R}$ 或 $\mathbb{R}^n$） |
 | 动力学描述 | 转移率 $W_{ij}$ / 转移矩阵 $P$ | 漂移 $a(x)$ + 扩散 $D$（或 $b(x)$） |
-| 分布演化 | $dp_i/dt=\sum_j(\cdots)$ | $\partial_t p=-\partial_x(ap)+D\,\partial_x^2 p$（常系数例） |
+| 分布演化 | $dp_i/dt=\sum_j(\cdots)$ | $\partial_t p=-\partial_x(ap)+D \partial_x^2 p$（常系数例） |
 | 稳态条件 | $\sum_j(\pi_jW_{ji}-\pi_iW_{ij})=0$ | $\partial_t p=0$（等价于 $J$ 为常数；平衡时常取 $J=0$） |
 | 细致平衡/平衡判据 | $\pi_iW_{ij}=\pi_jW_{ji}$ | 零概率流 $J=0$（在势流 + Einstein 关系下：$p_{\text{eq}}(x)\propto e^{-U(x)/(k_BT)}$） |
 

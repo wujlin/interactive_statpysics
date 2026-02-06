@@ -145,7 +145,7 @@ function MathInline({ tex }: { tex: string }) {
 export function ClusterChainReactionDemo() {
   const [tControl, setTControl] = useState(DEFAULT_T_CONTROL);
   const [tProbe, setTProbe] = useState(DEFAULT_T_PROBE);
-  const [lockControl, setLockControl] = useState(true);
+  const [showControlTemp, setShowControlTemp] = useState(false);
   const [lastLeft, setLastLeft] = useState<ClusterStats | null>(null);
   const [lastRight, setLastRight] = useState<ClusterStats | null>(null);
 
@@ -272,6 +272,17 @@ export function ClusterChainReactionDemo() {
     draw();
   }
 
+  function resetLeftToDefault() {
+    // 重置到“对照高温”的同时，关闭高级面板，避免再次触发左侧的温度联动重采样。
+    setShowControlTemp(false);
+    setTControl(DEFAULT_T_CONTROL);
+    thermalize(leftSpinsRef.current, DEFAULT_T_CONTROL, leftRngRef.current);
+    highlightLeftRef.current = null;
+    setLastLeft(null);
+    highlightUntilRef.current.left = 0;
+    draw();
+  }
+
   // Resize both canvases
   useEffect(() => {
     const leftWrap = leftWrapRef.current;
@@ -306,7 +317,7 @@ export function ClusterChainReactionDemo() {
   // Re-thermalize (debounced) when temperatures change.
   // 关键：对照/观察两窗的温度是独立控制的；调右侧温度不应让左侧“换一张图”，否则读者无法把差异归因到温度。
   useEffect(() => {
-    if (lockControl) return;
+    if (!showControlTemp) return;
     const id = window.setTimeout(() => {
       resetLeft();
       highlightUntilRef.current.left = 0;
@@ -368,7 +379,7 @@ export function ClusterChainReactionDemo() {
       <MathInline tex={"T_{\\mathrm{probe}}"} /> 让它接近 <MathInline tex={"T_c"} />（长相关）。
       <br />
       点击任意格点触发一次 Wolff 团簇翻转：相同自旋的近邻以概率 <MathInline tex={"p(T)=1-e^{-2/T}"} /> 被吸收进团簇。
-      <strong>拖动右侧温度时，只会重新取样右图</strong>（左侧对照保持不变）；如果你想改变左图，请点“解锁对照温度”。
+      <strong>拖动右侧温度时，只会重新取样右图</strong>（左侧对照保持不变）。若你想更改左图，请展开下方“高级：调整对照温度”。
     </>
   );
 
@@ -380,34 +391,23 @@ export function ClusterChainReactionDemo() {
           <div className="ic-title-sub">{sub}</div>
         </div>
         <div className="ic-controls">
-          <div className="ic-slider">
+          <div className="ic-row" style={{ display: "flex", alignItems: "center", gap: 10, flexWrap: "wrap" }}>
             <span className="ic-slider-label">
-              对照窗 <MathInline tex={"T_{\\mathrm{control}}"} /> = <span className="ic-mono">{tControl.toFixed(2)}</span>
+              对照（高温）<MathInline tex={"T_{\\mathrm{control}}"} /> = <span className="ic-mono">{tControl.toFixed(2)}</span>
               {"  "}（远离 <MathInline tex={"T_c"} />；|t|≈<span className="ic-mono">{Math.abs(reducedControl).toFixed(2)}</span>）
             </span>
-            <button
-              className="ic-btn ic-btn-ghost"
-              type="button"
-              onClick={() => {
-                const next = !lockControl;
-                setLockControl(next);
-                if (next) {
-                  // 恢复“锁定对照”时，把左窗重置到默认高温，避免读者误以为随 T_probe 变化。
-                  setTControl(DEFAULT_T_CONTROL);
-                  thermalize(leftSpinsRef.current, DEFAULT_T_CONTROL, leftRngRef.current);
-                  highlightLeftRef.current = null;
-                  setLastLeft(null);
-                  highlightUntilRef.current.left = 0;
-                  draw();
-                }
-              }}
-            >
-              {lockControl ? "解锁对照温度" : "锁定对照温度"}
+            <button className="ic-btn ic-btn-ghost" type="button" onClick={() => setShowControlTemp((v) => !v)}>
+              {showControlTemp ? "隐藏高级设置" : "高级：调整对照温度"}
             </button>
+            {showControlTemp && (
+              <button className="ic-btn ic-btn-ghost" type="button" onClick={() => resetLeftToDefault()}>
+                重置对照
+              </button>
+            )}
           </div>
-          {!lockControl && (
+          {showControlTemp && (
             <label className="ic-slider">
-              <span className="ic-slider-label muted">调整对照温度（高级）：只影响左图</span>
+              <span className="ic-slider-label muted">对照温度（可选）：只影响左图</span>
               <input
                 type="range"
                 min={3.0}
@@ -433,9 +433,22 @@ export function ClusterChainReactionDemo() {
               onChange={(e) => setTProbe(Number(e.target.value))}
             />
           </label>
-          <button className="ic-btn ic-btn-ghost" onClick={() => resetAll()}>
-            重新取样
-          </button>
+          <div className="ic-row" style={{ display: "flex", gap: 10, flexWrap: "wrap" }}>
+            <button
+              className="ic-btn ic-btn-ghost"
+              type="button"
+              onClick={() => {
+                resetRight();
+                highlightUntilRef.current.right = 0;
+                draw();
+              }}
+            >
+              重新取样（右）
+            </button>
+            <button className="ic-btn ic-btn-ghost" type="button" onClick={() => resetAll()}>
+              重新取样（两侧）
+            </button>
+          </div>
         </div>
       </header>
 

@@ -9,16 +9,18 @@ tags: [langevin, fokker-planck, stochastic, solution]
 
 Itô 形式的随机微分方程：
 \[
-dx=a(x)\,dt+b(x)\,dW_t.
+\mathrm{d}X_t = a(X_t)\,\mathrm{d}t + b(X_t)\,\mathrm{d}W_t
 \]
 
-- \(a(x)\)（漂移）：决定平均意义下的确定性趋势；若只保留该项就是常微分方程 \(dx/dt=a(x)\)。
-- \(b(x)\)（扩散强度）：噪声项的强度；\(dW_t\) 是 Wiener 过程增量，满足 \(\mathbb{E}[dW_t]=0\)、\(\mathrm{Var}(dW_t)=dt\)。
-- 因此噪声对方差增长的尺度由 \(b(x)^2\) 控制（因为方差与 \(dW_t^2\sim dt\) 同阶）。
+其中 \(X_t\) 是随机过程，\(x\) 通常用来表示它在某一时刻可能取到的数值；\(W_t\) 是布朗运动（Wiener 过程）。
+
+- \(a(\cdot)\)（漂移）：决定平均意义下的确定性趋势；若只保留这一项，得到确定性动力学 \(\mathrm{d}X_t/\mathrm{d}t = a(X_t)\)。
+- \(b(\cdot)\)（噪声幅度）：刻画随机扰动的强度；\(\mathrm{d}W_t\) 满足 \(\mathbb{E}[\mathrm{d}W_t]=0\)、\(\mathrm{Var}(\mathrm{d}W_t)=\mathrm{d}t\)。
+- 因此噪声对“方差增长”的尺度由 \(b(x)^2\) 控制（因为 \((\mathrm{d}W_t)^2\) 的量级与 \(\mathrm{d}t\) 同阶）。
 
 ## (2) Fokker–Planck：概率密度的演化方程
 
-若随机变量 \(x_t\) 满足上述 Itô SDE，则其概率密度 \(p(x,t)\) 满足 Fokker–Planck 方程：
+若随机过程 \(X_t\) 满足上述 Itô SDE，则其概率密度 \(p(x,t)\) 满足 Fokker–Planck 方程：
 \[
 \partial_t p(x,t)=-\partial_x\!\big(a(x)p(x,t)\big)+\frac{1}{2}\partial_x^2\!\big(b(x)^2 p(x,t)\big).
 \]
@@ -37,3 +39,5 @@ dx=a(x)\,dt+b(x)\,dW_t.
   \partial_t p=-\partial_x(ap),
   \]
   即确定性输运（Liouville/continuity）形式。
+
+> 更详细的“互译”推导（为什么必然出现 \(b^2\) 与 \(1/2\)、如何写成概率流 \(J\) 的守恒形式、以及如何从 \(J=0\) 推出 OU 稳态高斯）见：`statphys_urban_learning/kb/derivations/Langevin 与 Fokker-Planck 的对应关系 形式.md`。
