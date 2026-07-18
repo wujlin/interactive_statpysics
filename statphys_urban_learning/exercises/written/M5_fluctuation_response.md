@@ -51,6 +51,12 @@ tags: [fluctuation-response, static-FDT, policy-sensitivity]
 
 ---
 
+### (3) 何时 FDT 会失效或“不好用”？
+
+请给出至少三类情形，并说明它们分别破坏了哪条前提（线性近似、平衡分布、指数族形式、可估性等），以及由此带来的直觉后果。可以结合城市例子。
+
+---
+
 ## 提示
 
 1.  **导数技巧**：回忆 $\frac{\partial}{\partial \lambda} \ln Z = -\langle H \rangle$。

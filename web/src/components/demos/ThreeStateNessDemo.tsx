@@ -330,6 +330,8 @@ export function ThreeStateNessDemo() {
     const container = containerRef.current;
     const canvas = canvasRef.current;
     if (!container || !canvas) return;
+    const containerEl = container;
+    const canvasEl = canvas;
 
     function buildNodes(w: number, h: number) {
       const center = { x: w / 2, y: h / 2 + 4 };
@@ -343,7 +345,7 @@ export function ThreeStateNessDemo() {
     }
 
     function resetParticles() {
-      const count = clamp(Math.round((canvas.clientWidth * canvas.clientHeight) / 9000), 22, 56);
+      const count = clamp(Math.round((canvasEl.clientWidth * canvasEl.clientHeight) / 9000), 22, 56);
       particlesRef.current = Array.from({ length: count }, () => ({
         offset: Math.random(),
         speed: 0.6 + Math.random() * 0.9,
@@ -352,15 +354,15 @@ export function ThreeStateNessDemo() {
 
     function resize() {
       themeRef.current = getThemeColors();
-      const w = container.clientWidth;
+      const w = containerEl.clientWidth;
       const h = clamp(Math.round(w * 0.62), 220, 320);
-      applyCanvasSize(canvas, w, h);
+      applyCanvasSize(canvasEl, w, h);
       buildNodes(w, h);
       resetParticles();
     }
 
     const ro = new ResizeObserver(resize);
-    ro.observe(container);
+    ro.observe(containerEl);
     resize();
     return () => ro.disconnect();
   }, []);

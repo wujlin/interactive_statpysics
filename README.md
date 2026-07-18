@@ -27,7 +27,7 @@ npm run dev -- --port 3001
 ```
 
 打开 `http://localhost:3001`，入口：
-- `/modules`：模块讲义（M0–M9）
+- `/modules`：模块讲义（M0–M11）
 - `/kb`：知识库（悬浮提示来自各概念卡的 `## 一句话` 首行）
 - `/exercises`：习题入口（written + notebooks）
 - `/projects`：项目入口（README + notebooks + pytest）
@@ -54,7 +54,7 @@ pytest -q
 
 ## 学习方式（推荐路径）
 
-1. 从 `statphys_urban_learning/modules/index.md` 开始，按 M0→M9 推进（模块是“主题式”，并在正文/参考中注明与 Swendsen 的对应）。
+1. 从 `statphys_urban_learning/modules/index.md` 开始，按 M0→M11 推进（模块是“主题式”，并在正文/参考中注明与 Swendsen 的对应）。
 2. 每个模块先读讲义正文（Introduction → 叙事主线），遇到术语再点 KB（或直接悬浮看提示）。
 3. 完成该模块的 `exercises/written/` 与一个 notebook；用 `pytest` 做最小正确性验证。
 4. 用模块的 `kb/urban-mapping/` 把物理结构映射到城市约束与可检验预测；进入对应 `projects/` 做可复现与误差分析。

@@ -1,256 +1,289 @@
-# M4 巨正则系综与可变规模（OD/人口）
+# M4 巨正则系综：粒子数也能涨落时怎样记账
 
-> **核心目标**：打破“封闭系统 / 固定规模”的思维定势。现实中的城市与人群系统是开放的：能量/资源会流动，**人口与出行需求**（可抽象为粒子数 \(N\)）也会流动。巨正则系综（Grand Canonical Ensemble）专门处理 **\(N\) 可变** 的平衡系统，并引入关键控制参数 **化学势 \(\mu\)**。掌握 \(\mu\)，就掌握了“开放规模系统”的计算钥匙。
+把两个容器连通，如果系统 $A$ 的内部化学势高于系统 $B$，粒子会从 $A$ 流向 $B$；但把一个系统接到粒子库后，提高粒子库设定的化学势，又会使系统平均粒子数增加。两句话看似方向相反，其实分别谈论**系统内部的边际自由能**与**外部库施加的控制参数**。
 
-## 推荐学习顺序
-1. 先抓动机：为什么城市/人口/OD 的 \(N\) 不能固定（本页 Introduction）。
-2. 再抓新旋钮：\(\mu\) 作为“规模控制参数”的两层含义（Part 1）。
-3. 再抓数学落点：从 \(Z_N\) 到 \(\mathcal{Z}=\sum_N e^{\beta\mu N}Z_N\)，以及 \(\ln\mathcal{Z}\) 的导数规则（Part 2–3）。
-4. 最后回到应用：把 \((N,\mu)\) 翻译成 OD/人口系统里的“规模—吸引力—波动/响应”（Part 4）。
+分清化学势的这两种角色，才能同时判断粒子交换方向，并计算开放系统的平均粒子数及其涨落。
 
-## 背景最小包（First Principles）
-- 当 \(N\) 可交换时，我们需要同时控制 \(\langle E\rangle\) 与 \(\langle N\rangle\)；对应的控制旋钮是 \(T\) 与 \(\mu\)。在巨正则系综中 \(E\) 与 \(N\) 都允许波动。
-- 化学势 \(\mu\) 是与 \(N\) 共轭的对偶参数：它不是“化学专用”，而是**规模控制旋钮**。
-- 巨正则把系统可能处在的不同 \(N\) 分支按 \(e^{\beta\mu N}\) 加权汇总成 \(\mathcal{Z}\)，使开放系统仍可计算；并且 \(\ln\mathcal{Z}\) 的导数会直接生成平均规模与涨落（响应强度）。
+## 1. 内部化学势给出粒子交换的方向
 
-## 逻辑桥接（M3 → M4）
-- M3（正则）是“只开放能量通道”的模型：给定 \(T\)，\(E\) 可波动，但 \(N\) 固定。
-- M4（巨正则）把“规模通道”也打开：给定 \((T,\mu)\)，\(E\) 与 \(N\) 都可波动；数学上体现为 \(Z_N \to \mathcal{Z}=\sum_N e^{\beta\mu N}Z_N\)。
+对固定 $(T,V)$ 的系统，内部化学势定义为
 
----
+$$
+\mu_{\mathrm{sys}}(T,V,N)
+=\left(\frac{\partial F}{\partial N}\right)_{T,V}.
+$$
 
-## Introduction
+它表示在当前状态附近向系统增加一个粒子所需的边际自由能。对粒子数很小的有限系统，导数应替换为相邻 $N$ 之间的自由能差。
 
-M3（正则系综）把系统放在热库旁边：系统可以吸放热，因此能量 \(E\) 允许涨落；但它仍假设系统“封闭”——**粒子数 \(N\) 固定不变**。这个假设在城市/人口/OD 等问题里几乎从一开始就不成立：人会迁入迁出、事件数会增减，系统规模本身会随外界条件变化。于是我们必须回答一个新问题：**当 \(N\) 也持续涨落时，平衡应如何定义、如何计算**？
+考虑两个可交换粒子的子系统 $A$、$B$，总粒子数固定，$N_B=N_{\mathrm{tot}}-N_A$。总自由能为
 
-打开“规模通道”需要一个新的控制旋钮：**化学势 \(\mu\)**。它是与 \(N\) 共轭的对偶变量
-\[
-\mu=\left(\frac{\partial F}{\partial N}\right)_{T,V},
-\]
-直觉上刻画“再多一个粒子/个体”的边际代价/边际价值；当系统接触一个巨大的粒子库时，外界给定 \(\mu\)，平衡条件是 \(\mu_{\text{system}}=\mu_{\text{reservoir}}\)（完全类比热平衡要求温度相等）。
+$$
+F_{\mathrm{tot}}(N_A)
+=F_A(N_A)+F_B(N_{\mathrm{tot}}-N_A).
+$$
 
-数学上，这一步把 M3 的权重 \(e^{-\beta E}\) 升级为
-\[
-e^{-\beta(E-\mu N)},
-\qquad \beta\equiv \frac{1}{k_BT},
-\]
-并把每个固定 \(N\) 的正则配分函数 \(Z_N\) 汇总成一个统一对象——巨配分函数
-\[
-\mathcal{Z}(\beta,\mu,V)=\sum_{N=0}^{\infty} e^{\beta\mu N}\,Z_N(\beta,V).
-\]
-这不是“形式上的搬运”：它对应系统可能处在不同 \(N\) 分支上，而 \(\mathcal{Z}\) 把这些分支按权重加总，使得开放系统仍然可计算。接下来你会看到：\(\ln\mathcal{Z}\) 的一阶导数给平均规模 \(\langle N\rangle\)，二阶导数给规模涨落 \(\mathrm{Var}(N)\)；涨落大小本身就是响应强度（susceptibility）的可观测刻画。
+改变 $N_A$ 时
 
-城市映射（把 \(N\) 读成规模、把 \(\mu\) 读成吸引力/机会/门槛等外参）会在 Part 4 展开；这里先把巨正则的“数学骨架”钉死。
+$$
+dF_{\mathrm{tot}}
+=(\mu_A-\mu_B)\,dN_A.
+$$
 
-## References
-- **Gibbs 1902**: *Elementary Principles in Statistical Mechanics*. 导读见 [Seminal papers](/references/seminal_papers)（条目：`SP-M4-Gibbs1902`）。
-- **Deming & Stephan 1940**: IPF/RAKING 的经典源头。导读见 [Seminal papers](/references/seminal_papers)（条目：`SP-M4-DemingStephan1940`）。
+若 $\mu_A>\mu_B$，取 $dN_A<0$ 会降低总自由能，所以粒子从 $A$ 流向 $B$。平衡条件是
 
----
+$$
+\boxed{\mu_A=\mu_B}.
+$$
 
-## 本章路线图（先看这 30 秒）
-本章只做一件事：把 M3 的“固定 \(N\)”改成“\(N\) 可涨落”。
-因此我们按四步走：
-1. 用 \(\mu\) 把“粒子交换”写成可控的约束；
-2. 写出开放系统的权重，并把归一化常数定义为巨配分函数 \(\mathcal{Z}\)；
-3. 用 \(\ln\mathcal{Z}\) 的导数同时得到平均规模与涨落（响应强度）；
-4. 把 \((N,\mu)\) 翻译成城市语言：规模与吸引力、波动与集聚。
+这条判据只给出热力学驱动力的方向，不给出迁移速率；速率还需要势垒、输运系数和具体动力学。
 
-## Part 1：化学势 \(\mu\)：开放系统的控制参数
+## 2. 外部粒子库把 $\mu$ 变成控制参数
 
-在 M3（正则系综）里我们默认系统“封闭”：粒子数 \(N\) 固定。  
-但一旦系统能与外界交换粒子，状态就必须写成 **\((x,N)\)**：其中 \(x\) 是“给定 \(N\) 时的微观自由度”，而 \(N\) 本身变成随机变量。
+现在让一个小系统同时接触热库和粒子库。复合系统的总能量与总粒子数固定，但小系统的 $(E,N)$ 都可以涨落。小系统处于微观配置 $x$、能量 $E(x,N)$、粒子数 $N$ 的概率正比于库剩余状态的态数：
 
-此时我们需要一个像温度 \(T\) 一样的控制量：
-- \(T\) 控制能量交换（热流）；
-- \(\mu\) 控制粒子交换（粒子流）。
+$$
+P(x,N)
+\propto
+\omega_R(E_{\mathrm{tot}}-E,\,N_{\mathrm{tot}}-N).
+$$
 
-初学者最容易卡住的是：\(\mu\) 既像“边际自由能”，又像“外界给定的控制量”。把它分成两句话就不容易混：
-- **系统内部的定义**（共轭量）
-  \[
-  \mu=\left(\frac{\partial F}{\partial N}\right)_{T,V}
-  \quad(\text{或 }\mu=\left(\frac{\partial U}{\partial N}\right)_{S,V}).
-  \]
-  它刻画在给定约束下，“再多一个粒子”对自由能/内能的边际影响。
-- **巨正则的用法**（外界给定的控制量）
-  当系统接触一个粒子库时，库给定 \(\mu\)，平衡条件是
-  \[
-  \mu_{\text{system}}=\mu_{\text{reservoir}}.
-  \]
-  直观上：在其余条件不变时，\(\mu\) 越高，系统越“愿意长大”，平均规模 \(\langle N\rangle\) 趋向更大。
+把库熵在平衡点附近展开，并利用
 
-如果把两处区域当作可交换粒子的子系统，则粒子会流动直到两侧 \(\mu\) 相等；这与热平衡要求 \(T_1=T_2\) 完全平行。
+$$
+\left(\frac{\partial S_R}{\partial E_R}\right)=\frac{1}{T},
+\qquad
+\left(\frac{\partial S_R}{\partial N_R}\right)=-\frac{\mu_R}{T},
+$$
 
-**关键过渡**（把 \(\mu\) 落到概率权重上）  
-既然状态写成 \((x,N)\)，我们就需要给每个 \((x,N)\) 一个概率。最自然的做法是让 \(T\) 与 \(\mu\) 分别偏置能量与粒子数：权重取 \(e^{-\beta(E-\mu N)}\)。把它归一化，就会自然得到 Part 2 的巨配分函数 \(\mathcal{Z}\)。
+得到
 
-更严格的定义、符号约定与常见误区见：[[化学势 Chemical potential]] 与 [[符号约定与映射（本仓库统一：Swendsen 体系）]]。
+$$
+S_R(E_{\mathrm{tot}}-E,N_{\mathrm{tot}}-N)
+\simeq
+\text{const}-\frac{E-\mu_R N}{T}.
+$$
 
----
+于是开放系统的权重为
 
-## Part 2：巨配分函数 \(\mathcal{Z}\)——双重求和
+$$
+P(x,N)
+\propto
+e^{-\beta[E(x,N)-\mu_R N]},
+\qquad
+\beta=\frac{1}{k_BT}.
+$$
 
-先回忆 M3：在固定 \(N\) 时，微态的指数权重为
-\[
-P(x\mid N)\propto e^{-\beta E(x,N)},\qquad \beta=\frac{1}{k_BT},
-\]
-其归一化常数就是（固定 \(N\) 的）正则配分函数
-\[
+这里的 $\mu_R$ 是由巨大粒子库给定的**外部控制参数**。它与系统内部的 $\mu_{\mathrm{sys}}(N)$ 不是两个不同物理量，而是同一共轭量在库与系统两侧的取值；平衡时二者相等。
+
+## 3. 巨配分函数汇总所有粒子数分支
+
+固定 $N$ 时，正则配分函数为
+
+$$
 Z_N(T,V)=\sum_x e^{-\beta E(x,N)}.
-\]
+$$
 
-现在 \(N\) 本身也在涨落。对开放系统（给定 \(T,V,\mu\)）最常用的权重写法是
-\[
-P(x,N)\propto e^{-\beta\,[E(x,N)-\mu N]}.
-\]
-于是 **巨配分函数**就是把这个权重归一化所需的常数：
-\[
-\mathcal{Z}(T,V,\mu)
-=\sum_{N=0}^{\infty}\sum_x e^{-\beta\,[E(x,N)-\mu N]}
-=\sum_{N=0}^{\infty} e^{\beta\mu N}\,Z_N(T,V).
-\]
+允许 $N$ 从 $0$ 到无穷变化后，归一化常数变成巨配分函数
 
-这一步的好处是：你不再需要“先固定 \(N\) 再算 \(Z_N\) 再人工加权”，而是让所有 \(N\) 的贡献被同一个对象 \(\mathcal{Z}\) 统一承载。
+$$
+\boxed{
+\mathcal Z(T,V,\mu_R)
+=\sum_{N=0}^{\infty}\sum_x
+e^{-\beta[E(x,N)-\mu_R N]}
+},
+$$
 
-对应的热力学势（本仓库记作 \(J\)，避免与微正则的多重度 \(\Omega\) 混淆）是
-\[
-J(T,V,\mu)\equiv -k_BT\ln \mathcal{Z}(T,V,\mu),
-\]
-它的自然变量是 \((T,V,\mu)\)，对应把 “\(N\) 从硬约束变成软约束” 之后的自然势函数。
+或等价地
 
-**最短推导**（避免背公式）  
-对 \(\mathcal{Z}\) 对 \(\mu\) 求导：
-\[
-\frac{\partial \mathcal{Z}}{\partial \mu}
-=\sum_{N,x}\frac{\partial}{\partial \mu}e^{-\beta(E-\mu N)}
-=\sum_{N,x}(\beta N)\,e^{-\beta(E-\mu N)}.
-\]
-两边除以 \(\mathcal{Z}\)：
-\[
-\frac{\partial \ln \mathcal{Z}}{\partial \mu}
-=\frac{1}{\mathcal{Z}}\frac{\partial \mathcal{Z}}{\partial \mu}
-=\beta\sum_{N,x}N\,\frac{e^{-\beta(E-\mu N)}}{\mathcal{Z}}
-=\beta\langle N\rangle.
-\]
-因此
-\[
-\boxed{\ \langle N\rangle=\frac{1}{\beta}\frac{\partial \ln\mathcal{Z}}{\partial \mu}\ }\quad(\text{在 }T,V\text{ 固定时}).
-\]
+$$
+\boxed{
+\mathcal Z
+=\sum_{N=0}^{\infty}
+e^{\beta\mu_R N}Z_N(T,V)
+}.
+$$
 
-### Interactive：调 \(\mu\) 看 \(P(N)\)
-下面用一个“可解玩具模型”把 \(\mathcal{Z}\to \ln\mathcal{Z}\to \langle N\rangle\to \mathrm{Var}(N)\) 串起来：你调 \(\alpha=\beta\mu\)，就会看到粒子数分布 \(P(N)\) 如何移动、变宽，并且一阶/二阶导数如何生成均值与涨落。
+标准文献通常把巨势记作 $\Omega$。本课程改记为 $\mathcal J$，以免与 M2 的能量壳态数 $\Omega_{\delta E}$ 混淆：
+
+$$
+\boxed{
+\mathcal J(T,V,\mu_R)
+=-k_BT\ln\mathcal Z
+}.
+$$
+
+在热力学极限的鞍点近似下，它等于
+
+$$
+\mathcal J(T,V,\mu_R)
+\simeq
+\min_N\left[F(T,V,N)-\mu_RN\right].
+$$
+
+对有限系统，$-k_BT\ln\mathcal Z$ 保留了所有 $N$ 分支的涨落，不能简单等同于在某一个 $N$ 上代入 $F-\mu_RN$。其微分关系为
+
+$$
+d\mathcal J
+=-S\,dT-P\,dV-N\,d\mu_R.
+$$
+
+在给定 $(T,V,\mu_R)$ 时，平衡状态最小化 $F(N)-\mu_RN$。驻值条件为
+
+$$
+\frac{\partial}{\partial N}[F(N)-\mu_RN]
+=\mu_{\mathrm{sys}}(N)-\mu_R=0,
+$$
+
+正好恢复 $\mu_{\mathrm{sys}}=\mu_R$。
+
+## 4. 一阶导数给平均粒子数，二阶导数给涨落
+
+令无量纲控制参数为
+
+$$
+\alpha\equiv\beta\mu_R.
+$$
+
+对 $\alpha$ 求导：
+
+$$
+\frac{\partial\ln\mathcal Z}{\partial\alpha}
+=\langle N\rangle.
+$$
+
+再求一次导数：
+
+$$
+\frac{\partial^2\ln\mathcal Z}{\partial\alpha^2}
+=\langle N^2\rangle-\langle N\rangle^2
+=\operatorname{Var}(N).
+$$
+
+换回 $\mu_R$，在固定 $(T,V)$ 时有
+
+$$
+\boxed{
+\langle N\rangle
+=\frac{1}{\beta}
+\frac{\partial\ln\mathcal Z}{\partial\mu_R}
+},
+$$
+
+$$
+\boxed{
+\operatorname{Var}(N)
+=\frac{1}{\beta}
+\frac{\partial\langle N\rangle}{\partial\mu_R}
+=\frac{1}{\beta^2}
+\frac{\partial^2\ln\mathcal Z}{\partial\mu_R^2}
+}.
+$$
+
+所以，在稳定的巨正则平衡态中，提高外部库化学势会增加平均粒子数：
+
+$$
+\frac{\partial\langle N\rangle}{\partial\mu_R}
+=\beta\operatorname{Var}(N)\ge 0
+$$
+
+（这里默认 $T>0$）。这不与“粒子从内部化学势较高的一侧流出”冲突：前者改变外部控制参数，后者比较两个系统在当前状态下的内部边际自由能。
+
+完整导数推导见：[[平均粒子数与涨落从 ln 𝒵 的导数得到]]。
+
+### 一个可解例子：经典稀薄气体
+
+若固定 $N$ 的配分函数可写成
+
+$$
+Z_N=\frac{z_1^N}{N!},
+$$
+
+其中 $z_1$ 是单粒子配分函数，则
+
+$$
+\mathcal Z
+=\sum_{N=0}^{\infty}
+\frac{(e^{\beta\mu_R}z_1)^N}{N!}
+=\exp(e^{\beta\mu_R}z_1).
+$$
+
+令 $\lambda=e^{\beta\mu_R}z_1$，可得
+
+$$
+P(N)=e^{-\lambda}\frac{\lambda^N}{N!},
+\qquad
+\langle N\rangle=\operatorname{Var}(N)=\lambda.
+$$
+
+这就是理想稀薄气体的 Poisson 粒子数涨落；相互作用会改变这个等均值—方差关系。
+
+### Interactive：调节外部 $\mu_R$
+
+调节 $\alpha=\beta\mu_R$，观察 $P(N)$ 怎样移动和展宽，以及 $\ln\mathcal Z$ 的一阶、二阶导数如何返回均值与方差。
 
 <InteractiveConcept type="grand-canonical-poisson" />
 
-### 进阶（可选）：无相互作用量子气体的占据数法
-如果你想把“巨配分函数为何能因子化为能级乘积”这一步看清楚，并顺手把 Fermi–Dirac / Bose–Einstein / Maxwell–Boltzmann 三大分布串成同一条推导链，见：[[从巨配分函数到 Fermi–Dirac / Bose–Einstein / Maxwell–Boltzmann（占据数法）]]。
+### 进阶：量子占据数
 
-**过渡到 Part 3**  
-一阶导数给平均规模；那么二阶导数自然会给“规模的波动/涨落”。这就是巨正则版的涨落—响应关系。
+无相互作用量子气体可以把 $\mathcal Z$ 因子化为单粒子能级的乘积，并由允许占据数的差异得到 Fermi–Dirac、Bose–Einstein 与 Maxwell–Boltzmann 分布。推导见：[[从巨配分函数到 Fermi–Dirac / Bose–Einstein / Maxwell–Boltzmann（占据数法）]]。
 
----
+## 5. 城市例子：固定一种交换对象
 
-## Part 3：密度涨落——城市集聚的起源
+为了避免在“人口、OD 流量、企业数、事件数”之间来回切换，这里只把 $N$ 定义为**给定城市边界内的常住人口数**。外部人口池扮演粒子库，微观配置 $x$ 记录这 $N$ 名居民的空间或住房配置。设模型成本为 $C(x,N)$，则巨正则零模型可写成
 
-在 M3 里我们讨论了能量涨落（热容）。在 M4 里，我们关注 **粒子数涨落**，并把它读成“响应强度”（susceptibility）。
+$$
+P(x,N)
+\propto
+e^{-\beta[C(x,N)-\mu_RN]}.
+$$
 
-继续对 Part 2 的关系再求导：
-\[
-\frac{\partial \ln\mathcal{Z}}{\partial \mu}=\beta\langle N\rangle.
-\]
-对 \(\mu\) 再求一次导数：
-\[
-\frac{\partial^2 \ln\mathcal{Z}}{\partial \mu^2}
-=\beta\frac{\partial \langle N\rangle}{\partial \mu}.
-\]
-另一方面，直接计算可得到二阶导对应二阶中心矩（这里给出结果口径；完整推导见：[[平均粒子数与涨落从 ln 𝒵 的导数得到]]）：
-\[
-\frac{\partial^2 \ln\mathcal{Z}}{\partial \mu^2}=\beta^2\mathrm{Var}(N).
-\]
-合并得到
-\[
-\boxed{\ \mathrm{Var}(N)=\frac{1}{\beta}\frac{\partial \langle N\rangle}{\partial \mu}
-=\frac{1}{\beta^2}\frac{\partial^2 \ln\mathcal{Z}}{\partial \mu^2}\ }.
-\]
+在这套固定符号中：
 
-这句话的直觉翻译是：
-- \(\langle N\rangle\) 是“平均规模”；
-- \(\partial\langle N\rangle/\partial\mu\) 是“规模对控制量的敏感度”（响应/易变性）；
-- \(\mathrm{Var}(N)\) 把这种敏感度以“涨落”的形式显性化。
+- $\mu_{\mathrm{city}}(N)=\partial F_{\mathrm{city}}/\partial N$ 是城市在当前规模下增加一名居民的内部边际自由成本；
+- $\mu_R$ 是外部人口池给定的参与价值或保留水平，以与 $C$ 相同的单位表示；
+- 平衡平均规模由 $\mu_{\mathrm{city}}=\mu_R$ 决定；
+- 提高 $\mu_R$ 会在模型中偏置更大的 $N$，而两个城市直接交换固定总人口时，人口从内部 $\mu$ 较高的一侧流向较低的一侧。
 
-在物质系统中，它对应“可压缩性/易变性”的量级：\(\mu\) 轻微变化，密度会不会明显变化？
-在城市里，这意味着：如果你稍微提高一点吸引力（\(\mu\)），人口会暴增吗？
-- 正常区域：涨落有限。
-- 临界区域（M7）：涨落发散（集聚效应、涌现）。
+因此不宜把 $\mu$ 简单翻译成没有符号约定的“吸引力”。若能量写成成本，内部 $\mu$ 较高表示新增居民的边际成本较高；若改用效用记号，指数与参数符号也要相应改变。
 
-**过渡到 Part 4**  
-到这里我们已经得到一个可检验的结构：
-\[
-\text{控制量 }\mu \;\longrightarrow\; \text{平均规模 }\langle N\rangle \;\longrightarrow\; \text{波动/响应 }\mathrm{Var}(N).
-\]
-下面要做的只是把 \((N,\mu)\) 翻译成“城市系统里你真正关心的量”。
+这个映射仍只是平衡零模型。真实迁移可能受非平稳政策、异质偏好、网络约束和不可逆过程驱动；时间序列中的人口方差也不必等于平衡系综的 $\operatorname{Var}(N)$。
 
----
+只有在状态空间、参考测度、外部控制量和近似稳态时间窗都明确时，涨落—响应式才具有可检验含义。城市侧的建模边界见：[[化学势 μ 作为城市总强度规模控制量]]。
 
-## Part 4：城市映射——开放城市与规模波动
+## 6. 适用边界
 
-把城市当作开放系统时，“规模 \(N\)”往往不是硬约束：它会随政策、机会、外部冲击与迁移网络而波动。巨正则语言的最小翻译建议你先固定三件事：
+巨正则系综要求 $\mathcal Z$ 可归一化，并默认热库、粒子库足够大且耦合较弱。以下情形需要额外处理：
 
-- **变量对应**（先钉死口径）
-  - \(N\)：常住人口规模，或更一般的“迁移/出行事件数”（可变）。
-  - \(\mu\)：与规模共轭的控制量——可解释为“吸引力/外部给定的机会水平/保留效用/制度门槛”等（取决于你把 \(E\) 写成成本还是效用）。
-  - \(E(x,N)\)：在给定规模下的“代价/负效用/约束能”，\(x\) 表示微观配置（行业结构、空间分布、匹配状态等）。
+- 系统与库强耦合，导致系统能量无法独立定义；
+- 粒子数并非近似守恒的交换量，或根本不存在可定义的外部库；
+- 相变附近 $P(N)$ 多峰，单一平均值不能代表典型状态；
+- 非平衡稳态存在持续概率流，此时相同的稳态分布并不等于巨正则平衡。
 
-- **平衡条件的城市版**（为什么说“吸引力差被抹平”）
-  两座城市 \(A,B\) 若允许交换人口，在固定 \(T,V\) 下总自由能
-  \[
-  F_{\text{tot}}(N_A)=F_A(N_A)+F_B(N_{\text{tot}}-N_A)
-  \]
-  的极值条件给出
-  \[
-  \frac{dF_{\text{tot}}}{dN_A}=\mu_A-\mu_B=0
-  \quad\Rightarrow\quad
-  \mu_A=\mu_B.
-  \]
-  这就是“长期上无净迁移驱动”的极简刻画。
+例如平衡黑体辐射中光子数不受外部约束，因此光子化学势为零；若实验人为近似守恒激发数，结论可以改变。
 
-- **可检验预测**（把 Part 3 的涨落—响应落地）
-  一旦你用数据把 \(\mu\) 操作化，那么
-  \[
-  \frac{\partial\langle N\rangle}{\partial \mu}\quad\text{或}\quad \mathrm{Var}(N)
-  \]
-  就变成“吸引力微调 \(\Rightarrow\) 规模变化/波动放大”的可检验对象；这也是你后面讨论集聚与临界（M7）时最硬核的入口。
+## 核心答案：化学势的两种角色必须分开
 
-城市侧的“约束—势—可检验预测”映射可先看：[[化学势 μ 作为城市总强度规模控制量]]，再回到 [[巨正则系综 Grand canonical ensemble]] 的定义式做符号对照。
+内部化学势是系统自由能对粒子数的边际导数，决定两个系统之间的粒子交换方向。外部粒子库化学势则是控制参数，决定不同 $N$ 分支的统计权重。
 
----
+巨配分函数把这些分支统一求和，$\ln\mathcal Z$ 的一阶与二阶导数分别给出平均粒子数和粒子数涨落。分清“比较内部 $\mu$”与“改变外部 $\mu_R$”，就能消除开放系统中最常见的方向混淆。
 
-## 自检问题
-1. 化学势 \(\mu\) 的两种理解方式是什么？它们在什么意义上是一致的？
-2. 为什么 \(\langle N\rangle=(1/\beta)\,\partial_\mu\ln\mathcal{Z}\)？试着从 \(P(x,N)\propto e^{-\beta(E-\mu N)}\) 出发推导。
-3. 在城市模型中，如果两座城市 \(\mu_A > \mu_B\)，人口会往哪个方向流动？（提示：平衡条件 \(\mu_A=\mu_B\)）
-4. 为什么说 \(\mathrm{Var}(N)\) 是“响应强度”的可观测刻画？（提示：\(\mathrm{Var}(N)=(1/\beta)\,\partial_\mu\langle N\rangle\)）
+## 自检与练习
 
----
+1. 若 $\mu_A>\mu_B$，证明粒子从 $A$ 流向 $B$ 会降低总自由能。
+2. 从库熵展开推导 $e^{-\beta(E-\mu_RN)}$。
+3. 从 $\mathcal Z$ 推导 $\langle N\rangle$、$\operatorname{Var}(N)$ 与 $\partial\langle N\rangle/\partial\mu_R$ 的关系。
+4. 为什么提高外部 $\mu_R$ 会增加 $\langle N\rangle$，却不与“高内部 $\mu$ 一侧流出粒子”冲突？
+5. 在城市映射中，为什么必须先固定 $N$ 究竟表示人口、企业还是事件数？
 
-## 通往下一章（M5）
-- 一旦 \(N\) 可以涨落，系统的“响应强度”就与涨落大小直接相连。
-- M5 会系统化地把“涨落 ↔ 响应 ↔ 协方差”写成可计算的关系。
+### 参考与学习资源
 
-## Part 5：动手时刻 (Checklist)
-
-### 必读
-- [ ] **Reading Guide**: [[Swendsen_Ch20_GrandCanonical]]（Chapter 20: 20.1–20.3）
-  > 点击上方卡片查看本章的公式锚点与阅读路标。重点关注巨配分函数 \(\mathcal{Z}\) 的定义。
-
-### 习题
-- [ ] **Written**: `exercises/written/M4_grand_canonical_notes.md`
-  - 推导理想气体的 \(\langle N \rangle\) 与 \(\mu\) 的关系：\(\mu = k_B T \ln(n \lambda^3)\)。
-- [ ] **思考（物理进阶，可选）**：为什么光子气体的 \(\mu = 0\)？（提示：粒子数不守恒）
-- [ ] **思考（城市版）**：如果一个区域对人口完全开放、几乎没有“准入门槛”，你会预期它的 \(\mu\) 相对更高还是更低？为什么？
-- [ ] **进阶推导**（无相互作用量子气体）：[[从巨配分函数到 Fermi–Dirac / Bose–Einstein / Maxwell–Boltzmann（占据数法）]]
+- Gibbs 1902，*Elementary Principles in Statistical Mechanics*：导读见 [Seminal papers](/references/seminal_papers)（`SP-M4-Gibbs1902`）。
+- [ ] **Reading Guide**：[[Swendsen_Ch20_GrandCanonical]]。
+- [ ] **Written**：`exercises/written/M4_grand_canonical_notes.md`。
+- [ ] **进阶推导**：[[从巨配分函数到 Fermi–Dirac / Bose–Einstein / Maxwell–Boltzmann（占据数法）]]。
 
 ### 验收标准
-- [ ] 知道何时使用巨正则（System is OPEN）。
-- [ ] 能写出 \(\mathcal{Z}\) 的定义式，并知道如何对它求导得到 \(\langle N \rangle\)。
-- [ ] 能解释为什么 \(\mu\) 相等意味着粒子流动的动态平衡。
+
+- [ ] 能区分系统内部化学势与外部粒子库化学势，并正确判断粒子流向。
+- [ ] 能写出 $\mathcal Z$ 与 $\mathcal J$，并用导数得到 $\langle N\rangle$ 和 $\operatorname{Var}(N)$。
+- [ ] 能说明巨正则城市映射是一种有边界条件的零模型，而不是把“吸引力”当作物理事实。

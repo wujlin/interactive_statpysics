@@ -1,6 +1,6 @@
 # Checklist（严格对齐版）
 
-> 说明：本文件把 M0–M9 的“必须项”列成可勾选清单（文件路径为准）。  
+> 说明：本文件把 M0–M11 的“必须项”列成可勾选清单（文件路径为准）。
 > 你可以把它当作仓库的硬标准：所有 `[ ]` 变成 `[x]` 才算完全对齐。
 
 ---
@@ -194,3 +194,25 @@
   - [x] Test：`exercises/tests/test_ou_process.py`
   - [x] Code：`exercises/src/ou.py`
   - [x] Written：`exercises/written/M9_fp_langevin.md`
+
+---
+
+## M10 非平衡稳态与熵产生（NESS & EPR）
+- [x] Module：`modules/M10_nonequilibrium_steady_state_entropy_production.md`
+- [x] Concept：`kb/concepts/熵产生率 Entropy production rate (EPR).md`
+- [x] Interactive：`web/src/components/demos/ThreeStateNessDemo.tsx`
+- [x] Project：`projects/p06_entropy_production/`
+- [x] 能区分 Markov 时间不可逆性率与满足局部细致平衡时的物理熵产生率。
+- [x] 能说明两状态时间齐次链为什么不能表示早晚通勤环流。
+
+---
+
+## M11 FDT 违背与 Harada–Sasa（Visible dissipation）
+- [x] Module：`modules/M11_fdt_violation_harada_sasa.md`
+- [x] Code：`exercises/src/active_fdt.py`
+- [x] Notebook：`exercises/notebooks/E11_active_fdt_harada_sasa.ipynb`
+- [x] Test：`exercises/tests/test_active_fdt.py`
+- [x] Interactive：`web/src/components/demos/ActiveFdtSpectrumDemo.tsx`
+- [x] References：`SP-M11-HaradaSasa2005`、`SP-M11-HaradaSasa2006`、`SP-M11-WuLibchaber2000`
+- [x] 能用量纲说明位置谱形式必须包含 $\gamma\omega^2$ 权重。
+- [x] 能区分探针可见耗散、环境熵流与完整系统总熵产生。

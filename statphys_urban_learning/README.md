@@ -23,7 +23,7 @@
 ---
 
 ## 从哪里开始（最短闭环）
-1. 打开 `modules/index.md`，按 M0→M9 逐个打勾推进  
+1. 打开 `modules/index.md`，按 M0→M11 逐个打勾推进
 2. 先跑通一个城市落地项目：`projects/p01_maxent_od/`  
 3. 每个模块至少交付：卡片（kb）+ 习题（exercises）+ 一个最小城市映射（kb/urban-mapping）
 

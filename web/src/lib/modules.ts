@@ -49,12 +49,17 @@ function compareModuleDocs(a: ModuleDoc, b: ModuleDoc): number {
   const pb = parseModuleId(b.id);
 
   if (pa.kind !== pb.kind) return pa.kind === "module" ? -1 : 1;
-  if (pa.kind === "other") return pa.key.localeCompare(pb.key, "en");
-  if (pa.num !== pb.num) return pa.num - pb.num;
-  if (pa.suffix === pb.suffix) return 0;
-  if (!pa.suffix) return -1;
-  if (!pb.suffix) return 1;
-  return pa.suffix.localeCompare(pb.suffix, "en");
+  if (pa.kind === "other" && pb.kind === "other") {
+    return pa.key.localeCompare(pb.key, "en");
+  }
+  if (pa.kind === "module" && pb.kind === "module") {
+    if (pa.num !== pb.num) return pa.num - pb.num;
+    if (pa.suffix === pb.suffix) return 0;
+    if (!pa.suffix) return -1;
+    if (!pb.suffix) return 1;
+    return pa.suffix.localeCompare(pb.suffix, "en");
+  }
+  return 0;
 }
 
 export function listModuleDocs(): ModuleDoc[] {

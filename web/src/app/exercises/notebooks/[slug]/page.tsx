@@ -1,6 +1,9 @@
 import Link from "next/link";
 import { notFound } from "next/navigation";
 
+import { IsingCriticalSignalsDemo } from "@/components/demos/IsingCriticalSignalsDemo";
+import { IsingMcmcRealtimeDemo } from "@/components/demos/IsingMcmcRealtimeDemo";
+import { MaxEntDiceDemo } from "@/components/demos/MaxEntDiceDemo";
 import { OdSensitivityDemo } from "@/components/demos/OdSensitivityDemo";
 import { getExerciseNotebookBySlug, listExerciseNotebooks } from "@/lib/exercises";
 
@@ -17,6 +20,12 @@ export default async function ExerciseNotebookPage({ params }: { params: Promise
   } catch {
     notFound();
   }
+
+  const hasInteractiveDemo =
+    slug === "E01_maxent_discrete_numeric" ||
+    slug === "E05_sensitivity_od" ||
+    slug === "E06_ising_mcmc" ||
+    slug === "E07_ising_critical_signals";
 
   return (
     <main className="container stack">
@@ -38,16 +47,36 @@ export default async function ExerciseNotebookPage({ params }: { params: Promise
         </details>
       </section>
 
+      {slug === "E01_maxent_discrete_numeric" ? (
+        <section className="stack">
+          <MaxEntDiceDemo />
+        </section>
+      ) : null}
+
       {slug === "E05_sensitivity_od" ? (
         <section className="stack">
           <OdSensitivityDemo />
         </section>
       ) : null}
 
+      {slug === "E06_ising_mcmc" ? (
+        <section className="stack">
+          <IsingMcmcRealtimeDemo />
+        </section>
+      ) : null}
+
+      {slug === "E07_ising_critical_signals" ? (
+        <section className="stack">
+          <IsingCriticalSignalsDemo />
+        </section>
+      ) : null}
+
       <section className="card">
         <h2>本地运行</h2>
         <p className="muted" style={{ marginTop: 8 }}>
-          路线 A 不在网页内执行 Python；建议本地用 Jupyter 打开并运行。
+          {hasInteractiveDemo
+            ? "网页已提供交互版（不执行 Python）；若要复现/改代码，请本地用 Jupyter 打开并运行。"
+            : "路线 A 不在网页内执行 Python；建议本地用 Jupyter 打开并运行。"}
         </p>
         <pre style={{ marginTop: 12, padding: 12, borderRadius: 10, overflow: "auto" }}>
           <code>{`cd statphys_urban_learning && jupyter lab ${doc.relPath}`}</code>

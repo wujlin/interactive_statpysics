@@ -18,7 +18,7 @@ npm run dev
 打开 `http://localhost:3000`。
 
 ## 页面入口
-- `/modules`：学习路线（M0–M9 checklist）
+- `/modules`：学习路线（M0–M11 checklist）
 - `/kb`：知识库（Concept/Derivation/Method/Urban-mapping/Sources）
 - `/checklist`：严格对齐版硬标准
 - `/exercises`：习题入口（written + notebooks）

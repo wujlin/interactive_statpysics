@@ -1,6 +1,6 @@
 import numpy as np
 
-from exercises.src.ising import simulate_ising
+from exercises.src.ising import heat_capacity, simulate_ising, susceptibility
 
 
 def test_ising_ordered_vs_disordered_magnetization():
@@ -19,3 +19,16 @@ def test_ising_ordered_vs_disordered_magnetization():
 
     assert m_low > 0.5, f"expected ordered magnetization, got {m_low}"
     assert m_high < 0.3, f"expected disordered magnetization, got {m_high}"
+
+
+def test_per_spin_response_estimators_keep_system_size_factor():
+    beta = 0.5
+    n_spins = 16
+    e = np.array([-1.0, -0.5, 0.0])
+    m = np.array([-0.5, 0.0, 0.5])
+
+    expected_cv = beta**2 * n_spins * np.var(e, ddof=1)
+    expected_chi = beta * n_spins * np.var(m, ddof=1)
+
+    assert heat_capacity(beta, e, n_spins=n_spins) == expected_cv
+    assert susceptibility(beta, m, n_spins=n_spins) == expected_chi

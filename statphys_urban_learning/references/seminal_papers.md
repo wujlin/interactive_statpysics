@@ -212,3 +212,34 @@
   - 这条线索最终导向涨落定理：\(\Pr(\Delta S<0)\) 虽非零但被指数压制；是非平衡“第二定律”的概率版本。
 - Exercise（用今天的符号重做一遍）
   - 在三态环流上做一个最小数值实验：统计有限时间窗内的熵产生增量分布，观察其对称性是否近似出现（只要求定性，不要求收敛到严格极限）。
+
+## M11（FDT 违背 / Harada–Sasa / 可见耗散）
+
+### SP-M11-HaradaSasa2005
+- T. Harada and S.-i. Sasa, “Equality Connecting Energy Dissipation with a Violation of the Fluctuation-Response Relation,” *Physical Review Letters* **95**, 130602 (2005). DOI: [10.1103/PhysRevLett.95.130602](https://doi.org/10.1103/PhysRevLett.95.130602).
+- Why this paper?
+  - 证明一类非平衡 Langevin 系统中，速度关联与线性响应的 FDT 违背积分等于稳态能量耗散率；
+  - 它把“FDT 不成立”从定性诊断变成可由实验观测量估计的功率。
+- Reading prompt（带着问题去读）
+  - 等式使用的是位置还是速度关联？摩擦系数和平均漂移项分别出现在哪里？
+  - 论文中的“整个系统”指模型中纳入的哪些自由度，实验只观测部分自由度时会漏掉什么？
+- Exercise（用今天的符号重做一遍）
+  - 对谐振阱中的加性 OU 活性力，分别从速度形式与位置形式推导 Harada–Sasa 等式，并用量纲检查找出位置谱所需的 $\gamma\omega^2$ 权重。
+
+### SP-M11-HaradaSasa2006
+- T. Harada and S.-i. Sasa, “Energy Dissipation and Violation of the Fluctuation-Response Relation in Non-equilibrium Langevin Systems,” *Physical Review E* **73**, 026131 (2006). Preprint: [arXiv:cond-mat/0510723](https://arxiv.org/abs/cond-mat/0510723).
+- Why this paper?
+  - 系统展开 2005 年等式的适用条件，并讨论多自由度、时变驱动与多个热浴；
+  - 说明耗散可以按模型自由度分解，因此“探针可见耗散”与“隐藏通道耗散”必须分开报告。
+
+### SP-M11-WuLibchaber2000
+- X.-L. Wu and A. Libchaber, “Particle Diffusion in a Quasi-Two-Dimensional Bacterial Bath,” *Physical Review Letters* **84**, 3017–3020 (2000). DOI: [10.1103/PhysRevLett.84.3017](https://doi.org/10.1103/PhysRevLett.84.3017).
+- Why this paper?
+  - 用细菌悬浮液中的示踪粒子展示非热活动如何改变扩散统计，是“热噪声之外还有持续驱动”的经典实验入口；
+  - 它适合建立活性浴直觉，但不能单凭扩散增强就完成 FDT 或总耗散测量，响应仍需独立测量。
+
+### SP-M11-FodorEtAl2016
+- É. Fodor, C. Nardini, M. E. Cates, J. Tailleur, P. Visco, and F. van Wijland, “How Far from Equilibrium Is Active Matter?” *Physical Review Letters* **117**, 038103 (2016). DOI: [10.1103/PhysRevLett.117.038103](https://doi.org/10.1103/PhysRevLett.117.038103).
+- Why this paper?
+  - 展示持续有色噪声的有效模型在时间反演和熵产生定义上具有细致边界；
+  - 提醒读者：给活性噪声写出相关函数，并不等于已经定义了隐藏推进机制的完整热力学。

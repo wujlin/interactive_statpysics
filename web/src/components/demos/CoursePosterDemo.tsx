@@ -189,7 +189,7 @@ export function CoursePosterDemo() {
                 </span>
               </li>
               <li>
-                <strong>涨落—响应（M5）</strong>：系统对外界有多敏感，可以从它在平衡态下“自己乱动多大”（协方差）读出来。
+                <strong>涨落—响应（M5）</strong>：平衡动力学用自发涨落约束线性响应；指数族则用协方差给出静态参数敏感度。
                 <span style={{ marginLeft: 8 }}>
                   <ChipLink href="/modules/M5_fluctuation_response_correlation">M5</ChipLink>
                 </span>
@@ -224,9 +224,15 @@ export function CoursePosterDemo() {
                 </span>
               </li>
               <li>
-                <strong>NESS 与熵产生（M10）</strong>：量化“偏离平衡有多远”，把驱动与耗散变成可检验的量。
+                <strong>NESS 与熵产生（M10）</strong>：从概率净流和路径倒放的不对称定义 Markov 不可逆性，并说明它何时才具有热力学含义。
                 <span style={{ marginLeft: 8 }}>
                   <ChipLink href="/modules/M10_nonequilibrium_steady_state_entropy_production">M10</ChipLink>
+                </span>
+              </li>
+              <li>
+                <strong>FDT 违背与 Harada–Sasa（M11）</strong>：独立测量涨落谱与响应函数，把正确加权的差值转化为探针可见耗散。
+                <span style={{ marginLeft: 8 }}>
+                  <ChipLink href="/modules/M11_fdt_violation_harada_sasa">M11</ChipLink>
                 </span>
               </li>
             </ul>
@@ -241,4 +247,3 @@ export function CoursePosterDemo() {
     </section>
   );
 }
-

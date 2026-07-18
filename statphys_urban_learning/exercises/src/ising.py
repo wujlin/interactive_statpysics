@@ -131,16 +131,33 @@ def simulate_ising(
     )
 
 
-def heat_capacity(beta: float, e_series: np.ndarray, *, kB: float = 1.0) -> float:
-    """Cv per spin from energy per spin series."""
+def heat_capacity(
+    beta: float,
+    e_series: np.ndarray,
+    *,
+    n_spins: int,
+    kB: float = 1.0,
+) -> float:
+    """Heat capacity per spin from a per-spin energy time series.
+
+    With ``e = E / N`` and ``beta = 1 / (kB T)``,
+    ``C_V / N = kB * beta**2 * N * Var(e)``.
+    """
+    if n_spins <= 0:
+        raise ValueError("n_spins must be positive")
     e = np.asarray(e_series, dtype=float)
-    return float((beta**2 / kB) * (e.var(ddof=1)))
+    return float(kB * beta**2 * n_spins * e.var(ddof=1))
 
 
-def susceptibility(beta: float, m_series: np.ndarray, *, kB: float = 1.0) -> float:
-    """Magnetic susceptibility per spin (using magnetization per spin series)."""
+def susceptibility(beta: float, m_series: np.ndarray, *, n_spins: int) -> float:
+    """Magnetic susceptibility per spin from ``m = M / N`` samples.
+
+    For a field term ``-h M``, ``chi = beta * N * Var(m)``.
+    """
+    if n_spins <= 0:
+        raise ValueError("n_spins must be positive")
     m = np.asarray(m_series, dtype=float)
-    return float((beta / kB) * (m.var(ddof=1)))
+    return float(beta * n_spins * m.var(ddof=1))
 
 
 def binder_cumulant(m_series: np.ndarray) -> float:

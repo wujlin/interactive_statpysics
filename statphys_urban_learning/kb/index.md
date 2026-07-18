@@ -15,7 +15,7 @@ status: ready
 ## 统计物理主线（最少 8 个锚点）
 - 势与控制变量：[[热力学势 Thermodynamic potentials]]、[[自然变量 Natural variables]]、[[Legendre 变换 从 U 到 F 到 G]]
 - 计数与熵：[[多重度 multiplicity Ω]]、[[熵 Entropy]]、[[热力学极限 Thermodynamic limit]]
-- 从约束到分布：[[最大熵原理 Maximum entropy principle]]、[[最大熵推出指数族分布（通用模板）]]、[[已知均值与方差的最大熵解（高斯）]]、[[从系统与热库推出 Boltzmann 分布（正则系综）]]
+- 从约束到分布：[[最大熵原理 Maximum entropy principle]]、[[最大熵推出指数族分布（通用模板）]]、[[已知均值的最大熵解（指数）]]、[[已知均值与方差的最大熵解（高斯）]]、[[从系统与热库推出 Boltzmann 分布（正则系综）]]
 - 从分布到可计算量：[[配分函数 Partition function]]、[[平均能量与 ln Z 的导数关系]]、[[平均粒子数与涨落从 ln 𝒵 的导数得到]]
 - 不确定性与敏感性：[[涨落-响应 Fluctuation-response]]、[[协方差与二阶导（通用）]]
 - 动力学语言：[[Markov 链与稳态分布 Markov chain]]、[[主方程 Master equation]]、[[Fokker-Planck 方程 Fokker-Planck equation]]、[[Langevin 方程 Langevin equation]]

@@ -9,6 +9,7 @@ import { CoursePosterDemo } from "@/components/demos/CoursePosterDemo";
 import { DiffusionHeatmapDemo } from "@/components/demos/DiffusionHeatmapDemo";
 import { EffectiveCouplingDemo } from "@/components/demos/EffectiveCouplingDemo";
 import { FiniteSizeScalingDemo } from "@/components/demos/FiniteSizeScalingDemo";
+import { ActiveFdtSpectrumDemo } from "@/components/demos/ActiveFdtSpectrumDemo";
 import { OuProcessDemo } from "@/components/demos/OuProcessDemo";
 import { ThreeStateNessDemo } from "@/components/demos/ThreeStateNessDemo";
 
@@ -510,10 +511,10 @@ function EntropyCounter() {
     <section className="ic-card">
       <header className="ic-header">
         <div className="ic-title">
-          <div className="ic-title-main">Ehrenfest 两盒模型：随机性如何产生宏观均衡</div>
+          <div className="ic-title-main">Ehrenfest 两盒模型：态数如何塑造宏观占比</div>
           <div className="ic-title-sub">
-            单次跳变是随机的，但多重度 <MathInline tex={"\\Omega"} className="ic-math" /> 的压倒性会把系统“吸”向{" "}
-            <MathInline tex={"N_L\\approx N_R"} className="ic-math" />。
+            单次跳变是随机的；<MathInline tex={"N_L\\approx N_R"} className="ic-math" /> 对应的微观实现最多，
+            所以长期轨迹更常经过这里，但仍会偶尔远离中心。
           </div>
         </div>
         <div className="ic-controls">
@@ -1948,6 +1949,7 @@ function MeanFieldBifurcation() {
 // --- Main Registry ---
 
 const COMPONENT_MAP: Record<string, React.FC> = {
+  "active-fdt-spectrum": ActiveFdtSpectrumDemo,
   "entropy-counter": EntropyCounter,
   "course-poster": CoursePosterDemo,
   "cluster-chain-reaction": ClusterChainReactionDemo,

@@ -25,7 +25,7 @@ S\equiv -k_B\sum_i p_i\ln p_i.
 F\equiv U-TS,\qquad U\equiv \langle E\rangle=\sum_i p_iE_i.
 \]
 
-## 推导（不跳步）
+## 推导
 1) 先把 \(\ln p_i\) 写开：
 \[
 \ln p_i=\ln\left(\frac{e^{-\beta E_i}}{Z}\right)=-\beta E_i-\ln Z.
